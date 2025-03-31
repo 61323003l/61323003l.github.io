@@ -4,115 +4,285 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
-    <!-- css -->
+    <!-- favicon -->
+    <link rel="shortcut icon" href="img\DWU icon.ico">
+    <!-- font-family -->
+    <!-- 中文字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+    <!-- 日文字體 圓體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap" rel="stylesheet">
+    <title>吳嘉隆</title>
     <style type="text/css">
-    /*        */
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: "Zen Maru Gothic", "Noto Sans TC", Cursive;
+        padding: 10px;
+        background: #fdf4d7;
+    }
+
+    /* header */
+    .header {
+        padding: 30px;
+        text-align: center;
+        background: #fef3c4;
+    }
+
+    .header div {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        height: 50px;
+    }
+
+    /* top navigation bar */
+    .topnav {
+        position: sticky;
+        top: 0;
+        background-color: #75c0ea;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+
+    /* center topnav */
+    .topnav li {
+        display: inline-block;
+    }
+
+    /* topnav links */
+    .topnav a {
+        float: left;
+        display: block;
+        color: black;
+        font-weight: bolder;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+    }
+
+    /* change style on hover */
+    .topnav a:hover {
+        background-color: #de5f65;
+        color: #fef3c4;
+    }
+
+    /* each block id */
+
+    #me {
+        scroll-margin-top: 80px;
+        /* 根據導覽列的高度調整 */
+    }
+
+    #edu {
+        scroll-margin-top: 80px;
+        /* 根據導覽列的高度調整 */
+    }
+
+    #work {
+        scroll-margin-top: 80px;
+        /* 根據導覽列的高度調整 */
+    }
+
+    #course {
+        scroll-margin-top: 80px;
+        /* 根據導覽列的高度調整 */
+    }
+
+    #interests {
+        scroll-margin-top: 80px;
+        /* 根據導覽列的高度調整 */
+    }
+
+    #hobby {
+        scroll-margin-top: 80px;
+        /* 根據導覽列的高度調整 */
+    }
+
+    /* create two unequal columns that floats next to each other */
+    /* left column */
+    .leftcolumn {
+        float: left;
+        width: 75%;
+    }
+
+    /* right column */
+    .rightcolumn {
+        float: left;
+        width: 25%;
+        background-color: #fdf4d7;
+        padding-left: 20px;
+    }
+
+    /* Fake image */
+    .fakeimg {
+        background-color: #aaa;
+        width: 100%;
+        padding: 20px;
+    }
+
+    /* add a block effect for articles */
+    .block {
+        background-color: #fef3c4;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    /* list */
+    .block ol {
+        list-style-type: none;
+    }
+
+    /* Clear floats after the columns */
+    .row::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    /*  工作經歷  */
+    /*  公司logo  */
+    .work {
+        list-style-type: none;
+    }
+
+    .wokrlogo {
+        float: left;
+        height: 50px;
+        padding: 20px;
+    }
+
+    .wokrlogo img {
+        max-height: 100%;
+    }
+
+    .workcompany {
+        padding: 20px;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 20px;
+        text-align: center;
+        background: #ddd;
+        margin-top: 20px;
+    }
+
+    /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+    @media screen and (max-width: 800px) {
+
+        .leftcolumn,
+        .rightcolumn {
+            width: 100%;
+            padding: 0;
+        }
+    }
+
+    /* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
+    @media screen and (max-width: 400px) {
+        .topnav a {
+            float: none;
+            width: 100%;
+        }
+    }
     </style>
 </head>
 
 <body>
-    <h1 style="font-size: 60px;">Hello,World</h1>
-    <h1>Hello,World</h1>
-    <h2>H2</h2>
-    <h3>h3</h3>
-    <h4>h4</h4>
-    <h5>h5</h5>
-    <h6 style="font-size: 10px;">h6-10px</h6>
-    <h6>h6</h6>
-    <h1>分區：範例1</h1>
-    <div style="background-color: #FFF4A3;">
-        <h2>台師大</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque rhoncus dolor et finibus semper. Praesent vel tristique ligula, eu consequat ex. Pellentesque sodales, quam sed hendrerit malesuada, arcu magna suscipit metus, convallis semper urna mi ut orci. Morbi vehicula magna hendrerit sem porta, in placerat tortor porttitor. Suspendisse vehicula bibendum suscipit. Etiam dictum ante diam, vel accumsan diam feugiat eget. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam ut mattis augue. Suspendisse id erat ac ante tincidunt rutrum eget vel risus.
-        </p>
+    <div class="header">
+        <img src="img\DWU icon.png" style="height: 100px;">
     </div>
-    <h1>分區：範例2</h1>
-    <div style="background-color: #FFF4A3;width: 400px;margin: auto;">
-        <h2>台師大</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque rhoncus dolor et finibus semper. Praesent vel tristique ligula, eu consequat ex. Pellentesque sodales, quam sed hendrerit malesuada, arcu magna suscipit metus, convallis semper urna mi ut orci. Morbi vehicula magna hendrerit sem porta, in placerat tortor porttitor. Suspendisse vehicula bibendum suscipit. Etiam dictum ante diam, vel accumsan diam feugiat eget. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam ut mattis augue. Suspendisse id erat ac ante tincidunt rutrum eget vel risus.
-        </p>
+    <div class="topnav">
+        <li><a href="#me">我</a></li>
+        <li><a href="#edu">教育經歷</a></li>
+        <li><a href="#work">工作經歷</a></li>
+        <li><a href="#course">選修課程</a></li>
+        <li><a href="#interests">興趣</a></li>
+        <li><a href="#hobby">愛好</a></li>
     </div>
-    <div>
-        <h1>Div：Ex3</h1>
-        <div style="background-color: #FFF4A3;width: 400px;margin: auto;">
-            <h2>NTNU</h2>
-            <p>Aliquam cursus rhoncus ultricies. Phasellus quis velit a libero aliquet fermentum at eget mi. Phasellus sit amet justo blandit, rutrum nisi id, pulvinar diam. Nam feugiat justo id finibus varius. Aenean in lacinia odio, ac laoreet mi. Maecenas blandit lorem vehicula justo rhoncus, eu auctor velit aliquam. Aenean porttitor congue enim, sed iaculis eros.
-            </p>
+    <div class="row">
+        <div class="leftcolumn">
+            <!-- 教育經歷 -->
+            <div id="edu" class="block">
+                <h2>教育經歷</h2>
+                <p>目前碩士班在讀中</p>
+                <div>
+                    <ol>
+                        <li>國小：<a href="https://www.ktps.hc.edu.tw/nss/p/index" target="_blank">關東國小</a>(2006~2009)、<a href="https://syes.mlc.edu.tw/Home/Index.php" target="_blank">信義國小</a>(2010~2012)</li>
+                        <li>國中：<a href="https://jgjh.mlc.edu.tw/Home/Index.php" target="_blank">建國國中</a>(2012~2015)</li>
+                        <li>高中：<a href="https://www.hchs.hc.edu.tw/home" target="_blank">新竹高中</a>(2015~2018)</li>
+                        <li>大學：<a href="https://www.geo.ntnu.edu.tw/" target="_blank">國立台灣師範大學 地理學系</a>(2018~2022)</li>
+                        <li>碩士：<a href="https://www.geo.ntnu.edu.tw/" target="_blank">國立台灣師範大學 地理所</a>(2024~現在)</li>
+                    </ol>
+                </div>
+            </div>
+            <!-- 工作經歷 -->
+            <div id="work" class="block">
+                <h2>工作經歷</h2>
+                <p>目前是個每月負收入的<b>窮苦研究生</b></p>
+                <ul class="work">
+                    <!-- 壽司郎 -->
+                    <li>
+                        <div>
+                            <div class="worklogo"><a href="https://www.sushiro.com.tw/Shop/ShopInfo?shopId=133"><img src="img\壽司郎logo.png" arc="壽司郎logo"></a></div>
+                            <div class="workcompany">
+                                <p>台灣壽司郎股份有限公司</p>
+                                <p>2022/8~2022/12</p>
+                                <p>內場兼職人員</p>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- 鼎堅航太  -->
+                    <li>
+                        <div>
+                            <div class=""><a href="https://www.dijetlink.com/"><img src="img\鼎堅航太logo.png" arc="鼎堅航太logo" style="height: 50px;"></a></div>
+                            <div>
+                                <p>鼎堅航太股份有限公司</p>
+                                <p>2021/7~2021/12,2023/3~2023/6</p>
+                                <p>地理圖資人員</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div style="background-color: #FFC0C7;width: 400px;margin: auto;">
-            <h2>NTNU</h2>
-            <p>Aliquam cursus rhoncus ultricies. Phasellus quis velit a libero aliquet fermentum at eget mi. Phasellus sit amet justo blandit, rutrum nisi id, pulvinar diam. Nam feugiat justo id finibus varius. Aenean in lacinia odio, ac laoreet mi. Maecenas blandit lorem vehicula justo rhoncus, eu auctor velit aliquam. Aenean porttitor congue enim, sed iaculis eros.
-            </p>
+        <div class="rightcolumn">
+            <!-- 吳嘉隆 -->
+            <div id="me" class="block">
+                <h2>About Me</h2>
+                <div><img class="myphoto" src="img\myphoto.jpg" alt="這是一張照片" style="max-width: 100%;"></div>
+                <p>姓名：吳嘉隆</p>
+                <p>生日：2000年6月13日</p>
+                <p></p>
+            </div>
+            <div class="block">
+                <h3>Popular Post</h3>
+                <div class="fakeimg">
+                    <p>Image</p>
+                </div>
+                <div class="fakeimg">
+                    <p>Image</p>
+                </div>
+                <div class="fakeimg">
+                    <p>Image</p>
+                </div>
+            </div>
+            <div class="block">
+                <h3>Follow Me</h3>
+                <p>Some text..</p>
+            </div>
         </div>
-        <div style="background-color: #D9EEE1;width: 400px;margin: auto;">
-            <h2>NTNU</h2>
-            <p>Aliquam cursus rhoncus ultricies. Phasellus quis velit a libero aliquet fermentum at eget mi. Phasellus sit amet justo blandit, rutrum nisi id, pulvinar diam. Nam feugiat justo id finibus varius. Aenean in lacinia odio, ac laoreet mi. Maecenas blandit lorem vehicula justo rhoncus, eu auctor velit aliquam. Aenean porttitor congue enim, sed iaculis eros.
-            </p>
-        </div>
     </div>
-    <div>
-        <h1>圖像1</h1>
-        <img src="D:\相簿\梗圖\淚之女王_梗圖\捅他們一刀.jpg">
+    <div class="footer">
+        <h2>Footer</h2>
     </div>
-    <div>
-        <h1>圖像1</h1>
-        <img src="D:\相簿\梗圖\淚之女王_梗圖\捅他們一刀.jpg" style="width: 100%px;">
-    </div>
-    <div>
-        <h1>Link：Example1</h1>
-        <a href="http://toodu.github.io/index.html">CCH Wedpage</a>
-        <h1>Link：Example2</h1>
-        <a href="http://toodu.github.io/index.html" target="_self">Self</a>
-        <a href="http://toodu.github.io/index.html" target="_blank">blank</a>
-        <a href="http://toodu.github.io/index.html" target="_parent">parent</a>
-        <a href="http://toodu.github.io/index.html" target="_top">top</a>
-    </div>
-    <div>
-        <h1>table：example</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>大學</th>
-                    <th>城市</th>
-                    <th>國家</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>台師大</td>
-                    <td>台北</td>
-                    <td>台灣</td>
-                </tr>
-                <tr>
-                    <td>東京大學</td>
-                    <td>東京</td>
-                    <td>日本</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div>
-        <h1>List：E1</h1>
-        <ol>
-            <li>NTU</li>
-            <li>NTNU</li>
-            <li>NTHU</li>
-        </ol>
-        <h1>List：E2</h1>
-        <ul>
-            <li>NTU</li>
-            <li>NTNU</li>
-            <li>NTHU</li>
-        </ul>
-    </div>
-    <div>
-        <h1>Blocks & Inlines</h1>
-        <p>This is an inline span <span style="border: 1px solid black;">Hello World</span> element inside a paragraph.</p>
-    </div>
-    <div>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/IBtJq0YXAWQ?si=CGGNg82b3lhoH6Te" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-    </div>
-    <!--  -->
 </body>
 
 </html>
