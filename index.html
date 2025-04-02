@@ -30,8 +30,11 @@
     /* header */
     .header {
         padding: 30px;
+        /*    置中    */
         text-align: center;
         background: #fef3c4;
+        /*    圓角    */
+        border-radius: 10px;
     }
 
     .header div {
@@ -50,9 +53,10 @@
         margin: 0;
         padding: 0;
         text-align: center;
+        border-radius: 10px;
     }
 
-    /* center topnav */
+    /* topnav */
     .topnav li {
         display: inline-block;
     }
@@ -72,53 +76,56 @@
     .topnav a:hover {
         background-color: #de5f65;
         color: #fef3c4;
+        /*    圓角    */
+        border-radius: 10px;
     }
 
     /* each block id */
 
     #me {
-        scroll-margin-top: 80px;
-        /* 根據導覽列的高度調整 */
+        scroll-margin-top: 100px;
+
     }
 
     #edu {
-        scroll-margin-top: 80px;
         /* 根據導覽列的高度調整 */
+        scroll-margin-top: 80px;
+
     }
 
     #work {
-        scroll-margin-top: 80px;
         /* 根據導覽列的高度調整 */
+        scroll-margin-top: 80px;
     }
 
     #course {
-        scroll-margin-top: 80px;
         /* 根據導覽列的高度調整 */
+        scroll-margin-top: 80px;
     }
 
     #interests {
-        scroll-margin-top: 80px;
         /* 根據導覽列的高度調整 */
+        scroll-margin-top: 80px;
     }
 
     #hobby {
-        scroll-margin-top: 80px;
         /* 根據導覽列的高度調整 */
+        scroll-margin-top: 80px;
     }
 
-    /* create two unequal columns that floats next to each other */
-    /* left column */
-    .leftcolumn {
-        float: left;
+    /* content 分兩區 */
+    /* 右邊主要區域 */
+    .rightblock {
+        float: right;
         width: 75%;
-    }
-
-    /* right column */
-    .rightcolumn {
-        float: left;
-        width: 25%;
         background-color: #fdf4d7;
         padding-left: 20px;
+    }
+
+    /* 左邊簡單區域 */
+    .leftblock {
+        float: left;
+        width: 25%;
     }
 
     /* Fake image */
@@ -128,17 +135,27 @@
         padding: 20px;
     }
 
-    /* add a block effect for articles */
+    /* 大區塊 */
     .block {
         background-color: #fef3c4;
         padding: 20px;
         margin-top: 20px;
+        /*    圓角 */
+        border-radius: 10px;
     }
 
-    /* list */
-    .block ol {
+    /*list */
+    .block ul {
         list-style-type: none;
     }
+
+    /*  教育經歷區塊  */
+    .edublock {
+        background-color: #fdf4d7;
+        border-radius: 10px;
+        padding: 10px 10px;
+    }
+
 
     /* Clear floats after the columns */
     .row::after {
@@ -148,38 +165,96 @@
     }
 
     /*  工作經歷  */
-    /*  公司logo  */
-    .work {
+    /*  公司列表  */
+    /*  清單樣式  */
+    .worklist {
         list-style-type: none;
+        margin: 0;
+        padding: 0;
     }
 
-    .wokrlogo {
-        float: left;
-        height: 50px;
-        padding: 20px;
+    .worklist li {
+        display: flex;
+        /* 使用 flexbox 讓 logo 和內容並排 */
+        align-items: center;
+        /* 垂直置中 */
+        gap: 20px;
+        /* logo 和內容之間留點間距 */
+        padding: 10px;
+        border-radius: 10px;
+        /* 圓角 */
+        margin-bottom: 15px;
+        background-color: #fdf4d7;
     }
 
-    .wokrlogo img {
-        max-height: 100%;
+    /* 公司 logo */
+    .worklogo {
+        width: 100px;
+        /* 避免縮小 */
+        flex-shrink: 0;
     }
 
-    .workcompany {
-        padding: 20px;
+    .worklogo img {
+        /*    避免圖片變形    */
+        max-height: 80px;
+        max-width: 100%;
+
+    }
+
+    /* 文字資訊 */
+    .workproperty {
+        flex-grow: 1;
+        padding: 10px;
+        border-radius: 5px;
+        padding-left: 10%;
+    }
+
+    /*  選修課程  */
+    /*  表格設計  */
+    table {
+        width: 100%;
+        table-layout: fixed;
+        background-color: #fdf4d7;
+        border-radius: 10px;
+
+    }
+
+    /*  欄位名稱  */
+    th {
+        text-align: center;
+        /* 標題置中 */
+    }
+
+    /*  表格內容  */
+    .ct td {
+        text-align: center;
+        /* 內容置中 */
     }
 
     /* Footer */
     .footer {
         padding: 20px;
         text-align: center;
-        background: #ddd;
+        background: #fef3c4;
         margin-top: 20px;
+        border-radius: 10px;
+    }
+
+    .footer-icon {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .footer-icon img {
+        height: 50px;
+        width: 50px;
     }
 
     /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
     @media screen and (max-width: 800px) {
 
-        .leftcolumn,
-        .rightcolumn {
+        .rightblock,
+        .leftblock {
             width: 100%;
             padding: 0;
         }
@@ -208,12 +283,12 @@
         <li><a href="#hobby">愛好</a></li>
     </div>
     <div class="row">
-        <div class="leftcolumn">
+        <div class="rightblock">
             <!-- 教育經歷 -->
             <div id="edu" class="block">
                 <h2>教育經歷</h2>
                 <p>目前碩士班在讀中</p>
-                <div>
+                <div class="edublock">
                     <ol>
                         <li>碩士：<a href="https://www.geo.ntnu.edu.tw/" target="_blank">國立台灣師範大學 地理所</a>(2024~現在)</li>
                         <li>大學：<a href="https://www.geo.ntnu.edu.tw/" target="_blank">國立台灣師範大學 地理學系</a>(2018~2022)</li>
@@ -225,38 +300,112 @@
             </div>
             <!-- 工作經歷 -->
             <div id="work" class="block">
-                <h2>工作經歷</h2>
-                <p>目前是個每月負收入的<b>窮苦研究生</b></p>
-                <ul class="work">
-                    <!-- 壽司郎 -->
-                    <li>
-                        <div>
-                            <div class="worklogo"><a href="https://www.sushiro.com.tw/Shop/ShopInfo?shopId=133"><img src="img\壽司郎logo.png" arc="壽司郎logo"></a></div>
-                            <div class="workcompany">
-                                <p>台灣壽司郎股份有限公司</p>
-                                <p>2022/8~2022/12</p>
-                                <p>內場兼職人員</p>
+                <div>
+                    <h2>工作經歷</h2>
+                    <p>目前是個每月負收入的<b>窮苦研究生</b></p>
+                </div>
+                <div>
+                    <ul class="worklist">
+                        <!-- 鼎堅航太 -->
+                        <li>
+                            <div class="worklogo">
+                                <a href="https://www.dijetlink.com/">
+                                    <img src="img/鼎堅航太logo.png" alt="鼎堅航太logo">
+                                </a>
                             </div>
-                        </div>
-                    </li>
-                    <!-- 鼎堅航太  -->
-                    <li>
-                        <div>
-                            <div class=""><a href="https://www.dijetlink.com/"><img src="img\鼎堅航太logo.png" arc="鼎堅航太logo" style="height: 50px;"></a></div>
-                            <div>
+                            <div class="workproperty">
                                 <p>鼎堅航太股份有限公司</p>
-                                <p>2021/7~2021/12,2023/3~2023/6</p>
                                 <p>地理圖資人員</p>
+                                <p>2023/3~2023/6</p>
                             </div>
-                        </div>
-                    </li>
-                </ul>
+                        </li>
+                        <!-- 壽司郎 -->
+                        <li>
+                            <div class="worklogo">
+                                <a href="https://www.sushiro.com.tw/Shop/ShopInfo?shopId=133">
+                                    <img src="img/壽司郎logo.png" alt="壽司郎logo">
+                                </a>
+                            </div>
+                            <div class="workproperty">
+                                <p>台灣壽司郎股份有限公司</p>
+                                <p>內場兼職人員</p>
+                                <p>2022/8~2022/12</p>
+                            </div>
+                        </li>
+                        <!-- 鼎堅航太 -->
+                        <li>
+                            <div class="worklogo">
+                                <a href="https://www.dijetlink.com/">
+                                    <img src="img/鼎堅航太logo.png" alt="鼎堅航太logo">
+                                </a>
+                            </div>
+                            <div class="workproperty">
+                                <p>鼎堅航太股份有限公司</p>
+                                <p>實習生</p>
+                                <p>2021/7~2021/12</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <!-- 選修課程 -->
             <div id="course" class="block">
                 <h2>研究所 選修課程</h2>
-                <div width=50%>
-                    <!-- TABLE -->
+                <div>
+                    <table>
+                        <caption><b>113下學期選修課程</b></caption>
+                        <thead>
+                            <tr>
+                                <th>科目名稱</th>
+                                <th>授課教授</th>
+                                <th>上課時間</th>
+                                <th>上課地點</th>
+                                <th>學分</th>
+                            </tr>
+                        </thead>
+                        <tbody class="ct">
+                            <tr>
+                                <td class="cn">網頁爬蟲實務</td>
+                                <td>詹竣翔</td>
+                                <td>一 2-4</td>
+                                <td>綜1001</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>都市地理資訊系統</td>
+                                <td>詹竣翔</td>
+                                <td>一 6-8</td>
+                                <td>地理系電腦教室</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>地理論著評讀</td>
+                                <td>洪立三</td>
+                                <td>三 3-4</td>
+                                <td>地理系會議室</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>地理學專題演講</td>
+                                <td>韋煙灶</td>
+                                <td>三 7-8</td>
+                                <td>地理系會議室</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>智慧城市模型</td>
+                                <td>王聖鐸</td>
+                                <td>五 6-7</td>
+                                <td>地理系研討室六</td>
+                                <td>2</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <p></p>
+                </div>
+                <div>
                     <table>
                         <caption><b>113上學期選修課程</b></caption>
                         <thead>
@@ -268,7 +417,7 @@
                                 <th>學分</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="ct">
                             <tr>
                                 <td>社會經濟地理資訊系統</td>
                                 <td>周學政</td>
@@ -307,57 +456,6 @@
                         </tbody>
                     </table>
                 </div>
-                <div width: 50%>
-                    <table>
-                        <caption><b>113下學期選修課程</b></caption>
-                        <thead>
-                            <tr>
-                                <th>科目名稱</th>
-                                <th>授課教授</th>
-                                <th>上課時間</th>
-                                <th>上課地點</th>
-                                <th>學分</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>網頁爬蟲實務</td>
-                                <td>詹竣翔</td>
-                                <td>一 2-4</td>
-                                <td>綜1001</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>都市地理資訊系統</td>
-                                <td>詹竣翔</td>
-                                <td>一 6-8</td>
-                                <td>地理系電腦教室</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>地理論著評讀</td>
-                                <td>洪立三</td>
-                                <td>三 3-4</td>
-                                <td>地理系會議室</td>
-                                <td>2</td>
-                            </tr>
-                            <tr>
-                                <td>地理學專題演講</td>
-                                <td>韋煙灶</td>
-                                <td>三 7-8</td>
-                                <td>地理系會議室</td>
-                                <td>2</td>
-                            </tr>
-                            <tr>
-                                <td>智慧城市模型</td>
-                                <td>王聖鐸</td>
-                                <td>五 6-7</td>
-                                <td>地理系研討室六</td>
-                                <td>2</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
             <!-- 興趣 -->
             <div id="interests" class="block">
@@ -368,22 +466,21 @@
                 <h2>愛好</h2>
             </div>
         </div>
-        <div class="rightcolumn">
+        <div class="leftblock">
             <!-- 吳嘉隆 -->
             <div id="me" class="block">
                 <h2>About Me</h2>
-                <div><img class="myphoto" src="img\myphoto.jpg" alt="這是一張照片" style="max-width: 100%;"></div>
+                <div><img class="myphoto" src="img\myphoto.jpg" alt="這是一張照片" style="max-width: 100%;border-radius: 10px;"></div>
                 <p>姓名：吳嘉隆</p>
                 <p>生日：2000年6月13日</p>
                 <p></p>
             </div>
             <div class="block">
                 <h3>Logo 介紹</h3>
-                <div class="header">
-                    <img src="img\DWU icon.png" style="height: 100px;float: center;">
+                <div class="header"> <img src="img\DWU icon.png" style="height: 100px;float: center;">
                 </div>
                 <div>
-                    <p>Logo靈感來自我的Instgram ID dragonwood ，龍和木頭。</p>
+                    <p>Logo靈感來自我的Instgram ID <b>dragonwood</b> ，龍和木頭。</p>
                     <p>龍：取自<b>隆</b>字諧音。</p>
                     <p>木頭：取姓氏<b>吳</b>字諧音。</p>
                     <p>以dragon、wood首字母作為我的logo設計核心，以字母D包裹著字母w。使用我最喜歡的神奇寶貝<b><a herf="https://tw.portal-pokemon.com/play/pokedex/0312">負電拍拍</a></b>的顏色，作為logo主要的配色</p>
@@ -394,12 +491,23 @@
             </div>
             <div class="block">
                 <h3>Follow Me</h3>
-                <p>Some text..</p>
+                <p>fb：吳嘉隆</p>
+                <p>ig：dragonwood</p>
+                <p>信箱：61323003l@gapps.ntnu.edu.tw</p>
             </div>
         </div>
     </div>
     <div class="footer">
-        <h2>Footer</h2>
+        <h2>吳嘉隆的聯絡方式</h2>
+        <!-- FB -->
+        <div>
+            <a href="https://www.facebook.com/sun.wu.405599/?locale=zh_TW" target="_blank" class="footer-icon"><img src="img/facebook.png" alt="facebook" title="facebook(另開視窗)"></a>
+        </div>
+        <!-- IG -->
+        <!-- FB -->
+        <div>
+            <a href="https://www.instagram.com/dragonwood_0613/" target="_blank" class="footer-icon"><img src="img/Instagram.png" alt="Instagram" title="Instagram(另開視窗)"></a>
+        </div>
     </div>
 </body>
 
