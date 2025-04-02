@@ -241,11 +241,14 @@
     }
 
     .footer-icon {
-        display: inline-block;
-        vertical-align: middle;
+        display: flex;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        align-items: center;
     }
 
     .footer-icon img {
+        margin-right: 20px;
         height: 50px;
         width: 50px;
     }
@@ -500,13 +503,12 @@
     <div class="footer">
         <h2>吳嘉隆的聯絡方式</h2>
         <!-- FB -->
-        <div>
-            <a href="https://www.facebook.com/sun.wu.405599/?locale=zh_TW" target="_blank" class="footer-icon"><img src="img/facebook.png" alt="facebook" title="facebook(另開視窗)"></a>
-        </div>
-        <!-- IG -->
-        <!-- FB -->
-        <div>
+        <div class="footer-icon">
+            <a href="https://www.facebook.com/sun.wu.405599/?locale=zh_TW" target="_blank"><img src="img/facebook.png" alt="facebook" title="facebook(另開視窗)"></a>
+            <!-- IG -->
             <a href="https://www.instagram.com/dragonwood_0613/" target="_blank" class="footer-icon"><img src="img/Instagram.png" alt="Instagram" title="Instagram(另開視窗)"></a>
+            <!-- Youtube -->
+            <a href="https://www.youtube.com/@dragonwood0613" target="_blank" class="footer-icon"><img src="img/github.png" alt="Youtube" title="Youtube(另開視窗)"></a>
         </div>
     </div>
 </body>
