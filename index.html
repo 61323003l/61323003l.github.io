@@ -23,6 +23,7 @@
 
     body {
         font-family: "Zen Maru Gothic", "Noto Sans TC", Cursive;
+        /*    字體    */
         padding: 10px;
         background: #fdf4d7;
     }
@@ -41,23 +42,28 @@
         display: block;
         margin-left: auto;
         margin-right: auto;
+        /*    置中    */
         height: 50px;
     }
 
     /* top navigation bar */
     .topnav {
+        /*    滾動後固定在上方    */
         position: sticky;
         top: 0;
         background-color: #75c0ea;
+        /*    多區塊置中    */
         list-style-type: none;
         margin: 0;
         padding: 0;
         text-align: center;
+        /*    圓角    */
         border-radius: 10px;
     }
 
     /* topnav */
     .topnav li {
+        /*    多區塊置中    */
         display: inline-block;
     }
 
@@ -81,35 +87,29 @@
     }
 
     /* each block id */
-
+    /*  頁面跳轉不被NAV遮擋  */
     #me {
-        scroll-margin-top: 100px;
+        scroll-margin-top: 80px;
 
     }
 
     #edu {
-        /* 根據導覽列的高度調整 */
         scroll-margin-top: 80px;
-
     }
 
     #work {
-        /* 根據導覽列的高度調整 */
         scroll-margin-top: 80px;
     }
 
     #course {
-        /* 根據導覽列的高度調整 */
         scroll-margin-top: 80px;
     }
 
     #interests {
-        /* 根據導覽列的高度調整 */
         scroll-margin-top: 80px;
     }
 
     #hobby {
-        /* 根據導覽列的高度調整 */
         scroll-margin-top: 80px;
     }
 
@@ -126,13 +126,6 @@
     .leftblock {
         float: left;
         width: 25%;
-    }
-
-    /* Fake image */
-    .fakeimg {
-        background-color: #aaa;
-        width: 100%;
-        padding: 20px;
     }
 
     /* 大區塊 */
@@ -214,6 +207,7 @@
     table {
         width: 100%;
         table-layout: fixed;
+        /*    欄寬固定    */
         background-color: #fdf4d7;
         border-radius: 10px;
 
@@ -231,7 +225,19 @@
         /* 內容置中 */
     }
 
-    /* Footer */
+    /*  logo 介紹    */
+    /*  小區塊  */
+    .logoblock {
+        /*    背景顏色    */
+        background-color: #fdf4d7;
+        /*    置中    */
+        text-align: center;
+        /*    圓角    */
+        border-radius: 10px;
+        padding: 10px 10px;
+    }
+
+    /*     Footer */
     .footer {
         padding: 20px;
         text-align: center;
@@ -298,11 +304,11 @@
                 <p>目前碩士班在讀中</p>
                 <div class="edublock">
                     <ol>
-                        <li>碩士：<a href="https://www.geo.ntnu.edu.tw/" target="_blank">國立台灣師範大學 地理所</a>(2024~)</li>
-                        <li>大學：<a href="https://www.geo.ntnu.edu.tw/" target="_blank">國立台灣師範大學 地理學系</a>(2018~2022)</li>
-                        <li>高中：<a href="https://www.hchs.hc.edu.tw/home" target="_blank">新竹高中</a>(2015~2018)</li>
-                        <li>國中：<a href="https://jgjh.mlc.edu.tw/Home/Index.php" target="_blank">建國國中</a>(2012~2015)</li>
-                        <li>國小：<a href="https://www.ktps.hc.edu.tw/nss/p/index" target="_blank">關東國小</a>(2006~2009)、<a href="https://syes.mlc.edu.tw/Home/Index.php" target="_blank">信義國小</a>(2010~2012)</li>
+                        <li>碩士：<a href="https://www.geo.ntnu.edu.tw/" target="_blank" title="(另開視窗)">國立台灣師範大學 地理所</a>(2024~)</li>
+                        <li>大學：<a href="https://www.geo.ntnu.edu.tw/" target="_blank" title="(另開視窗)">國立台灣師範大學 地理學系</a>(2018~2022)</li>
+                        <li>高中：<a href="https://www.hchs.hc.edu.tw/home" target="_blank" title="(另開視窗)">新竹高中</a>(2015~2018)</li>
+                        <li>國中：<a href="https://jgjh.mlc.edu.tw/Home/Index.php" target="_blank" title="(另開視窗)">建國國中</a>(2012~2015)</li>
+                        <li>國小：<a href="https://www.ktps.hc.edu.tw/nss/p/index" target="_blank" title="(另開視窗)">關東國小</a>(2006~2009)、<a href="https://syes.mlc.edu.tw/Home/Index.php" target="_blank" title="(另開視窗)">信義國小</a>(2010~2012)</li>
                     </ol>
                 </div>
             </div>
@@ -310,15 +316,15 @@
             <div id="work" class="block">
                 <div>
                     <h2>工作經歷</h2>
-                    <p>目前是個每月負收入的<b>窮苦研究生</b></p>
+                    <p>目前是個每月入不敷出的<b>窮苦研究生</b></p>
                 </div>
                 <div>
                     <ul class="worklist">
                         <!-- 鼎堅航太 -->
                         <li>
                             <div class="worklogo">
-                                <a href="https://www.dijetlink.com/">
-                                    <img src="img/鼎堅航太logo.png" alt="鼎堅航太logo">
+                                <a href="https://www.dijetlink.com/" target="_blank">
+                                    <img src="img/鼎堅航太logo.png" alt="鼎堅航太logo" title="鼎堅航太(另開視窗)">
                                 </a>
                             </div>
                             <div class="workproperty">
@@ -330,8 +336,8 @@
                         <!-- 壽司郎 -->
                         <li>
                             <div class="worklogo">
-                                <a href="https://www.sushiro.com.tw/Shop/ShopInfo?shopId=133">
-                                    <img src="img/壽司郎logo.png" alt="壽司郎logo">
+                                <a href="https://www.sushiro.com.tw/Shop/ShopInfo?shopId=133" target="_blank">
+                                    <img src="img/壽司郎logo.png" alt="壽司郎logo" title="台灣壽司郎台北中華路店(另開視窗)" style="border-radius: 10px;">
                                 </a>
                             </div>
                             <div class="workproperty">
@@ -343,8 +349,8 @@
                         <!-- 鼎堅航太 -->
                         <li>
                             <div class="worklogo">
-                                <a href="https://www.dijetlink.com/">
-                                    <img src="img/鼎堅航太logo.png" alt="鼎堅航太logo">
+                                <a href="https://www.dijetlink.com/" target="_blank">
+                                    <img src="img/鼎堅航太logo.png" alt="鼎堅航太logo" title="鼎堅航太(另開視窗)">
                                 </a>
                             </div>
                             <div class="workproperty">
@@ -483,9 +489,18 @@
                 <p>生日：2000年6月13日</p>
                 <p></p>
             </div>
+            <!-- 聯絡資訊 -->
+            <div class="block">
+                <h3>聯絡資訊</h3>
+                <p>FB： 吳嘉隆</p>
+                <p>IG： dragonwood_0613</p>
+                <p>手機： 0926-128029</p>
+                <p>信箱： 61323003l@gapps.ntnu.edu.tw</p>
+            </div>
+            <!-- LOGO 介紹 -->
             <div class="block">
                 <h3>Logo 介紹</h3>
-                <div class="header"> <img src="img\DWU icon.png" style="height: 100px;float: center;">
+                <div class="logoblock"> <img src="img\DWU icon.png" style="height: 100px;">
                 </div>
                 <div>
                     <p>Logo靈感來自我的Instagram ID <b>dragonwood</b> ，龍和木頭。</p>
@@ -493,20 +508,14 @@
                     <p>木頭：取姓氏<b>吳</b>字諧音。</p>
                     <p>以dragon、wood首字母作為我的logo設計核心，以字母D包裹著字母w。使用我最喜歡的神奇寶貝<b><a herf="https://tw.portal-pokemon.com/play/pokedex/0312">負電拍拍</a></b>的顏色，作為logo主要的配色</p>
                 </div>
-                <div class="header">
-                    <img src="img\負電拍拍.png" style="height: 200px;float: center;">
+                <div class="logoblock">
+                    <img src="img\負電拍拍.png" style="height: 200px;">
                 </div>
-            </div>
-            <div class="block">
-                <h3>Follow Me</h3>
-                <p>fb：吳嘉隆</p>
-                <p>ig：dragonwood</p>
-                <p>信箱：61323003l@gapps.ntnu.edu.tw</p>
             </div>
         </div>
     </div>
+    <!-- FOOTER -->
     <div class="footer">
-        <h2>吳嘉隆的聯絡方式</h2>
         <!-- FB -->
         <div class="footer-icon">
             <li><a href="https://www.facebook.com/sun.wu.405599/?locale=zh_TW" target="_blank"><img src="img/facebook.png" alt="facebook" title="facebook(另開視窗)"></a></li>
@@ -515,6 +524,7 @@
             <!-- Youtube -->
             <li><a href="https://www.youtube.com/@dragonwood0613" target="_blank" class="footer-icon"><img src="img/Youtube.png" alt="Youtube" title="Youtube(另開視窗)"></a></li>
         </div>
+        <p>Copyright © 2025 吳嘉隆</p>
     </div>
 </body>
 
