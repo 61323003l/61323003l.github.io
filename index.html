@@ -70,7 +70,7 @@
     /* topnav links */
     .topnav a {
         float: left;
-        display: block;
+        display: inline-block;
         color: black;
         font-weight: bolder;
         text-align: center;
@@ -237,6 +237,34 @@
         padding: 10px 10px;
     }
 
+    /*  興趣&愛好  */
+    .interests-block {
+
+        display: inline-block;
+        width: 100%;
+        border-radius: 10px;
+        padding: 10px 10px;
+    }
+
+    .interests-block-2 {
+        float: center;
+        background-color: #75c0ea;
+        border-radius: 30px;
+        display: inline-block;
+        /*        padding: 30px;*/
+        width: 45%;
+        margin: 20px;
+    }
+
+    .interests-block-2 img {
+        display: block;
+        margin: auto;
+        width: 80%;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+
     /*     Footer */
     .footer {
         padding: 20px;
@@ -267,8 +295,8 @@
     /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
     @media screen and (max-width: 800px) {
 
-        .rightblock,
-        .leftblock {
+        .leftblock,
+        .rightblock {
             width: 100%;
             padding: 0;
         }
@@ -297,6 +325,39 @@
         <li><a href="#hobby">愛好</a></li>
     </div>
     <div class="row">
+        <div class="leftblock">
+            <!-- 吳嘉隆 -->
+            <div id="me" class="block">
+                <h2>About Me</h2>
+                <div><img class="myphoto" src="img\myphoto.jpg" alt="這是一張照片" style="max-width: 100%;border-radius: 10px;"></div>
+                <p>姓名：吳嘉隆</p>
+                <p>生日：2000年6月13日</p>
+                <p></p>
+            </div>
+            <!-- 聯絡資訊 -->
+            <div class="block">
+                <h3>聯絡資訊</h3>
+                <p>FB： 吳嘉隆</p>
+                <p>IG： dragonwood_0613</p>
+                <p>手機： 0926-128029</p>
+                <p>信箱： 61323003l@gapps.ntnu.edu.tw</p>
+            </div>
+            <!-- LOGO 介紹 -->
+            <div class="block">
+                <h3>Logo 介紹</h3>
+                <div class="logoblock"> <img src="img\DWU icon.png" style="height: 100px;">
+                </div>
+                <div>
+                    <p>Logo靈感來自我的Instagram ID <b>dragonwood</b> ，龍和木頭。</p>
+                    <p>龍：取自<b>隆</b>字諧音。</p>
+                    <p>木頭：取姓氏<b>吳</b>字諧音。</p>
+                    <p>以dragon、wood首字母作為我的logo設計核心，以字母D包裹著字母w。使用我最喜歡的神奇寶貝<b><a herf="https://tw.portal-pokemon.com/play/pokedex/0312">負電拍拍</a></b>的顏色，作為logo主要的配色</p>
+                </div>
+                <div class="logoblock">
+                    <img src="img\負電拍拍.png" style="height: 200px;">
+                </div>
+            </div>
+        </div>
         <div class="rightblock">
             <!-- 教育經歷 -->
             <div id="edu" class="block">
@@ -474,43 +535,14 @@
             <!-- 興趣 -->
             <div id="interests" class="block">
                 <h2>興趣</h2>
+                <div class="interests-block">
+                    <div class="interests-block-2"><img src="img\game_icon.png"></div>
+                    <div class="interests-block-2"><img src="img\lego_icon.png"></div>
+                </div>
             </div>
             <!-- 愛好 -->
             <div id="hobby" class="block">
                 <h2>愛好</h2>
-            </div>
-        </div>
-        <div class="leftblock">
-            <!-- 吳嘉隆 -->
-            <div id="me" class="block">
-                <h2>About Me</h2>
-                <div><img class="myphoto" src="img\myphoto.jpg" alt="這是一張照片" style="max-width: 100%;border-radius: 10px;"></div>
-                <p>姓名：吳嘉隆</p>
-                <p>生日：2000年6月13日</p>
-                <p></p>
-            </div>
-            <!-- 聯絡資訊 -->
-            <div class="block">
-                <h3>聯絡資訊</h3>
-                <p>FB： 吳嘉隆</p>
-                <p>IG： dragonwood_0613</p>
-                <p>手機： 0926-128029</p>
-                <p>信箱： 61323003l@gapps.ntnu.edu.tw</p>
-            </div>
-            <!-- LOGO 介紹 -->
-            <div class="block">
-                <h3>Logo 介紹</h3>
-                <div class="logoblock"> <img src="img\DWU icon.png" style="height: 100px;">
-                </div>
-                <div>
-                    <p>Logo靈感來自我的Instagram ID <b>dragonwood</b> ，龍和木頭。</p>
-                    <p>龍：取自<b>隆</b>字諧音。</p>
-                    <p>木頭：取姓氏<b>吳</b>字諧音。</p>
-                    <p>以dragon、wood首字母作為我的logo設計核心，以字母D包裹著字母w。使用我最喜歡的神奇寶貝<b><a herf="https://tw.portal-pokemon.com/play/pokedex/0312">負電拍拍</a></b>的顏色，作為logo主要的配色</p>
-                </div>
-                <div class="logoblock">
-                    <img src="img\負電拍拍.png" style="height: 200px;">
-                </div>
             </div>
         </div>
     </div>
