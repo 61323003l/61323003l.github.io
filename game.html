@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- favicon -->
+    <link rel="shortcut icon" href="img\DWU icon.ico">
+    <!-- font-family
+    中文字體 Noto Sans TC
+    日文字體 Zen Maru Gothic
+    英文字體 Ubuntu -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Zen+Maru+Gothic:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Sxternal CSS -->
+    <link rel="stylesheet" type="text/css" href="CSS.css">
+    <title>吳嘉隆 - 愛好：遊戲</title>
+    <style type="text/css">
+    * {
+        box-sizing: border-box;
+    }
+
+
+    /* Clear floats after the columns */
+    /*  確保footer正常顯示  */
+    .row::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .game {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        /* 水平置中 */
+        border-radius: 10px;
+        padding: 10px;
+        gap: 20px;
+        /* 元素間距 */
+    }
+
+    .game div {
+        /*        background: #fdf4d7;*/
+        border-radius: 30px;
+        flex: 1 1 300px;
+        /* 最小寬度 300px，最多可填滿容器 */
+        max-width: 48%;
+        /* 控制最大寬度 */
+        padding: 20px;
+        box-sizing: border-box;
+
+    }
+
+    .game img {
+        max-width: 100%;
+        border-radius: 30px;
+        margin: 0;
+    }
+
+    .game-property {
+        display: flex;
+        align-items: center;
+    }
+
+
+    /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+    @media screen and (max-width: 600px) {
+
+        .game,
+        .game div {
+            max-width: 100%;
+
+        }
+
+    }
+
+    /* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
+    @media screen and (max-width: 400px) {
+        .topnav a {
+            float: none;
+            width: 100%;
+        }
+
+
+
+    }
+    </style>
+</head>
+
+<body>
+    <!-- header -->
+    <div id="header">
+        <a href="index.html" title="按一下回到首頁"><img src="img\DWU icon.png"></a>
+        <h1 class="header-title">我的興趣：遊戲</h1>
+        <img src="img\game_75c0ea.png">
+    </div>
+    <!-- 回到頂端按鈕 -->
+    <div class="backtotop"><a href="#header"><img src="img\負電拍拍頭剪影-2.png" alt="回到頂端" title="按一下回到頂端"></a></div>
+    <!-- top navigation bar -->
+    <div class="topnav">
+        <li><a href="index.html#me">我</a></li>
+        <li><a href="index.html#edu">教育經歷</a></li>
+        <li><a href="index.html#work">工作經歷</a></li>
+        <li><a href="index.html#course">選修課程</a></li>
+        <li><a href="index.html#interests">興趣</a></li>
+        <li><a href="index.html#hobby">愛好</a></li>
+    </div>
+    <!-- content -->
+    <div class="row">
+        <div class="block">
+            <!-- FORZA HORIZON 4 -->
+            <span class="game">
+                <div><a href="https://forza.net/" target="_blank"><img src="img\FORZA HORIZON 4 封面.jpg" alt="FORZA HORIZON 4" title="FORZA HORIZON 官方網站(另開視窗)"></a></div>
+                <div class="game-property">
+                    <span>
+                        <h1>FORZA HORIZON 4</h1>
+                        <p>遊戲時數：210.8小時</p>
+                        <p>成就：68/178</p>
+                    </span>
+                </div>
+            </span>
+            <!-- 魔物獵人 崛起 -->
+            <span class="game">
+                <div><a href="https://www.monsterhunter.com/rise/hk/" target="_blank"><img src="img\魔物獵人崛起 封面.jpg" alt="魔物獵人 崛起" title="魔物獵人 崛起 官方網站(另開視窗)"></a></div>
+                <div class="game-property">
+                    <h1>魔物獵人 崛起</h1>
+                </div>
+            </span>
+            <!-- 王國之淚 -->
+            <span class="game">
+                <div><a href="https://www.nintendo.com/hk/zelda/totk/index.html" target="_blank"><img src="img\王國之淚封面.jpg" alt="王國之淚" title="王國之淚 官方網站(另開視窗)"></a></div>
+                <div class="game-property">
+                    <h1>王國之淚</h1>
+                </div>
+            </span>
+            <!-- NBA 2K22 -->
+            <span class="game">
+                <div><a href="https://nba.2k.com/zh-TW/2k22/" target="_blank"><img src="img\2k22封面.jpg" alt="NBA 2K22" title="NBA 2K 官方網站(另開視窗)"></a></div>
+                <div class="game-property">
+                    <h1>NBA 2K22</h1>
+                </div>
+            </span>
+            <!-- 曠野之息 -->
+            <span class="game">
+                <div><a href="https://www.nintendo.com/tw/switch/zelda_botw/index.html?srsltid=AfmBOop80yM1ZaAe6aE6pUxUokgbBhTVZmBHMSv-zP2DYx6DtmENnqwB" target="_blank"><img src="img\曠野之息封面.jpg" alt="曠野之息" title="曠野之息 官方網站(另開視窗)"></a></div>
+                <div class="game-property">
+                    <h1>曠野之息</h1>
+                </div>
+            </span>
+            <!-- 阿爾宙斯 -->
+            <span class="game">
+                <div><a href="https://www.pokemon.co.jp/ex/legends_arceus/tc/" target="_blank"><img src="img\阿爾宙斯封面.jpg" alt="阿爾宙斯" title="阿爾宙斯 官方網站(另開視窗)"></a></div>
+                <div class="game-property">
+                    <h1>阿爾宙斯</h1>
+                </div>
+            </span>
+        </div>
+    </div>
+    <!-- FOOTER -->
+    <div class="footer">
+        <!-- FB -->
+        <div class="footer-icon">
+            <li><a href="https://www.facebook.com/sun.wu.405599/?locale=zh_TW" target="_blank"><img src="img/facebook.png" alt="facebook" title="facebook(另開視窗)"></a></li>
+            <!-- IG -->
+            <li><a href="https://www.instagram.com/dragonwood_0613/" target="_blank" class="footer-icon"><img src="img/Instagram.png" alt="Instagram" title="Instagram(另開視窗)"></a></li>
+            <!-- Youtube -->
+            <li><a href="https://www.youtube.com/@dragonwood0613" target="_blank" class="footer-icon"><img src="img/Youtube.png" alt="Youtube" title="Youtube(另開視窗)"></a></li>
+        </div>
+        <p>Copyright © 2025 吳嘉隆</p>
+    </div>
+</body>
+
+</html>

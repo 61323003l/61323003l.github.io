@@ -10,24 +10,28 @@ body {
 
 #header {
     padding: 30px;
-    /*    置中    */
-    text-align: center;
     background: #fef3c4;
-    /*    圓角    */
     border-radius: 10px;
-}
 
-#header div {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    /*    置中    */
-    height: 50px;
+    /* 使用 Flexbox 進行排列 */
+    display: flex;
+    align-items: center;
+    /* 垂直置中 */
+    justify-content: center;
+    /* 水平置中 */
+    gap: 20px;
+    /* 圖片與文字之間的間距 */
 }
 
 #header img {
     height: 100px;
 }
+
+.header-title {
+    font-size: 2rem;
+    margin: 0;
+}
+
 
 /*  回到頂端按鈕  */
 .backtotop {
