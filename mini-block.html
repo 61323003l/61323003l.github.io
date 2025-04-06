@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- favicon -->
+    <link rel="shortcut icon" href="img\DWU icon.ico">
+    <!-- font-family
+    中文字體 Noto Sans TC
+    日文字體 Zen Maru Gothic
+    英文字體 Ubuntu -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Zen+Maru+Gothic:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Sxternal CSS -->
+    <link rel="stylesheet" type="text/css" href="CSS.css">
+    <title>吳嘉隆 - 興趣：迷你積木</title>
+    <style type="text/css">
+    * {
+        box-sizing: border-box;
+    }
+
+
+    /* Clear floats after the columns */
+    /*  確保footer正常顯示  */
+    .row::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .miniblock {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        /* 水平置中 */
+        border-radius: 10px;
+        padding: 10px;
+        gap: 20px;
+        /* 元素間距 */
+    }
+
+    .miniblock div {
+        /*        background: #fdf4d7;*/
+        border-radius: 30px;
+        flex: 1 1 300px;
+        /* 最小寬度 300px，最多可填滿容器 */
+        max-width: 48%;
+        /* 控制最大寬度 */
+        padding: 20px;
+        box-sizing: border-box;
+
+    }
+
+    .miniblock img {
+        max-width: 100%;
+        border-radius: 30px;
+        margin: 0;
+    }
+
+    .miniblock-property {
+        display: flex;
+
+        align-items: center;
+        text-align: left;
+    }
+
+
+    /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+    @media screen and (max-width: 600px) {
+
+        .miniblock,
+        .miniblock div {
+            max-width: 100%;
+
+        }
+
+    }
+
+    /* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
+    @media screen and (max-width: 400px) {
+        .topnav a {
+            float: none;
+            width: 100%;
+        }
+
+
+
+    }
+    </style>
+</head>
+
+<body>
+    <!-- header -->
+    <div id="header">
+        <a href="index.html" title="按一下回到首頁"><img src="img\DWU icon.png"></a>
+        <h1 class="header-title">我的興趣：迷你積木</h1>
+        <img src="img\lego_75c0ea.png">
+    </div>
+    <!-- 回到頂端按鈕 -->
+    <div class="backtotop"><a href="#header"><img src="img\負電拍拍頭剪影-2.png" alt="回到頂端" title="按一下回到頂端"></a></div>
+    <!-- top navigation bar -->
+    <div class="topnav">
+        <li><a href="index.html#me">我</a></li>
+        <li><a href="index.html#edu">教育經歷</a></li>
+        <li><a href="index.html#work">工作經歷</a></li>
+        <li><a href="index.html#course">選修課程</a></li>
+        <li><a href="index.html#interests">興趣</a></li>
+        <li><a href="index.html#hobby">愛好</a></li>
+    </div>
+    <!-- content -->
+    <div class="row">
+        <div class="block">
+            <!-- petit block -->
+            <span class="miniblock">
+                <div><img src="img\大創小積木.jpg" alt="大創小積木" title="大創小積木"></div>
+                <div class="miniblock-property">
+                    <span>
+                        <h1><a href="https://petitblock.com/" target="_blank" title="petitblock社群(另開視窗)">DAISO PETIT BLOCK</a></h1>
+                        <p><b>植物系列：</b>松、櫻(共2組)</p>
+                        <p><b>幻獸系列MONSTERS：</b>龍、獨角獸、Phoenix、Fenrir、瑞獸麒麟、神獸青龍、Ifrit、Leviathan(共8組)</p>
+                        <p><b>虫のなかま：</b>赫克力士大兜蟲、鍬形蟲、獨角仙(共3組)</p>
+                        <p><b>恐竜のなかま：</b>暴龍、腕龍、無齒翼龍、三角龍、劍龍、棘龍、霸王龍寶寶、迅猛龍、甲龍、滄龍(共10組)</p>
+                    </span>
+                </div>
+            </span>
+        </div>
+        <div class="block">
+            <!-- Mekansm block -->
+            <span class="miniblock">
+                <div><img src="img\Mekansm小積木.jpg" alt="Mekansm小積木" title="Mekansm小積木"></div>
+                <div class="miniblock-property">
+                    <span>
+                        <h1>MEKANSM 梅肯斯姆 building block</h1>
+                        <p><b>Pet Day系列：</b></p>
+                        <p><b>狗狗：</b>柯基、哈士奇、臘腸、比格、邊牧、約克夏、馬爾濟斯、比熊、雪納瑞(共8組)</p>
+                        <p><b>貓貓：</b>拿破崙、曼基康、遢羅、德文、橘貓、美短、布偶、奶牛、豹貓(共8組)</p>
+                    </span>
+                </div>
+            </span>
+        </div>
+    </div>
+    <!-- FOOTER -->
+    <div class="footer">
+        <!-- FB -->
+        <div class="footer-icon">
+            <li><a href="https://www.facebook.com/sun.wu.405599/?locale=zh_TW" target="_blank"><img src="img/facebook.png" alt="facebook" title="facebook(另開視窗)"></a></li>
+            <!-- IG -->
+            <li><a href="https://www.instagram.com/dragonwood_0613/" target="_blank" class="footer-icon"><img src="img/Instagram.png" alt="Instagram" title="Instagram(另開視窗)"></a></li>
+            <!-- Youtube -->
+            <li><a href="https://www.youtube.com/@dragonwood0613" target="_blank" class="footer-icon"><img src="img/Youtube.png" alt="Youtube" title="Youtube(另開視窗)"></a></li>
+        </div>
+        <p>Copyright © 2025 吳嘉隆</p>
+    </div>
+</body>
+
+</html>
