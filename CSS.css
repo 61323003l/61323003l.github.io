@@ -1,0 +1,129 @@
+body {
+    font-family: "Zen Maru Gothic", "Noto Sans TC", "Ubuntu", Cursive;
+    /*    字體    */
+    padding: 10px;
+    background: #fdf4d7;
+}
+
+/* header */
+/*  回到頂端錨點  */
+
+#header {
+    padding: 30px;
+    /*    置中    */
+    text-align: center;
+    background: #fef3c4;
+    /*    圓角    */
+    border-radius: 10px;
+}
+
+#header div {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    /*    置中    */
+    height: 50px;
+}
+
+#header img {
+    height: 100px;
+}
+
+/*  回到頂端按鈕  */
+.backtotop {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    /*       background-color: #75c0ea;*/
+    border-radius: 30px;
+    height: 75px;
+    width: 75px;
+}
+
+.backtotop img {
+    display: block;
+    margin: auto;
+    max-width: 80%;
+    /*filter: drop-shadow(1px 1px 1px);*/
+}
+
+/* top navigation bar */
+.topnav {
+    /*    滾動後固定在上方    */
+    position: sticky;
+    top: 0;
+    background-color: #75c0ea;
+    /*    多區塊置中    */
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    /*    圓角    */
+    border-radius: 10px;
+}
+
+/* topnav */
+.topnav li {
+    /*    多區塊置中    */
+    display: inline-block;
+}
+
+/* topnav links */
+.topnav a {
+    float: left;
+    display: inline-block;
+    color: black;
+    font-weight: bolder;
+    text-align: center;
+    padding: 16px 16px;
+    text-decoration: none;
+}
+
+/* change style on hover */
+.topnav a:hover {
+    background-color: #de5f65;
+    color: #fef3c4;
+    /*    圓角    */
+    border-radius: 10px;
+}
+
+/* 大區塊 */
+.block {
+    background-color: #fef3c4;
+    padding: 20px;
+    margin-top: 20px;
+    /*    圓角 */
+    border-radius: 10px;
+}
+
+/*list */
+.block ul {
+    list-style-type: none;
+}
+
+/* Footer */
+.footer {
+    padding: 20px;
+    text-align: center;
+    background: #fef3c4;
+    margin-top: 20px;
+    border-radius: 10px;
+}
+
+/*  footer   */
+.footer-icon {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.footer-icon li {
+    display: inline-block;
+}
+
+.footer-icon img {
+    margin-right: 20px;
+    height: 50px;
+    width: 50px;
+}
