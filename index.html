@@ -6,15 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- favicon -->
     <link rel="shortcut icon" href="img\DWU icon.ico">
-    <!-- font-family -->
-    <!-- 中文字體 -->
+    <!-- font-family
+    中文字體 Noto Sans TC
+    日文字體 Zen Maru Gothic
+    英文字體 Ubuntu -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
-    <!-- 日文字體 圓體 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Zen+Maru+Gothic:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <title>吳嘉隆</title>
     <style type="text/css">
     * {
@@ -22,14 +20,16 @@
     }
 
     body {
-        font-family: "Zen Maru Gothic", "Noto Sans TC", Cursive;
+        font-family: "Zen Maru Gothic", "Noto Sans TC", "Ubuntu", Cursive;
         /*    字體    */
         padding: 10px;
         background: #fdf4d7;
     }
 
     /* header */
-    .header {
+    /*  回到頂端錨點  */
+
+    #header {
         padding: 30px;
         /*    置中    */
         text-align: center;
@@ -38,12 +38,33 @@
         border-radius: 10px;
     }
 
-    .header div {
+    #header div {
         display: block;
         margin-left: auto;
         margin-right: auto;
         /*    置中    */
         height: 50px;
+    }
+
+    #header img {
+        height: 100px;
+    }
+
+    /*  回到頂端按鈕  */
+    .backtotop {
+        position: fixed;
+        right: 30px;
+        bottom: 30px;
+        /*       background-color: #75c0ea;*/
+        border-radius: 30px;
+        height: 75px;
+        width: 75px;
+    }
+
+    .backtotop img {
+        display: block;
+        margin: auto;
+        max-width: 80%;
     }
 
     /* top navigation bar */
@@ -114,6 +135,8 @@
     }
 
     /* content 分兩區 */
+
+
     /* 右邊主要區域 */
     .rightblock {
         float: right;
@@ -149,8 +172,8 @@
         padding: 10px 10px;
     }
 
-
     /* Clear floats after the columns */
+    /*  確保footer正常顯示  */
     .row::after {
         content: "";
         display: table;
@@ -228,44 +251,46 @@
     /*  logo 介紹    */
     /*  小區塊  */
     .logoblock {
-        /*    背景顏色    */
         background-color: #fdf4d7;
-        /*    置中    */
+        /*    背景顏色    */
         text-align: center;
-        /*    圓角    */
+        /*    置中    */
         border-radius: 10px;
+        /*    圓角    */
         padding: 10px 10px;
     }
 
     /*  興趣&愛好  */
     .interests-block {
-
-        display: inline-block;
-        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        /* 水平置中 */
         border-radius: 10px;
-        padding: 10px 10px;
+        padding: 10px;
+        gap: 20px;
+        /* 元素間距 */
     }
 
     .interests-block-2 {
-        float: center;
         background-color: #75c0ea;
         border-radius: 30px;
-        display: inline-block;
-        /*        padding: 30px;*/
-        width: 45%;
-        margin: 20px;
+        flex: 1 1 300px;
+        /* 最小寬度 300px，最多可填滿容器 */
+        max-width: 45%;
+        /* 控制最大寬度 */
+        padding: 20px;
+        box-sizing: border-box;
     }
 
     .interests-block-2 img {
         display: block;
-        margin: auto;
+        margin: 20px auto;
         width: 80%;
-        margin-top: 20px;
-        margin-bottom: 20px;
     }
 
 
-    /*     Footer */
+    /* Footer */
     .footer {
         padding: 20px;
         text-align: center;
@@ -313,9 +338,13 @@
 </head>
 
 <body>
-    <div class="header">
-        <img src="img\DWU icon.png" style="height: 100px;">
+    <!-- header -->
+    <div id="header">
+        <img src="img\DWU icon.png">
     </div>
+    <!-- 回到頂端按鈕 -->
+    <div class="backtotop"><a href="#header"><img src="img\負電拍拍頭剪影.png" alt="回到頂端" title="按一下回到頂端"></a></div>
+    <!-- top navigation bar -->
     <div class="topnav">
         <li><a href="#me">我</a></li>
         <li><a href="#edu">教育經歷</a></li>
@@ -324,6 +353,7 @@
         <li><a href="#interests">興趣</a></li>
         <li><a href="#hobby">愛好</a></li>
     </div>
+    <!-- content -->
     <div class="row">
         <div class="leftblock">
             <!-- 吳嘉隆 -->
@@ -337,10 +367,10 @@
             <!-- 聯絡資訊 -->
             <div class="block">
                 <h3>聯絡資訊</h3>
-                <p>FB： 吳嘉隆</p>
-                <p>IG： dragonwood_0613</p>
-                <p>手機： 0926-128029</p>
-                <p>信箱： 61323003l@gapps.ntnu.edu.tw</p>
+                <p><b>FB：</b> <a href="https://www.facebook.com/sun.wu.405599/?locale=zh_TW" target="_blank" title="facebook(另開視窗)">吳嘉隆</a></p>
+                <p><b>IG：</b> <a href="https://www.instagram.com/dragonwood_0613/" target="_blank" title="Instagram(另開視窗)">dragonwood_0613</a></p>
+                <p><b>手機：</b> 0926-128029</p>
+                <p><b>信箱：</b> <a href="https://workspace.google.com/intl/zh-TW/gmail/" target="_blank" title="Gmail(另開視窗)">61323003l@gapps.ntnu.edu.tw</a></p>
             </div>
             <!-- LOGO 介紹 -->
             <div class="block">
@@ -365,11 +395,11 @@
                 <p>目前碩士班在讀中</p>
                 <div class="edublock">
                     <ol>
-                        <li>碩士：<a href="https://www.geo.ntnu.edu.tw/" target="_blank" title="(另開視窗)">國立台灣師範大學 地理所</a>(2024~)</li>
-                        <li>大學：<a href="https://www.geo.ntnu.edu.tw/" target="_blank" title="(另開視窗)">國立台灣師範大學 地理學系</a>(2018~2022)</li>
-                        <li>高中：<a href="https://www.hchs.hc.edu.tw/home" target="_blank" title="(另開視窗)">新竹高中</a>(2015~2018)</li>
-                        <li>國中：<a href="https://jgjh.mlc.edu.tw/Home/Index.php" target="_blank" title="(另開視窗)">建國國中</a>(2012~2015)</li>
-                        <li>國小：<a href="https://www.ktps.hc.edu.tw/nss/p/index" target="_blank" title="(另開視窗)">關東國小</a>(2006~2009)、<a href="https://syes.mlc.edu.tw/Home/Index.php" target="_blank" title="(另開視窗)">信義國小</a>(2010~2012)</li>
+                        <li>碩士：<a href="https://www.geo.ntnu.edu.tw/" target="_blank" title="台師大地理學系官網(另開視窗)">國立台灣師範大學 地理所</a>(2024~)</li>
+                        <li>大學：<a href="https://www.geo.ntnu.edu.tw/" target="_blank" title="台師大地理學系官網(另開視窗)">國立台灣師範大學 地理學系</a>(2018~2022)</li>
+                        <li>高中：<a href="https://www.hchs.hc.edu.tw/home" target="_blank" title="新竹高中官網(另開視窗)">新竹高中</a>(2015~2018)</li>
+                        <li>國中：<a href="https://jgjh.mlc.edu.tw/Home/Index.php" target="_blank" title="建國國中官網(另開視窗)">建國國中</a>(2012~2015)</li>
+                        <li>國小：<a href="https://www.ktps.hc.edu.tw/nss/p/index" target="_blank" title="關東國小官網(另開視窗)">關東國小</a>(2006~2009)、<a href="https://syes.mlc.edu.tw/Home/Index.php" target="_blank" title="信義國小官網(另開視窗)">信義國小</a>(2010~2012)</li>
                     </ol>
                 </div>
             </div>
@@ -536,13 +566,17 @@
             <div id="interests" class="block">
                 <h2>興趣</h2>
                 <div class="interests-block">
-                    <div class="interests-block-2"><img src="img\game_icon.png"></div>
-                    <div class="interests-block-2"><img src="img\lego_icon.png"></div>
+                    <div class="interests-block-2"><img src="img\game.png" alt="遊戲" title="遊戲"></div>
+                    <div class="interests-block-2"><img src="img\lego.png" alt="迷你積木" title="迷你積木"></div>
                 </div>
             </div>
             <!-- 愛好 -->
             <div id="hobby" class="block">
                 <h2>愛好</h2>
+                <div class="interests-block">
+                    <div class="interests-block-2"><img src="img\basketball.png" alt="籃球" title="籃球"></div>
+                    <div class="interests-block-2"><img src="img\book.png" alt="小說" title="小說"></div>
+                </div>
             </div>
         </div>
     </div>
