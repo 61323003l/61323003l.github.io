@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- favicon -->
+    <link rel="shortcut icon" href="img\DWU icon.ico">
+    <!-- font-family
+    中文字體 Noto Sans TC
+    日文字體 Zen Maru Gothic
+    英文字體 Ubuntu -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Zen+Maru+Gothic:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Sxternal CSS -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>吳嘉隆 - 愛好：小說</title>
+    <style type="text/css">
+    * {
+        box-sizing: border-box;
+    }
+
+
+    /* Clear floats after the columns */
+    /*  確保footer正常顯示  */
+    .row::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .novel {
+        display: flex;
+        justify-content: center;
+        /* 水平置中 */
+        border-radius: 10px;
+        padding: 10px;
+
+        /* 元素間距 */
+    }
+
+    .novel div {
+        background: #fdf4d7;
+        border-radius: 30px;
+        max-width: 80%;
+        /* 控制最大寬度 */
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        text-align: left;
+
+    }
+
+
+    /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+    @media screen and (max-width: 600px) {
+
+        .novel,
+        .noevl div {
+            max-width: 100%;
+            margin: 0;
+            padding: 0px;
+
+        }
+
+        blockquote {
+            padding: 0;
+            margin: 0;
+        }
+
+    }
+
+    /* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
+    @media screen and (max-width: 400px) {
+        .noevl a {
+            float: none;
+            width: 100%;
+        }
+
+
+
+    }
+    </style>
+</head>
+
+<body>
+    <!-- header -->
+    <div id="header">
+        <a href="index.html" title="按一下回到首頁"><img src="img\DWU icon.png"></a>
+        <h1 class="header-title">我的愛好：小說</h1>
+        <img src="img\lego_75c0ea.png">
+    </div>
+    <!-- 回到頂端按鈕 -->
+    <div class="backtotop"><a href="#header"><img src="img\負電拍拍頭剪影-2.png" alt="回到頂端" title="按一下回到頂端"></a></div>
+    <!-- top navigation bar -->
+    <div class="topnav">
+        <li><a href="index.html#me">我</a></li>
+        <li><a href="index.html#edu">教育經歷</a></li>
+        <li><a href="index.html#work">工作經歷</a></li>
+        <li><a href="index.html#course">選修課程</a></li>
+        <li><a href="index.html#interests">興趣</a></li>
+        <li><a href="index.html#hobby">愛好</a></li>
+    </div>
+    <!-- content -->
+    <div class="row">
+        <div class="block">
+            <h2>推薦書單</h2>
+            <p>以下書單排名沒有先後順序，只要出現在這份清單上的小說，都是我認為好看的小說之一。</p>
+            <p>以下小說內容簡介皆整理自小說出版商、維基百科、百度百科。</p>
+            <span class="novel">
+                <div>
+                    <span>
+                        <h1>1. 你是我的榮耀</h1>
+                        <p><b>作者：</b>顧漫</p>
+                        <p><b>簡介：</b></p>
+                        <blockquote>十年過去，喬晶晶意外的星光閃耀，高中拒絕過她的男神卻似乎已經泯然眾人…
+                            時光匆匆，你依舊在我心中閃耀，我是否也能成為你的榮耀？
+                            是喬晶晶。
+                            高考一別以來，他們已經有十年沒見了。或者這麼說也不對，其實他到處可以見到她，在各種新聞媒體、各種大小螢幕，甚至地鐵廣告、公車站牌上，處處都有她的身影。
+                            看著不遠處那個朝他盈然而笑的女子，於途不能免俗地恍惚地覺得──他大概遇見了一個奇遇。
+                            喬晶晶也在看於途，她想，有句話，很流行的，怎麼說來著。
+                            哦，好像是——
+                            歸來仍是少年。
+                            她在滾滾紅塵中奔波名利，而這個人卻一如既往，眼神清澈。</blockquote>
+                    </span>
+                </div>
+            </span>
+            <span class="novel">
+                <div>
+                    <span>
+                        <h1>2. 全職高手</h1>
+                        <p><b>作者：</b>蝴蝶藍</p>
+                        <p><b>簡介：</b></p>
+                        <blockquote>頂尖高手葉修在網路遊戲「榮耀」中，是被譽為教科書級別的玩家，因不接商業代言而遭到原本的東家嘉世戰隊驅逐。離開職業圈的葉修被興欣網吧收留，成為一位網管。擁有十年遊戲經驗的葉修，並不打算放棄他所鍾愛的榮耀，遂重啟ID「君莫笑」，手持一把未完成的自製武器千機傘，在榮耀新開的第十區重新投入遊戲，開始了他重返巔峰的計劃。散人君莫笑在第十區大放異彩，葉修結識了許多新的小夥伴，也遭受到其他隊伍的欺負。儘管如此，他仍和新夥伴們重新組建了一支更強大的團隊，一起為了夢想踏上榮耀征途。</blockquote>
+                    </span>
+                </div>
+            </span>
+            <span class="novel">
+                <div>
+                    <span>
+                        <h1>3. 書劍恩仇錄</h1>
+                        <p><b>作者：</b>金庸</p>
+                        <p><b>簡介：</b></p>
+                        <blockquote>故事講述清朝乾隆年間，反清幫會「紅花會」一眾頭目的事蹟。
+                            乾隆年間，江湖上勢力最雄厚的反清幫會為紅花會，其時總舵主于萬亭身故，遺命立天池怪俠袁士霄之弟子，也是自己義子的陳家洛接任。紅花會內外香堂十三名頭目領命遠赴回疆迎接陳家洛，其間四當家奔雷手文泰來因掌有皇帝身世的秘密，而遭遇朝廷眾高手追捕，連番力戰下不敵被擒。陳家洛與其餘頭目合力營救，過程中認識一群為了奪回部聖物而與朝廷對抗的回部英雄，彼此互助，結成生死之盟。此外又巧遇武當高手「綿裏針」陸菲青、鐵膽莊主周仲英等英雄，相互結交，終在連番波折後，成功救出文泰來，並得知皇帝身世之秘。
+                            原來當時的皇帝愛新覺羅弘曆（即慣稱的「乾隆皇」）本為漢人，襁褓時被當時的四皇子胤禛以女嬰換去，此後即被當作胤禛之子，並繼承皇位，而乾隆的真正身份竟是陳家洛的親哥哥，女嬰則是陳家洛所稱的大姊。前紅花會總舵主于萬亭正因得知此事，希望以此為契機，藉由乾隆改服漢人衣冠，一舉推翻滿清皇朝，故此遺命眾人擁立乾隆親弟陳家洛為紅花會之主，一則動之以親情，二則以此為脅，謀舉大事。紅花會眾頭目為成其事，遂傾全幫之力，連同陸菲青、周仲英等人，合力擒獲乾隆，並最終訂下反滿復漢之盟。正當眾人心慶大事可期之際，卻傳來朝廷與回部大舉開戰的消息，為全義氣，眾人遂火速赴援。回部一戰，讓陳家洛邂逅回部美女香香公主喀絲麗，相互許下終身之約，又得悟曠世武學，武功大進，並以此撃敗生平第一強敵火手判官張召重。
+                            重回中原後，竟傳來消息謂皇帝欲納香香公主為妃。陳家洛得訊即與乾隆聯絡，欲相告與香香公主已訂婚盟之事，卻反遭乾隆以復興大事為脅，迫其幫助勸說香香公主入宮為妃，陳家洛終無奈答允。爾後卻突然傳來香香公主自殺而死的惡耗，眾人心痛之餘，又得悉乾隆背棄盟約，欲將眾人連同陳家洛一舉擒殺。其時正值紅花會群雄大會京師，遂與大內眾高手決一死戰，硬闖突圍。此後陳家洛心傷愛人慘死，又感復興無期，意興闌珊，遂與紅花會群雄豹隱回疆。</blockquote>
+                    </span>
+                </div>
+            </span>
+            <span class="novel">
+                <div>
+                    <span>
+                        <h1>4. 噩盡島</h1>
+                        <p><b>作者：</b>蝴蝶藍</p>
+                        <p><b>簡介：</b></p>
+                        <blockquote>相隔數千年後的現在，仙凡兩界再度結合。妖獸們重返現世，人類文明面臨崩毀，高層決定實施噩盡島計畫，計畫失敗後，噩盡島成為倖存人類的群聚地，與妖獸對峙時，龍王母要求交出屍靈之王...</blockquote>
+                    </span>
+                </div>
+            </span>
+            <span class="novel">
+                <div>
+                    <span>
+                        <h1>5. 龍族</h1>
+                        <p><b>作者：</b>드래곤라자(李榮道)</p>
+                        <p><b>簡介：</b></p>
+                        <blockquote>故事描述一位名叫修奇·尼德法（Huche Neidel）的小村莊少年，在遇到一位神秘的盲眼法師後，與同伴們在一個秋天內經歷了各種冒險事件。 ​他們的旅程始於為了解救被龍綁架的村民，途中被捲入涉及龍族、人類王國和其他種族的複雜陰謀。 ​最終，修奇等人成功解決危機，回歸平靜的村莊生活。</blockquote>
+                    </span>
+                </div>
+            </span>
+            <span class="novel">
+                <div>
+                    <span>
+                        <h1>6. 我獨自升級</h1>
+                        <p><b>作者：</b>Chugong</p>
+                        <p><b>簡介：</b></p>
+                        <blockquote>10年前，世界與其他次元間的「傳送門」被打開，另一端會隨機出現充滿魔物的地下城，部分人類也因此覺醒了超能力，以對抗魔物的侵擾，被稱作「獵人」。
+                            主角成振宇是實力最弱的E級獵人，有著「人類最弱兵器」的綽號。某次探索，他與其他獵人被困在危險的「雙重地下城」中，一行人幾乎全滅。然而，成振宇在對抗魔王的過程中意外完成了隱藏任務，當他再次醒來，發現自己成為了一個「玩家」。他可以看到如同遊戲般的介面，上頭顯示著任務、統計數據、庫存、商店和級別等等，甚至還有加倍增長的獨特能力。
+                            意外獲得的能力，使成振宇開始踏上成為世界頂尖獵人的行列，並揭開這個怪物肆虐的世界背後的神秘面紗。</blockquote>
+                    </span>
+                </div>
+            </span>
+            <span class="novel">
+                <div>
+                    <span>
+                        <h1>7. Percy Jackson & the Olympians(波西傑克森)</h1>
+                        <p><b>作者：</b>Richard Riordan</p>
+                        <p><b>簡介：</b></p>
+                        <blockquote>作品講述了一位名叫波西·傑克森的少年發現自己是海神波塞頓之子的故事。他被帶到半人半神訓練營「半血營」，在那裡學習如何運用自己的神祇力量，並與其他半神同伴一起對抗威脅世界的邪惡勢力。這些故事融合了希臘神話中的角色和情節，將其巧妙地融入現代美國的背景中。</blockquote>
+                    </span>
+                </div>
+            </span>
+            <span class="novel">
+                <div>
+                    <span>
+                        <h1>8. 平凡職業造就世界最強</h1>
+                        <p><b>作者：</b>白米良</p>
+                        <p><b>簡介：</b></p>
+                        <blockquote>因為在異世界的神進行勇者召喚，老是被同學霸凌的南雲始，與同班同學被神召喚到海利希王國。可是在異世界，始的天職卻是最無用的鍊成師。在第一次迷宮冒險時，因為陷阱而遇上迷宮第65層的Boss。始為了救同學而負責斷後，可是在魔力耗盡要撤退時，被某位同學放火球偷襲，因而與第65層的Boss一起掉入迷宮的深處。在迷宮深處與吸血姬月相遇，之後為了回到故鄉地球兩人攜手決意而踏上旅途。</blockquote>
+                    </span>
+                </div>
+            </span>
+            <span class="novel">
+                <div>
+                    <span>
+                        <h1>9. The Wheel of Time(時光之輪)</h1>
+                        <p><b>作者：</b>Robert Jordan</p>
+                        <p><b>簡介：</b></p>
+                        <blockquote>主角亞森·羅蘋是一位風度翩翩、機智過人的紳士大盜，以其高超的易容術和精妙的盜竊計劃聞名。​他專門竊取富人和貴族的財物，並常在行動中戲弄警方和偵探，特別是與福爾摩斯的對手——赫克洛克·肖梅（Herlock Sholmes）之間的較量尤為著名。​羅蘋的冒險故事融合了懸疑、幽默和驚險元素，展現了他作為反英雄的獨特魅力，深受讀者喜愛。</blockquote>
+                    </span>
+                </div>
+            </span>
+            <span class="novel">
+                <div>
+                    <span>
+                        <h1>10. Arsène Lupin(亞森羅蘋)</h1>
+                        <p><b>作者：</b>Maurice-Marie-Émile Leblanc</p>
+                        <p><b>簡介：</b></p>
+                        <blockquote>故事設定在一個時間循環的世界，講述年輕的牧羊人蘭德·亞瑟（Rand al'Thor）發現自己是被預言的「轉生龍」，肩負著對抗黑暗勢力、拯救世界的使命。在旅途中，蘭德與朋友們——馬特（Mat）、派林（Perrin）、艾格文（Egwene）等人——共同面對各種挑戰，包括強大的敵人「被遺忘者」（Forsaken）和其他邪惡勢力。該系列以其龐大的世界觀、複雜的人物關係和深刻的主題探討而聞名，被譽為奇幻文學的經典之作。</blockquote>
+                    </span>
+                </div>
+            </span>
+        </div>
+    </div>
+    <!-- FOOTER -->
+    <div class="footer">
+        <!-- FB -->
+        <div class="footer-icon">
+            <li><a href="https://www.facebook.com/sun.wu.405599/?locale=zh_TW" target="_blank"><img src="img/facebook.png" alt="facebook" title="facebook(另開視窗)"></a></li>
+            <!-- IG -->
+            <li><a href="https://www.instagram.com/dragonwood_0613/" target="_blank" class="footer-icon"><img src="img/Instagram.png" alt="Instagram" title="Instagram(另開視窗)"></a></li>
+            <!-- Youtube -->
+            <li><a href="https://www.youtube.com/@dragonwood0613" target="_blank" class="footer-icon"><img src="img/Youtube.png" alt="Youtube" title="Youtube(另開視窗)"></a></li>
+        </div>
+        <p>Copyright © 2025 吳嘉隆</p>
+    </div>
+</body>
+
+</html>
