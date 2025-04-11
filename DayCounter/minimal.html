@@ -1,0 +1,16 @@
+<body>
+    <div id="counter" style="font-size:2rem; padding-top:50vh; text-align:center;"></div>
+    <script>
+    const title = localStorage.getItem('eventTitle') || '交往天數';
+    const startDate = localStorage.getItem('startDate') || '2022-07-10'; // 可改成預設值
+    function getDayDiff(fromDate) {
+        const oneDay = 1000 * 60 * 60 * 24;
+        const today = new Date();
+        const start = new Date(fromDate);
+        const diffTime = today.setHours(0, 0, 0, 0) - start.setHours(0, 0, 0, 0);
+        return Math.floor(diffTime / oneDay) + 1;
+    }
+    const days = getDayDiff(startDate);
+    document.getElementById('counter').textContent = `${title} ${days} 天`;
+    </script>
+</body>
