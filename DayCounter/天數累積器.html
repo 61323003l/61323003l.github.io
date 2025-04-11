@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>累積天數計數器</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+      font-family: "Segoe UI", sans-serif;
+      text-align: center;
+      padding: 2rem;
+      background-color: #fdfdfd;
+    }
+    h1 {
+      font-size: 1.8rem;
+    }
+    input, button {
+      margin: 0.5rem;
+      padding: 0.6rem;
+      font-size: 1rem;
+    }
+    #counter {
+      margin-top: 2rem;
+      font-size: 2rem;
+      color: #333;
+    }
+  </style>
+</head>
+
+<body>
+    <h1>累積天數計數器</h1>
+    <div>
+        <input type="text" id="eventTitle" placeholder="輸入事件名稱">
+        <input type="date" id="startDate">
+        <button onclick="startTracking()">開始紀錄</button>
+    </div>
+    <div id="counter" style="display:none;"></div>
+    <script>
+    function getDayDiff(fromDate) {
+        const oneDay = 1000 * 60 * 60 * 24;
+        const today = new Date();
+        const start = new Date(fromDate);
+        const diffTime = today.setHours(0, 0, 0, 0) - start.setHours(0, 0, 0, 0);
+        return Math.floor(diffTime / oneDay) + 1;
+    }
+
+    function startTracking() {
+        const title = document.getElementById('eventTitle').value;
+        const date = document.getElementById('startDate').value;
+        if (!title || !date) {
+            alert('請輸入事件名稱與起始日期');
+            return;
+        }
+        localStorage.setItem('eventTitle', title);
+        localStorage.setItem('startDate', date);
+        showCounter();
+    }
+
+    function showCounter() {
+        const title = localStorage.getItem('eventTitle');
+        const date = localStorage.getItem('startDate');
+        if (title && date) {
+            const days = getDayDiff(date);
+            const text = `${title}，第 ${days} 天`;
+            const counterDiv = document.getElementById('counter');
+            counterDiv.textContent = text;
+            counterDiv.style.display = 'block';
+        }
+    }
+
+    window.onload = () => {
+        if (localStorage.getItem('eventTitle') && localStorage.getItem('startDate')) {
+            document.getElementById('eventTitle').value = localStorage.getItem('eventTitle');
+            document.getElementById('startDate').value = localStorage.getItem('startDate');
+            showCounter();
+        }
+    }
+    </script>
+</body>
+
+</html>
