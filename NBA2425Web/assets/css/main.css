@@ -1396,8 +1396,8 @@ body.is-preload #bg:before {
     left: calc(50% - 1px);
     width: 1px;
     height: calc(3.5rem + 1px);
-    background: #ffffff;
-    display: none;
+    /*    background: #ffffff;*/
+    /*    display: none;*/
     /* <--- 新增這行，讓垂直白線隱藏 */
 }
 
