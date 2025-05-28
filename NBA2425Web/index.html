@@ -190,6 +190,21 @@
                         <canvas id="defenseHotzoneCanvas" width="500" height="470" style="border: 1px solid #ccc; background-color: #000;"></canvas>
                     </div>
                 </div>
+                <div id="hotzone-tooltip" style="
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.85); /* 半透明黑色背景 */
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 0.9em;
+        pointer-events: none; /* 讓滑鼠事件穿透此元素，不會阻擋下方的 Canvas */
+        display: none; /* 預設隱藏 */
+        z-index: 1000; /* 確保在最上層 */
+        white-space: nowrap; /* 確保內容不換行 */
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    ">
+                </div>
                 <div style="text-align: center; margin-top: 20px;">
                     <label for="team-selector" style="color: white; margin-right: 10px;">選擇球隊：</label>
                     <select id="team-selector" style="padding: 8px; border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.5);">
