@@ -1,0 +1,435 @@
+<!DOCTYPE HTML>
+<!--
+	Dimension by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+    <title>NBA 2024-25 例行賽數據網站</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <!-- favicon -->
+    <link rel="shortcut icon" href="img/myNBA_logo.ico">
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript>
+        <link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+</head>
+
+<body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+        <!-- Header -->
+        <header id="header">
+            <div class="logo">
+                <span class="icon fa-gem"></span>
+            </div>
+            <div class="content">
+                <div class="inner">
+                    <h1>NBA 2024-25 例行賽球隊表現</h1>
+                    <p>點擊下方球隊圖示，瀏覽各隊詳細內容！</p>
+                    <nav id="team-logo-navigation">
+                        <div id="team-logo-slider">
+                            <a href="#hawks-content" class="team-logo-item" data-team-id="ATL">
+                                <img src="img/TEAM_logo/ATL_LOGO.png" alt="亞特蘭大老鷹隊" title="亞特蘭大老鷹隊" />
+                            </a>
+                            <a href="#celtics-content" class="team-logo-item" data-team-id="BOS">
+                                <img src="img/TEAM_logo/BOS_LOGO.png" alt="波士頓塞爾提克隊" title="波士頓塞爾提克隊" />
+                            </a>
+                            <a href="#nets-content" class="team-logo-item" data-team-id="BRK">
+                                <img src="img/TEAM_logo/BRK_LOGO.png" alt="布魯克林籃網隊" title="布魯克林籃網隊" />
+                            </a>
+                            <a href="#bulls-content" class="team-logo-item" data-team-id="CHI">
+                                <img src="img/TEAM_logo/CHI_LOGO.png" alt="芝加哥公牛隊" title="芝加哥公牛隊" />
+                            </a>
+                            <a href="#hornets-content" class="team-logo-item" data-team-id="CHO">
+                                <img src="img/TEAM_logo/CHO_LOGO.png" alt="夏洛特黃蜂隊" title="夏洛特黃蜂隊" />
+                            </a>
+                            <a href="#mavericks-content" class="team-logo-item" data-team-id="DAL">
+                                <img src="img/TEAM_logo/DAL_LOGO.png" alt="達拉斯獨行俠隊" title="達拉斯獨行俠隊" />
+                            </a>
+                            <a href="#cavaliers-content" class="team-logo-item" data-team-id="CLE">
+                                <img src="img/TEAM_logo/CLE_LOGO.png" alt="克里夫蘭騎士隊" title="克里夫蘭騎士隊" />
+                            </a>
+                            <a href="#nuggets-content" class="team-logo-item" data-team-id="DEN">
+                                <img src="img/TEAM_logo/DEN_LOGO.png" alt="丹佛金塊隊" title="丹佛金塊隊" />
+                            </a>
+                            <a href="#pistons-content" class="team-logo-item" data-team-id="DET">
+                                <img src="img/TEAM_logo/DET_LOGO.png" alt="底特律活塞隊" title="底特律活塞隊" />
+                            </a>
+                            <a href="#warriors-content" class="team-logo-item" data-team-id="GSW">
+                                <img src="img/TEAM_logo/GSW_LOGO.png" alt="金州勇士隊" title="金州勇士隊" />
+                            </a>
+                            <a href="#rockets-content" class="team-logo-item" data-team-id="HOU">
+                                <img src="img/TEAM_logo/HOU_LOGO.png" alt="休士頓火箭隊" title="休士頓火箭隊" />
+                            </a>
+                            <a href="#pacers-content" class="team-logo-item" data-team-id="IND">
+                                <img src="img/TEAM_logo/IND_LOGO.png" alt="印第安納溜馬隊" title="印第安納溜馬隊" />
+                            </a>
+                            <a href="#clippers-content" class="team-logo-item" data-team-id="LAC">
+                                <img src="img/TEAM_logo/LAC_LOGO.png" alt="洛杉磯快艇隊" title="洛杉磯快艇隊" />
+                            </a>
+                            <a href="#lakers-content" class="team-logo-item" data-team-id="LAL">
+                                <img src="img/TEAM_logo/LAL_LOGO.png" alt="洛杉磯湖人隊" title="洛杉磯湖人隊" />
+                            </a>
+                            <a href="#grizzlies-content" class="team-logo-item" data-team-id="MEM">
+                                <img src="img/TEAM_logo/MEM_LOGO.png" alt="曼菲斯灰熊隊" title="曼菲斯灰熊隊" />
+                            </a>
+                            <a href="#heat-content" class="team-logo-item" data-team-id="MIA">
+                                <img src="img/TEAM_logo/MIA_LOGO.png" alt="邁阿密熱火隊" title="邁阿密熱火隊" />
+                            </a>
+                            <a href="#bucks-content" class="team-logo-item" data-team-id="MIL">
+                                <img src="img/TEAM_logo/MIL_LOGO.png" alt="密爾瓦基公鹿隊" title="密爾瓦基公鹿隊" />
+                            </a>
+                            <a href="#timberwolves-content" class="team-logo-item" data-team-id="MIN">
+                                <img src="img/TEAM_logo/MIN_LOGO.png" alt="明尼蘇達灰狼隊" title="明尼蘇達灰狼隊" />
+                            </a>
+                            <a href="#pelicans-content" class="team-logo-item" data-team-id="NOP">
+                                <img src="img/TEAM_logo/NOP_LOGO.png" alt="紐奧良鵜鶘隊" title="紐奧良鵜鶘隊" />
+                            </a>
+                            <a href="#knicks-content" class="team-logo-item" data-team-id="NYK">
+                                <img src="img/TEAM_logo/NYK_LOGO.png" alt="紐約尼克隊" title="紐約尼克隊" />
+                                <a href="#thunder-content" class="team-logo-item" data-team-id="OKC">
+                                    <img src="img/TEAM_logo/OKC_LOGO.png" alt="奧克拉荷馬雷霆隊" title="奧克拉荷馬雷霆隊" />
+                                </a>
+                                <a href="#magic-content" class="team-logo-item" data-team-id="ORL">
+                                    <img src="img/TEAM_logo/ORL_LOGO.png" alt="奧蘭多魔術隊" title="奧蘭多魔術隊" />
+                                </a>
+                                <a href="#76ers-content" class="team-logo-item" data-team-id="PHI">
+                                    <img src="img/TEAM_logo/PHI_LOGO.png" alt="費城76人隊" title="費城76人隊" />
+                                </a>
+                                <a href="#suns-content" class="team-logo-item" data-team-id="PHO">
+                                    <img src="img/TEAM_logo/PHO_LOGO.png" alt="鳳凰城太陽隊" title="鳳凰城太陽隊" />
+                                </a>
+                                <a href="#blazers-content" class="team-logo-item" data-team-id="POR">
+                                    <img src="img/TEAM_logo/POR_LOGO.png" alt="波特蘭拓荒者隊" title="波特蘭拓荒者隊" />
+                                </a>
+                                <a href="#kings-content" class="team-logo-item" data-team-id="SAC">
+                                    <img src="img/TEAM_logo/SAC_LOGO.png" alt="沙加緬度國王隊" title="沙加緬度國王隊" />
+                                </a>
+                                <a href="#spurs-content" class="team-logo-item" data-team-id="SAS">
+                                    <img src="img/TEAM_logo/SAS_LOGO.png" alt="聖安東尼奧馬刺隊" title="聖安東尼奧馬刺隊" />
+                                </a>
+                                <a href="#raptors-content" class="team-logo-item" data-team-id="TOR">
+                                    <img src="img/TEAM_logo/TOR_LOGO.png" alt="多倫多暴龍隊" title="多倫多暴龍隊" />
+                                </a>
+                                <a href="#jazz-content" class="team-logo-item" data-team-id="UTA">
+                                    <img src="img/TEAM_logo/UTA_LOGO.png" alt="猶他爵士隊" title="猶他爵士隊" />
+                                </a>
+                                <a href="#wizards-content" class="team-logo-item" data-team-id="WAS">
+                                    <img src="img/TEAM_logo/WAS_LOGO.png" alt="華盛頓巫師隊" title="華盛頓巫師隊" />
+                                </a>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#intro">Intro</a></li>
+                    <li><a href="#work">Work</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <!--<li><a href="#elements">Elements</a></li>-->
+                </ul>
+            </nav>
+        </header>
+        <!-- Main -->
+        <div id="main">
+            <!-- Intro -->
+            <article id="intro">
+                <h2 class="major">Intro</h2>
+                <span class="image main"><img src="images/pic01.jpg" alt="" /></span>
+                <p>Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam facilisis ante interdum congue. Integer mollis, nisl amet convallis, porttitor magna ullamcorper, amet egestas mauris. Ut magna finibus nisi nec lacinia. Nam maximus erat id euismod egestas. By the way, check out my <a href="#work">awesome work</a>.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel sed vehicula.</p>
+            </article>
+            <!-- Work -->
+            <article id="work">
+                <h2 class="major">Work</h2>
+                <span class="image main"><img src="images/pic02.jpg" alt="" /></span>
+                <p>Adipiscing magna sed dolor elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices.</p>
+                <p>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus pharetra. Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus amet feugiat tempus.</p>
+            </article>
+            <!-- About -->
+            <article id="about">
+                <h2 class="major">About</h2>
+                <span class="image main"><img src="images/pic03.jpg" alt="" /></span>
+                <p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam libero et malesuada fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex mollis mattis lorem ipsum dolor sit amet.</p>
+            </article>
+            <!-- Contact -->
+            <article id="contact">
+                <h2 class="major">Contact</h2>
+                <form method="post" action="#">
+                    <div class="fields">
+                        <div class="field half">
+                            <label for="name">Name</label>
+                            <input type="text" name="name" id="name" />
+                        </div>
+                        <div class="field half">
+                            <label for="email">Email</label>
+                            <input type="text" name="email" id="email" />
+                        </div>
+                        <div class="field">
+                            <label for="message">Message</label>
+                            <textarea name="message" id="message" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <ul class="actions">
+                        <li><input type="submit" value="Send Message" class="primary" /></li>
+                        <li><input type="reset" value="Reset" /></li>
+                    </ul>
+                </form>
+                <ul class="icons">
+                    <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                    <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                    <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                    <li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+                </ul>
+            </article>
+            <!-- Elements -->
+            <article id="elements">
+                <h2 class="major">Elements</h2>
+                <section>
+                    <h3 class="major">Text</h3>
+                    <p>This is <b>bold</b> and this is <strong>strong</strong>. This is <i>italic</i> and this is <em>emphasized</em>.
+                        This is <sup>superscript</sup> text and this is <sub>subscript</sub> text.
+                        This is <u>underlined</u> and this is code: <code>for (;;) { ... }</code>. Finally, <a href="#">this is a link</a>.</p>
+                    <hr />
+                    <h2>Heading Level 2</h2>
+                    <h3>Heading Level 3</h3>
+                    <h4>Heading Level 4</h4>
+                    <h5>Heading Level 5</h5>
+                    <h6>Heading Level 6</h6>
+                    <hr />
+                    <h4>Blockquote</h4>
+                    <blockquote>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan faucibus. Vestibulum ante ipsum primis in faucibus lorem ipsum dolor sit amet nullam adipiscing eu felis.</blockquote>
+                    <h4>Preformatted</h4>
+                    <pre><code>i = 0;
+
+while (!deck.isInOrder()) {
+    print 'Iteration ' + i;
+    deck.shuffle();
+    i++;
+}
+
+print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
+                </section>
+                <section>
+                    <h3 class="major">Lists</h3>
+                    <h4>Unordered</h4>
+                    <ul>
+                        <li>Dolor pulvinar etiam.</li>
+                        <li>Sagittis adipiscing.</li>
+                        <li>Felis enim feugiat.</li>
+                    </ul>
+                    <h4>Alternate</h4>
+                    <ul class="alt">
+                        <li>Dolor pulvinar etiam.</li>
+                        <li>Sagittis adipiscing.</li>
+                        <li>Felis enim feugiat.</li>
+                    </ul>
+                    <h4>Ordered</h4>
+                    <ol>
+                        <li>Dolor pulvinar etiam.</li>
+                        <li>Etiam vel felis viverra.</li>
+                        <li>Felis enim feugiat.</li>
+                        <li>Dolor pulvinar etiam.</li>
+                        <li>Etiam vel felis lorem.</li>
+                        <li>Felis enim et feugiat.</li>
+                    </ol>
+                    <h4>Icons</h4>
+                    <ul class="icons">
+                        <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                        <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                        <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                        <li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
+                    </ul>
+                    <h4>Actions</h4>
+                    <ul class="actions">
+                        <li><a href="#" class="button primary">Default</a></li>
+                        <li><a href="#" class="button">Default</a></li>
+                    </ul>
+                    <ul class="actions stacked">
+                        <li><a href="#" class="button primary">Default</a></li>
+                        <li><a href="#" class="button">Default</a></li>
+                    </ul>
+                </section>
+                <section>
+                    <h3 class="major">Table</h3>
+                    <h4>Default</h4>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Item One</td>
+                                    <td>Ante turpis integer aliquet porttitor.</td>
+                                    <td>29.99</td>
+                                </tr>
+                                <tr>
+                                    <td>Item Two</td>
+                                    <td>Vis ac commodo adipiscing arcu aliquet.</td>
+                                    <td>19.99</td>
+                                </tr>
+                                <tr>
+                                    <td>Item Three</td>
+                                    <td> Morbi faucibus arcu accumsan lorem.</td>
+                                    <td>29.99</td>
+                                </tr>
+                                <tr>
+                                    <td>Item Four</td>
+                                    <td>Vitae integer tempus condimentum.</td>
+                                    <td>19.99</td>
+                                </tr>
+                                <tr>
+                                    <td>Item Five</td>
+                                    <td>Ante turpis integer aliquet porttitor.</td>
+                                    <td>29.99</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td>100.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <h4>Alternate</h4>
+                    <div class="table-wrapper">
+                        <table class="alt">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Item One</td>
+                                    <td>Ante turpis integer aliquet porttitor.</td>
+                                    <td>29.99</td>
+                                </tr>
+                                <tr>
+                                    <td>Item Two</td>
+                                    <td>Vis ac commodo adipiscing arcu aliquet.</td>
+                                    <td>19.99</td>
+                                </tr>
+                                <tr>
+                                    <td>Item Three</td>
+                                    <td> Morbi faucibus arcu accumsan lorem.</td>
+                                    <td>29.99</td>
+                                </tr>
+                                <tr>
+                                    <td>Item Four</td>
+                                    <td>Vitae integer tempus condimentum.</td>
+                                    <td>19.99</td>
+                                </tr>
+                                <tr>
+                                    <td>Item Five</td>
+                                    <td>Ante turpis integer aliquet porttitor.</td>
+                                    <td>29.99</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td>100.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </section>
+                <section>
+                    <h3 class="major">Buttons</h3>
+                    <ul class="actions">
+                        <li><a href="#" class="button primary">Primary</a></li>
+                        <li><a href="#" class="button">Default</a></li>
+                    </ul>
+                    <ul class="actions">
+                        <li><a href="#" class="button">Default</a></li>
+                        <li><a href="#" class="button small">Small</a></li>
+                    </ul>
+                    <ul class="actions">
+                        <li><a href="#" class="button primary icon solid fa-download">Icon</a></li>
+                        <li><a href="#" class="button icon solid fa-download">Icon</a></li>
+                    </ul>
+                    <ul class="actions">
+                        <li><span class="button primary disabled">Disabled</span></li>
+                        <li><span class="button disabled">Disabled</span></li>
+                    </ul>
+                </section>
+                <section>
+                    <h3 class="major">Form</h3>
+                    <form method="post" action="#">
+                        <div class="fields">
+                            <div class="field half">
+                                <label for="demo-name">Name</label>
+                                <input type="text" name="demo-name" id="demo-name" value="" placeholder="Jane Doe" />
+                            </div>
+                            <div class="field half">
+                                <label for="demo-email">Email</label>
+                                <input type="email" name="demo-email" id="demo-email" value="" placeholder="jane@untitled.tld" />
+                            </div>
+                            <div class="field">
+                                <label for="demo-category">Category</label>
+                                <select name="demo-category" id="demo-category">
+                                    <option value="">-</option>
+                                    <option value="1">Manufacturing</option>
+                                    <option value="1">Shipping</option>
+                                    <option value="1">Administration</option>
+                                    <option value="1">Human Resources</option>
+                                </select>
+                            </div>
+                            <div class="field half">
+                                <input type="radio" id="demo-priority-low" name="demo-priority" checked>
+                                <label for="demo-priority-low">Low</label>
+                            </div>
+                            <div class="field half">
+                                <input type="radio" id="demo-priority-high" name="demo-priority">
+                                <label for="demo-priority-high">High</label>
+                            </div>
+                            <div class="field half">
+                                <input type="checkbox" id="demo-copy" name="demo-copy">
+                                <label for="demo-copy">Email me a copy</label>
+                            </div>
+                            <div class="field half">
+                                <input type="checkbox" id="demo-human" name="demo-human" checked>
+                                <label for="demo-human">Not a robot</label>
+                            </div>
+                            <div class="field">
+                                <label for="demo-message">Message</label>
+                                <textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
+                            </div>
+                        </div>
+                        <ul class="actions">
+                            <li><input type="submit" value="Send Message" class="primary" /></li>
+                            <li><input type="reset" value="Reset" /></li>
+                        </ul>
+                    </form>
+                </section>
+            </article>
+        </div>
+        <!-- Footer -->
+        <footer id="footer">
+            <p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+        </footer>
+    </div>
+    <!-- BG -->
+    <div id="bg"></div>
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+
+</html>
