@@ -1919,15 +1919,7 @@ body.is-preload #footer {
     /* 原始已有 */
 
     /* 根據需要調整圖標大小，確保其視覺效果在圓圈內看起來置中 */
-    /* 這裡可以嘗試不同的 font-size 值，例如 2rem, 2.1rem, 1.9rem */
     font-size: 2rem;
-    /* 這是您原始設定，可以試著調整 */
-
-    /* 如果感覺垂直有偏差，可以嘗試微調 top 或 transform 的 Y 值 */
-    /* top: calc(50% - 1px); */
-    /* 向上微調 1 像素 */
-    /* transform: translate(-50%, calc(-50% - 1px)); */
-    /* 向下微調 1 像素 */
 
     /* 確保顏色正確 */
     color: #ffffff;
@@ -1935,4 +1927,191 @@ body.is-preload #footer {
     /* 確保其 line-height 不會導致額外空白 */
     line-height: 1;
     /* 強制設定，有助於垂直置中 */
+}
+
+
+/* ============================================== */
+/* 球員搜尋欄樣式 (修正置中問題) */
+/* ============================================== */
+
+#player-search-nav {
+    margin: 1.5rem 0 0 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /* 水平居中其子元素 (form) */
+    align-items: center;
+    /* 垂直居中其子元素 (form) */
+}
+
+#player-search-form {
+    display: flex;
+    /* 確保輸入框和按鈕是 Flex 項目 */
+    align-items: center;
+    /* 垂直居中輸入框和按鈕 */
+    /* 移除此處的 justify-content: center;，讓按鈕緊貼輸入框 */
+    width: 100%;
+    max-width: 400px;
+    /* **調整：稍微增加最大寬度，讓按鈕不會因為空間不足而看起來偏離** */
+    /* **調整：如果需要按鈕和輸入框作為整體一起置中，則將此處的 width 調整為 fit-content，並移除 max-width** */
+    /* width: fit-content; */
+    /* 或保持 width: 100%; max-width: 400px;，讓它們在容器內靠左，但整個 form 會在 nav 中置中 */
+}
+
+#player-name-input {
+    flex-grow: 1;
+    min-width: 150px;
+    padding: 0.75em 1em;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 0.35rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 1rem;
+    /* **調整：確保行高與按鈕一致，有助於垂直對齊** */
+    line-height: 1.2;
+    /* 稍微減少行高，讓文字更緊湊 */
+    outline: none;
+    box-shadow: none;
+    transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+#player-name-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+#player-name-input:focus {
+    border-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+#search-player-button {
+    margin-left: 10px;
+    padding: 0.75em 1.5em;
+    background-color: #337ab7;
+    color: #ffffff;
+    border: none;
+    border-radius: 0.35rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    white-space: nowrap;
+
+    /* **核心修正：確保按鈕文字垂直置中** */
+    display: flex;
+    /* 將按鈕本身變成 Flex 容器 */
+    justify-content: center;
+    /* 水平居中文字 */
+    align-items: center;
+    /* 垂直居中文字 */
+    /* 可以移除 line-height，讓 flexbox 完全控制 */
+    line-height: 1;
+    /* 或設置為 1，確保沒有額外的行高影響 */
+}
+
+#search-player-button:hover {
+    background-color: #286090;
+}
+
+/* 針對小螢幕適應性調整 */
+@media screen and (max-width: 480px) {
+    #player-search-form {
+        flex-direction: column;
+        /* 小螢幕下輸入框和按鈕垂直排列 */
+        max-width: 90%;
+        /* 小螢幕下佔用更多寬度 */
+    }
+
+    #player-name-input {
+        margin-bottom: 10px;
+        margin-left: 0;
+        /* 移除左邊距 */
+        width: 100%;
+        /* 確保佔滿寬度 */
+        max-width: 100%;
+        /* 確保不受父層 max-width 影響過大 */
+    }
+
+    #search-player-button {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+/* ============================================== */
+/* 自動完成建議列表樣式 */
+/* ============================================== */
+
+/* 確保建議列表相對於輸入框定位 */
+#player-search-form {
+    position: relative;
+    /* 父容器需要相對定位 */
+    /* ... 保持原有樣式 ... */
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /* 確保在其他內容之上 */
+    top: 100%;
+    /* 位於輸入框正下方 */
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    /* 限制最大高度，可滾動 */
+    overflow-y: auto;
+    /* 超出高度時顯示滾動條 */
+    background-color: rgba(0, 0, 0, 0.8);
+    /* 背景半透明，與模板風格一致 */
+    backdrop-filter: blur(5px);
+    /* 輕微模糊效果 */
+    -webkit-backdrop-filter: blur(5px);
+    /* 兼容 Safari */
+    border-radius: 0.35rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.0);
+    /* 預設透明 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    /* 分隔線 */
+    color: #ffffff;
+    /* 文字顏色 */
+    transition: background-color 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.autocomplete-items div:hover {
+    /* 當滑鼠移入時的背景顏色 */
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.autocomplete-items .autocomplete-active {
+    /* 當鍵盤選擇時的背景顏色 */
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* 隱藏預設的滾動條，如果需要自訂 */
+.autocomplete-items::-webkit-scrollbar {
+    width: 6px;
+}
+
+.autocomplete-items::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.autocomplete-items::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.autocomplete-items::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
