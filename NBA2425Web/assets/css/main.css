@@ -1410,11 +1410,17 @@ body.is-preload #bg:before {
 }
 
 #header .logo {
-    width: 5.5rem;
-    height: 5.5rem;
-    line-height: 5.5rem;
-    border: solid 1px #ffffff;
+    margin: 0 0 1.5rem 0;
+    -moz-transition: -moz-transform 0.325s ease-in-out, opacity 0.325s ease-in-out;
+    -webkit-transition: -webkit-transform 0.325s ease-in-out, opacity 0.325s ease-in-out;
+    -ms-transition: -ms-transform 0.325s ease-in-out, opacity 0.325s ease-in-out;
+    transition: transform 0.325s ease-in-out, opacity 0.325s ease-in-out;
+    position: relative;
+    width: 4.75rem;
+    height: 4.75rem;
+    border: 0.1rem solid #ffffff;
     border-radius: 100%;
+    opacity: 1;
 }
 
 #header .logo .icon:before {
@@ -2072,4 +2078,53 @@ body.is-preload #footer {
 
 .autocomplete-items::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5);
+}
+
+
+/* ============================================== */
+/* Logo 和標題橫向排列與置中樣式 */
+/* ============================================== */
+
+#logo-and-title {
+    display: flex;
+    /* 將其設為 Flexbox 容器 */
+    flex-direction: row;
+    /* 子元素橫向排列 (預設值，但明確寫出更清晰) */
+    justify-content: center;
+    /* 將子元素在主軸（水平方向）上置中 */
+    align-items: center;
+    /* 將子元素在側軸（垂直方向）上置中 */
+    /*    margin-bottom: 1.5rem;*/
+    /* 增加底部間距，與下方內容分隔 */
+    padding: 0 1rem;
+    /* 左右增加一些內邊距，防止內容貼邊 */
+    width: 100%;
+    /* 確保容器佔滿寬度以便於置中 */
+    box-sizing: border-box;
+    /* 確保 padding 不會增加總寬度 */
+}
+
+/* 調整 H1 的樣式，可能需要移除一些預設的 margin */
+#logo-and-title h1 {
+    margin: 0;
+    /* 移除 H1 預設的 margin，避免影響 Flexbox 佈局 */
+    padding-left: 0.75rem;
+    /* 讓 H1 和 Logo 有適當的間距 */
+    white-space: nowrap;
+    /* 防止 H1 文字換行，保持單行顯示 */
+}
+
+/* 針對小螢幕，調整為垂直排列 */
+@media screen and (max-width: 480px) {
+    #logo-and-title {
+        flex-direction: column;
+        /* 小螢幕下改為垂直排列 */
+    }
+
+    #logo-and-title h1 {
+        padding-left: 0;
+        /* 垂直排列時，移除左側間距 */
+        margin-top: 0.5rem;
+        /* 在 H1 上方增加間距 */
+    }
 }
