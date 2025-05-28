@@ -1780,7 +1780,9 @@ body.is-preload #footer {
 
 /* Custom Styles for Team Logo Slider */
 /* ============================================== */
-
+/* ============================================== */
+/* 更新後的 NBA 球隊 Logo 滑動功能 CSS 規則 */
+/* ============================================== */
 
 /* 修正父層 #header .content .inner 的 overflow 屬性，允許水平滾動 */
 #header .content .inner {
@@ -1788,8 +1790,16 @@ body.is-preload #footer {
     /* 允許水平滾動 */
     overflow-y: hidden;
     /* 保持垂直方向隱藏，以維持模板原有設計 */
-    /* 這裡不需要 !important，因為放在檔案末尾，會自動覆蓋 */
+    /* 這裡不需要 !important，放在檔案末尾，會自動覆蓋 */
 }
+
+/* 確保父層不會阻止鼠標事件 */
+#header .content .inner>* {
+    /* 針對 .inner 的所有直接子元素 */
+    pointer-events: auto;
+    /* 確保子元素能接收鼠標事件 */
+}
+
 
 #team-logo-slider {
     /* 啟用 Flexbox 佈局，讓子元素水平排列 */
@@ -1819,6 +1829,12 @@ body.is-preload #footer {
 
     /* 在小螢幕上可以考慮調整高度，如果 logo 大小不一 */
     /* min-height: 120px; */
+
+    /* *** 新增修正：讓滑鼠也能拖曳滾動 *** */
+    touch-action: pan-x;
+    /* 允許水平方向的觸控拖曳，這也影響滑鼠拖曳行為 */
+    cursor: grab;
+    /* 鼠標懸停時顯示手掌圖標，提示可拖曳 */
 }
 
 /* 針對 Webkit 瀏覽器（Chrome, Safari）隱藏滾動條 */
@@ -1836,6 +1852,8 @@ body.is-preload #footer {
     flex-shrink: 0;
     text-decoration: none;
     /* 移除連結下劃線 */
+    /* 確保 Logo 本身也能接收鼠標事件，而不是被父層阻止 */
+    pointer-events: auto;
 }
 
 .team-logo-item:last-child {
@@ -1855,6 +1873,13 @@ body.is-preload #footer {
     transition: transform 0.3s ease, opacity 0.3s ease;
     opacity: 0.8;
     /* 預設略微透明 */
+    /* 防止圖片被選取時影響拖曳體驗 */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none;
+    /* 讓鼠標事件「穿透」圖片，直接作用到父層的 <a> 上，方便拖曳 */
 }
 
 /* 滑鼠懸停效果 */
