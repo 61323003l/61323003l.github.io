@@ -2216,9 +2216,44 @@ function handleCanvasMouseMove(e, canvas, dataType) {
 // --- 顯示提示框 ---
 function showTooltip(x, y, content) {
     hotzoneTooltip.innerHTML = content;
-    hotzoneTooltip.style.left = `${x + 15}px`; // 距離滑鼠右側 15px
-    hotzoneTooltip.style.top = `${y + 15}px`; // 距離滑鼠下方 15px
+
+    // 暫時顯示提示框以獲取其寬度和高度
     hotzoneTooltip.style.display = 'block';
+    hotzoneTooltip.style.visibility = 'hidden'; // 暫時隱藏，不影響佈局
+
+    const tooltipWidth = hotzoneTooltip.offsetWidth;
+    const tooltipHeight = hotzoneTooltip.offsetHeight;
+
+    // 獲取視窗的寬度和高度
+    const windowWidth = window.innerWidth || document.documentElement.clientWidth;
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    let finalX = x + 15; // 預設向右偏移
+    let finalY = y + 15; // 預設向下偏移
+
+    // 判斷是否超出右邊界
+    if (finalX + tooltipWidth > windowWidth - 10) { // 留 10px 邊距
+        finalX = x - tooltipWidth - 15; // 如果超出，則將提示框移到滑鼠左側
+        // 確保不會超出左邊界（如果滑鼠剛好在左邊邊緣，但提示框很大）
+        if (finalX < 10) { // 如果調整到左邊還是超出，那就靠右對齊視窗
+            finalX = windowWidth - tooltipWidth - 10;
+        }
+    }
+
+    // 判斷是否超出下邊界 (如果需要，也可以處理上方，這裡只處理右側)
+    // 雖然您主要提到右側，但底部也可能超出
+    if (finalY + tooltipHeight > windowHeight - 10) { // 留 10px 邊距
+        finalY = y - tooltipHeight - 15; // 如果超出，則將提示框移到滑鼠上方
+        // 確保不會超出上邊界
+        if (finalY < 10) {
+            finalY = 10; // 直接靠上邊界
+        }
+    }
+
+
+    hotzoneTooltip.style.left = `${finalX}px`;
+    hotzoneTooltip.style.top = `${finalY}px`;
+    hotzoneTooltip.style.visibility = 'visible'; // 顯示提示框
 }
 
 // --- 隱藏提示框 ---
