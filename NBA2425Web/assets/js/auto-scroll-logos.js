@@ -5,8 +5,8 @@ $(function() { // 確保 DOM 載入完成後執行
 
     if (slider) {
         // 設定滾動速度 (數字越小，速度越快)
-        const scrollSpeed = 50; // 每次滾動的像素數
-        const intervalTime = 300; // 滾動間隔 (毫秒)
+        const scrollSpeed = 5; // 每次滾動的像素數
+        const intervalTime = 50; // 滾動間隔 (毫秒)
 
         // 設定滑動方向 (1 為向右，-1 為向左)
         let scrollDirection = 1;

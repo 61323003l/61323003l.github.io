@@ -1806,6 +1806,22 @@ body.is-preload #footer {
     display: none;
 }
 
+
+#team-logo-slider a {
+    border-bottom: none;
+    /*  移除底部虛線  */
+}
+
+#team-logo-slider a img {
+    border-radius: 0.35rem;
+}
+
+
+#team-logo-slider a p {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
 .team-logo-item {
     /* 將每個 Logo 項目設定為行內塊元素，方便控制寬高和間距 */
     display: inline-block;
