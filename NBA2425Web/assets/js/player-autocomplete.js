@@ -15,7 +15,7 @@ $(function() { // 確保 DOM 載入完成後執行
                 // 簡單的 CSV 解析：按行分割，取第一列作為姓名
                 const lines = data.split('\n');
                 const playerNames = [];
-                for (let i = 1; i < lines.length; i++) { // 從第二行開始讀取數據（跳過標題行）
+                for (let i = 2; i < lines.length; i++) { // 從第二行開始讀取數據（跳過標題行）
                     const line = lines[i].trim();
                     if (line) {
                         const columns = line.split(','); // 假設姓名在第一列
