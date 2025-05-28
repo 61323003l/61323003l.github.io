@@ -1,4 +1,4 @@
-@import url(fontawesome-all.min.css);
+/*@import url(fontawesome-all.min.css);*/
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300italic,600italic,300,600");
 
 /*
@@ -729,7 +729,7 @@ input[type="radio"]+label:before {
     line-height: 1;
     text-transform: none !important;
     font-family: 'Font Awesome 5 Free';
-    font-weight: 400;
+    font-weight: 900;
 }
 
 .icon>.label {
@@ -1901,4 +1901,38 @@ body.is-preload #footer {
         padding: 0.5em 0;
         /* 小螢幕下縮小內邊距 */
     }
+}
+
+/* ============================================== */
+/* 修正 .logo .icon 置中問題 */
+/* ============================================== */
+
+#header .logo .icon {
+    /* 確保繼承其父層的絕對定位置中屬性 */
+    position: absolute;
+    /* 原始已有 */
+    left: 50%;
+    /* 原始已有 */
+    top: 50%;
+    /* 原始已有 */
+    transform: translate(-50%, -50%);
+    /* 原始已有 */
+
+    /* 根據需要調整圖標大小，確保其視覺效果在圓圈內看起來置中 */
+    /* 這裡可以嘗試不同的 font-size 值，例如 2rem, 2.1rem, 1.9rem */
+    font-size: 2rem;
+    /* 這是您原始設定，可以試著調整 */
+
+    /* 如果感覺垂直有偏差，可以嘗試微調 top 或 transform 的 Y 值 */
+    /* top: calc(50% - 1px); */
+    /* 向上微調 1 像素 */
+    /* transform: translate(-50%, calc(-50% - 1px)); */
+    /* 向下微調 1 像素 */
+
+    /* 確保顏色正確 */
+    color: #ffffff;
+    /* 原始已有 */
+    /* 確保其 line-height 不會導致額外空白 */
+    line-height: 1;
+    /* 強制設定，有助於垂直置中 */
 }
