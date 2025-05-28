@@ -177,6 +177,25 @@
         </header>
         <!-- Main -->
         <div id="main">
+            <!-- 球隊頁面 -->
+            <article id="team-dashboard">
+                <h2 class="major" id="team-name-display">選擇球隊查看熱區圖</h2>
+                <div id="hotzone-canvases">
+                    <div style="text-align: center;">
+                        <h3>進攻命中率</h3>
+                        <canvas id="offenseHotzoneCanvas" width="500" height="470" style="border: 1px solid #ccc; background-color: #000;"></canvas>
+                    </div>
+                    <div style="text-align: center;">
+                        <h3>防守被命中率</h3>
+                        <canvas id="defenseHotzoneCanvas" width="500" height="470" style="border: 1px solid #ccc; background-color: #000;"></canvas>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <label for="team-selector" style="color: white; margin-right: 10px;">選擇球隊：</label>
+                    <select id="team-selector" style="padding: 8px; border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.5);">
+                    </select>
+                </div>
+            </article>
             <!-- Intro -->
             <article id="intro">
                 <h2 class="major">Intro</h2>
@@ -482,6 +501,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/auto-scroll-logos.js"></script>
     <script src="assets/js/player-autocomplete.js"></script>
+    <script src="assets/js/team-dashboard.js"></script>
 </body>
 
 </html>

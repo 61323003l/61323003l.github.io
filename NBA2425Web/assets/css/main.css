@@ -1625,7 +1625,7 @@ body.is-preload #header .content .inner {
     transition: opacity 0.325s ease-in-out, transform 0.325s ease-in-out;
     padding: 4.5rem 2.5rem 1.5rem 2.5rem;
     position: relative;
-    width: 40rem;
+    /*    width: 40rem;*/
     max-width: 100%;
     background-color: rgba(27, 31, 34, 0.85);
     border-radius: 4px;
@@ -2142,5 +2142,77 @@ body.is-preload #footer {
         /* 垂直排列時，移除左側間距 */
         margin-top: 0.5rem;
         /* 在 H1 上方增加間距 */
+    }
+}
+
+
+/* ============================================== */
+/* 熱區圖佈局樣式 */
+/* ============================================== */
+
+#hotzone-canvases {
+    display: flex;
+    /* 啟用 Flexbox */
+    flex-direction: row;
+    /* 預設為水平排列 */
+    justify-content: center;
+    /* 水平置中 */
+    align-items: flex-start;
+    /* 垂直頂部對齊 */
+    gap: 20px;
+    /* 元素間距 */
+    flex-wrap: wrap;
+    /* 允許換行 */
+    width: 100%;
+    /* 確保容器佔滿可用寬度 */
+    box-sizing: border-box;
+    /* 確保內邊距不增加總寬度 */
+    margin-top: 20px;
+    /* 與上方內容的間距 */
+    margin-bottom: 20px;
+    /* 與下方內容的間距 */
+}
+
+/* 確保 Canvas 標題沒有預設的 margin 影響佈局 */
+#hotzone-canvases h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    /* 標題與 Canvas 之間的間距 */
+    color: #ffffff;
+    /* 確保標題顏色可見 */
+}
+
+/* 媒體查詢：當螢幕寬度較小時，將熱區圖垂直堆疊 */
+@media screen and (max-width: 1050px) {
+
+    /* 1050px 是 500*2 + 20 + 邊距 的大致寬度 */
+    #hotzone-canvases {
+        flex-direction: column;
+        /* 變為垂直堆疊 */
+        align-items: center;
+        /* 垂直堆疊時，讓每個 Canvas 區塊水平置中 */
+    }
+
+    #hotzone-canvases>div {
+        width: 100%;
+        /* 每個 Canvas 容器佔滿寬度 */
+        max-width: 500px;
+        /* 但不超過 Canvas 本身的寬度 */
+    }
+
+    #hotzone-canvases canvas {
+        width: 100%;
+        /* 讓 Canvas 在小螢幕時響應式縮放 */
+        height: auto;
+        /* 高度自動調整以保持比例 */
+    }
+}
+
+/* 針對更小的手機螢幕 */
+@media screen and (max-width: 520px) {
+    #hotzone-canvases canvas {
+        width: 100%;
+        /* 在非常小的螢幕上，Canvas 仍然佔滿寬度 */
+        height: auto;
     }
 }
