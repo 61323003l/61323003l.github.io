@@ -2381,3 +2381,42 @@ body.is-preload #footer {
         /* 重置可能存在的右側間距 */
     }
 }
+
+
+#all-charts-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* 水平置中 */
+    gap: 20px;
+    /* 圖表間距 */
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.chart-section {
+    text-align: center;
+    /* 可以設定一個最大寬度，例如 500px，以確保在寬螢幕時不會過大 */
+    max-width: 500px;
+    flex-grow: 1;
+    /* 允許在空間不足時佔據更多空間 */
+    flex-basis: 48%;
+    /* 預設佔據約一半寬度，以便兩列顯示 */
+}
+
+.chart-section canvas {
+    width: 100%;
+    /* 讓 Canvas 響應式縮放 */
+    height: auto;
+    /* 保持比例 */
+}
+
+/* 媒體查詢，當螢幕更小時，讓圖表垂直堆疊 */
+@media screen and (max-width: 1050px) {
+
+    /* 根據需要調整斷點 */
+    .chart-section {
+        flex-basis: 100%;
+        /* 每個圖表佔滿一行 */
+    }
+}

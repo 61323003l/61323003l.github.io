@@ -1851,39 +1851,3977 @@ const defenseShotData = [{
 // 4. 籃球場背景圖片
 const courtBackgroundImageUrl = 'img/basketball_court.png';
 
-// --- 全域變數 ---
-let leagueAverageOffense = {}; // 用來儲存聯盟平均進攻數據
-let leagueAverageDefense = {}; // 用來儲存聯盟平均防守數據
+// 5. 所有球隊球員off&def rating
+const allPlayersData = [{
+        "team": "average",
+        "player": "average",
+        "Offensive Rating": 110,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "MIL",
+        "player": "A.J. Green",
+        "Offensive Rating": 116,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "TOR",
+        "player": "A.J. Lawson",
+        "Offensive Rating": 113,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "DEN",
+        "player": "Aaron Gordon",
+        "Offensive Rating": 128,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "HOU",
+        "player": "Aaron Holiday",
+        "Offensive Rating": 118,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "IND",
+        "player": "Aaron Nesmith",
+        "Offensive Rating": 122,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "OKC",
+        "player": "Aaron Wiggins",
+        "Offensive Rating": 118,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "OKC",
+        "player": "Adam Flagler",
+        "Offensive Rating": 75,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "CHI",
+        "player": "Adama Sanogo",
+        "Offensive Rating": 122,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "PHI",
+        "player": "Adem Bona",
+        "Offensive Rating": 121,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "MIL",
+        "player": "AJ Johnson",
+        "Offensive Rating": 96,
+        "Defensive Rating": 124
+    },
+    {
+        "team": "WAS",
+        "player": "AJ Johnson",
+        "Offensive Rating": 96,
+        "Defensive Rating": 124
+    },
+    {
+        "team": "OKC",
+        "player": "Ajay Mitchell",
+        "Offensive Rating": 114,
+        "Defensive Rating": 107
+    },
+    {
+        "team": "BOS",
+        "player": "Al Horford",
+        "Offensive Rating": 119,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "MIA",
+        "player": "Alec Burks",
+        "Offensive Rating": 113,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "OKC",
+        "player": "Alex Caruso",
+        "Offensive Rating": 120,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "OKC",
+        "player": "Alex Ducas",
+        "Offensive Rating": 105,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "LAL",
+        "player": "Alex Len",
+        "Offensive Rating": 111,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "SAC",
+        "player": "Alex Len",
+        "Offensive Rating": 111,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "OKC",
+        "player": "Alex Reese",
+        "Offensive Rating": 118,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "PHI",
+        "player": "Alex Reese",
+        "Offensive Rating": 118,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "WAS",
+        "player": "Alex Sarr",
+        "Offensive Rating": 97,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "DET",
+        "player": "Alondes Williams",
+        "Offensive Rating": 248,
+        "Defensive Rating": 135
+    },
+    {
+        "team": "HOU",
+        "player": "Alperen Şengün",
+        "Offensive Rating": 116,
+        "Defensive Rating": 107
+    },
+    {
+        "team": "HOU",
+        "player": "Amen Thompson",
+        "Offensive Rating": 122,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "LAC",
+        "player": "Amir Coffey",
+        "Offensive Rating": 120,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "PHI",
+        "player": "Andre Drummond",
+        "Offensive Rating": 106,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "MIL",
+        "player": "Andre Jackson Jr.",
+        "Offensive Rating": 104,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "IND",
+        "player": "Andrew Nembhard",
+        "Offensive Rating": 111,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "GSW",
+        "player": "Andrew Wiggins",
+        "Offensive Rating": 113,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "MIA",
+        "player": "Andrew Wiggins",
+        "Offensive Rating": 113,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "POR",
+        "player": "Anfernee Simons",
+        "Offensive Rating": 114,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "ORL",
+        "player": "Anthony Black",
+        "Offensive Rating": 102,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "DAL",
+        "player": "Anthony Davis",
+        "Offensive Rating": 117,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "LAL",
+        "player": "Anthony Davis",
+        "Offensive Rating": 117,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "MIN",
+        "player": "Anthony Edwards",
+        "Offensive Rating": 115,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "WAS",
+        "player": "Anthony Gill",
+        "Offensive Rating": 114,
+        "Defensive Rating": 124
+    },
+    {
+        "team": "NYK",
+        "player": "Anton Watson",
+        "Offensive Rating": 76,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "NOP",
+        "player": "Antonio Reeves",
+        "Offensive Rating": 106,
+        "Defensive Rating": 126
+    },
+    {
+        "team": "NYK",
+        "player": "Ariel Hukporti",
+        "Offensive Rating": 93,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "LAL",
+        "player": "Armel Traoré",
+        "Offensive Rating": 58,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "DET",
+        "player": "Ausar Thompson",
+        "Offensive Rating": 114,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "LAL",
+        "player": "Austin Reaves",
+        "Offensive Rating": 122,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "CHI",
+        "player": "Ayo Dosunmu",
+        "Offensive Rating": 116,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "MIA",
+        "player": "Bam Adebayo",
+        "Offensive Rating": 115,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "BOS",
+        "player": "Baylor Scheierman",
+        "Offensive Rating": 106,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "IND",
+        "player": "Ben Sheppard",
+        "Offensive Rating": 114,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "BRK",
+        "player": "Ben Simmons",
+        "Offensive Rating": 111,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "LAC",
+        "player": "Ben Simmons",
+        "Offensive Rating": 111,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "IND",
+        "player": "Bennedict Mathurin",
+        "Offensive Rating": 109,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "WAS",
+        "player": "Bilal Coulibaly",
+        "Offensive Rating": 102,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "SAS",
+        "player": "Bismack Biyombo",
+        "Offensive Rating": 109,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "SAS",
+        "player": "Blake Wesley",
+        "Offensive Rating": 99,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "MIL",
+        "player": "Bobby Portis",
+        "Offensive Rating": 109,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "DET",
+        "player": "Bobi Klintman",
+        "Offensive Rating": 148,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "ATL",
+        "player": "Bogdan Bogdanović",
+        "Offensive Rating": 108,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "LAC",
+        "player": "Bogdan Bogdanović",
+        "Offensive Rating": 108,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "PHO",
+        "player": "Bol Bol",
+        "Offensive Rating": 114,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "LAC",
+        "player": "Bones Hyland",
+        "Offensive Rating": 104,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "MIN",
+        "player": "Bones Hyland",
+        "Offensive Rating": 104,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "PHO",
+        "player": "Bradley Beal",
+        "Offensive Rating": 114,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "OKC",
+        "player": "Branden Carlson",
+        "Offensive Rating": 115,
+        "Defensive Rating": 103
+    },
+    {
+        "team": "GSW",
+        "player": "Brandin Podziemski",
+        "Offensive Rating": 115,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "NOP",
+        "player": "Brandon Boston Jr.",
+        "Offensive Rating": 107,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "MEM",
+        "player": "Brandon Clarke",
+        "Offensive Rating": 131,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "NOP",
+        "player": "Brandon Ingram",
+        "Offensive Rating": 105,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "CHO",
+        "player": "Brandon Miller",
+        "Offensive Rating": 105,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "DAL",
+        "player": "Brandon Williams",
+        "Offensive Rating": 117,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "GSW",
+        "player": "Braxton Key",
+        "Offensive Rating": 59,
+        "Defensive Rating": 82
+    },
+    {
+        "team": "UTA",
+        "player": "Brice Sensabaugh",
+        "Offensive Rating": 108,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "LAL",
+        "player": "Bronny James",
+        "Offensive Rating": 81,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "MIL",
+        "player": "Brook Lopez",
+        "Offensive Rating": 120,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "NOP",
+        "player": "Bruce Brown",
+        "Offensive Rating": 105,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "TOR",
+        "player": "Bruce Brown",
+        "Offensive Rating": 105,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "TOR",
+        "player": "Bruno Fernando",
+        "Offensive Rating": 104,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "POR",
+        "player": "Bryce McGowens",
+        "Offensive Rating": 79,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "WAS",
+        "player": "Bub Carrington",
+        "Offensive Rating": 103,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "GSW",
+        "player": "Buddy Hield",
+        "Offensive Rating": 106,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "DET",
+        "player": "Cade Cunningham",
+        "Offensive Rating": 112,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "ORL",
+        "player": "Caleb Houstan",
+        "Offensive Rating": 118,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "DAL",
+        "player": "Caleb Martin",
+        "Offensive Rating": 102,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "PHI",
+        "player": "Caleb Martin",
+        "Offensive Rating": 102,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "LAC",
+        "player": "Cam Christie",
+        "Offensive Rating": 82,
+        "Defensive Rating": 98
+    },
+    {
+        "team": "LAL",
+        "player": "Cam Reddish",
+        "Offensive Rating": 100,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "MEM",
+        "player": "Cam Spencer",
+        "Offensive Rating": 134,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "BRK",
+        "player": "Cam Thomas",
+        "Offensive Rating": 112,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "HOU",
+        "player": "Cam Whitmore",
+        "Offensive Rating": 111,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "BRK",
+        "player": "Cameron Johnson",
+        "Offensive Rating": 123,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "NYK",
+        "player": "Cameron Payne",
+        "Offensive Rating": 113,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "ATL",
+        "player": "Caris LeVert",
+        "Offensive Rating": 118,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "CLE",
+        "player": "Caris LeVert",
+        "Offensive Rating": 118,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "OKC",
+        "player": "Cason Wallace",
+        "Offensive Rating": 116,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "SAS",
+        "player": "Charles Bassey",
+        "Offensive Rating": 115,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "OKC",
+        "player": "Chet Holmgren",
+        "Offensive Rating": 115,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "TOR",
+        "player": "Chris Boucher",
+        "Offensive Rating": 120,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "CHI",
+        "player": "Chris Duarte",
+        "Offensive Rating": 128,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "MIL",
+        "player": "Chris Livingston",
+        "Offensive Rating": 96,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "SAS",
+        "player": "Chris Paul",
+        "Offensive Rating": 124,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "DEN",
+        "player": "Christian Braun",
+        "Offensive Rating": 132,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "LAL",
+        "player": "Christian Koloko",
+        "Offensive Rating": 124,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "CLE",
+        "player": "Chuma Okeke",
+        "Offensive Rating": 143,
+        "Defensive Rating": 126
+    },
+    {
+        "team": "PHI",
+        "player": "Chuma Okeke",
+        "Offensive Rating": 143,
+        "Defensive Rating": 126
+    },
+    {
+        "team": "NOP",
+        "player": "CJ McCollum",
+        "Offensive Rating": 109,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "ATL",
+        "player": "Clint Capela",
+        "Offensive Rating": 118,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "CHI",
+        "player": "Coby White",
+        "Offensive Rating": 113,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "CHO",
+        "player": "Cody Martin",
+        "Offensive Rating": 106,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "PHO",
+        "player": "Cody Martin",
+        "Offensive Rating": 106,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "UTA",
+        "player": "Cody Williams",
+        "Offensive Rating": 85,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "SAC",
+        "player": "Colby Jones",
+        "Offensive Rating": 104,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "WAS",
+        "player": "Colby Jones",
+        "Offensive Rating": 104,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "ORL",
+        "player": "Cole Anthony",
+        "Offensive Rating": 105,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "DET",
+        "player": "Cole Swider",
+        "Offensive Rating": 90,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "TOR",
+        "player": "Cole Swider",
+        "Offensive Rating": 90,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "MEM",
+        "player": "Colin Castleton",
+        "Offensive Rating": 112,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "PHI",
+        "player": "Colin Castleton",
+        "Offensive Rating": 112,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "TOR",
+        "player": "Colin Castleton",
+        "Offensive Rating": 112,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "PHO",
+        "player": "Collin Gillespie",
+        "Offensive Rating": 124,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "UTA",
+        "player": "Collin Sexton",
+        "Offensive Rating": 115,
+        "Defensive Rating": 125
+    },
+    {
+        "team": "WAS",
+        "player": "Corey Kispert",
+        "Offensive Rating": 110,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "ORL",
+        "player": "Cory Joseph",
+        "Offensive Rating": 116,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "CLE",
+        "player": "Craig Porter Jr.",
+        "Offensive Rating": 113,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "BRK",
+        "player": "Cui Yongxi",
+        "Offensive Rating": 41,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "BRK",
+        "player": "D'Angelo Russell",
+        "Offensive Rating": 107,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "LAL",
+        "player": "D'Angelo Russell",
+        "Offensive Rating": 107,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "TOR",
+        "player": "D.J. Carton",
+        "Offensive Rating": 43,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "ATL",
+        "player": "Daeqwon Plowden",
+        "Offensive Rating": 129,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "MIN",
+        "player": "Daishen Nix",
+        "Offensive Rating": 46,
+        "Defensive Rating": 86
+    },
+    {
+        "team": "POR",
+        "player": "Dalano Banton",
+        "Offensive Rating": 101,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "CHI",
+        "player": "Dalen Terry",
+        "Offensive Rating": 106,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "LAL",
+        "player": "Dalton Knecht",
+        "Offensive Rating": 114,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "MIL",
+        "player": "Damian Lillard",
+        "Offensive Rating": 122,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "CHO",
+        "player": "Damion Baugh",
+        "Offensive Rating": 85,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "PHO",
+        "player": "Damion Lee",
+        "Offensive Rating": 94,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "DAL",
+        "player": "Daniel Gafford",
+        "Offensive Rating": 137,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "NOP",
+        "player": "Daniel Theis",
+        "Offensive Rating": 116,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "DET",
+        "player": "Daniss Jenkins",
+        "Offensive Rating": 78,
+        "Defensive Rating": 128
+    },
+    {
+        "team": "DAL",
+        "player": "Dante Exum",
+        "Offensive Rating": 112,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "CHO",
+        "player": "DaQuan Jeffries",
+        "Offensive Rating": 101,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "DEN",
+        "player": "Dario Šarić",
+        "Offensive Rating": 94,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "BRK",
+        "player": "Dariq Whitehead",
+        "Offensive Rating": 98,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "CLE",
+        "player": "Darius Garland",
+        "Offensive Rating": 121,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "SAS",
+        "player": "David Duke Jr.",
+        "Offensive Rating": 95,
+        "Defensive Rating": 124
+    },
+    {
+        "team": "ATL",
+        "player": "David Roddy",
+        "Offensive Rating": 101,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "HOU",
+        "player": "David Roddy",
+        "Offensive Rating": 101,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "PHI",
+        "player": "David Roddy",
+        "Offensive Rating": 101,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "MIA",
+        "player": "Davion Mitchell",
+        "Offensive Rating": 112,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "TOR",
+        "player": "Davion Mitchell",
+        "Offensive Rating": 112,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "BRK",
+        "player": "Day'Ron Sharpe",
+        "Offensive Rating": 115,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "SAC",
+        "player": "De'Aaron Fox",
+        "Offensive Rating": 113,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "SAS",
+        "player": "De'Aaron Fox",
+        "Offensive Rating": 113,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "ATL",
+        "player": "De'Andre Hunter",
+        "Offensive Rating": 119,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "CLE",
+        "player": "De'Andre Hunter",
+        "Offensive Rating": 119,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "GSW",
+        "player": "De'Anthony Melton",
+        "Offensive Rating": 108,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "CLE",
+        "player": "Dean Wade",
+        "Offensive Rating": 118,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "POR",
+        "player": "Deandre Ayton",
+        "Offensive Rating": 114,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "DEN",
+        "player": "DeAndre Jordan",
+        "Offensive Rating": 119,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "NOP",
+        "player": "Dejounte Murray",
+        "Offensive Rating": 101,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "MIL",
+        "player": "Delon Wright",
+        "Offensive Rating": 102,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "NYK",
+        "player": "Delon Wright",
+        "Offensive Rating": 102,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "SAC",
+        "player": "DeMar DeRozan",
+        "Offensive Rating": 120,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "POR",
+        "player": "Deni Avdija",
+        "Offensive Rating": 116,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "BRK",
+        "player": "Dennis Schröder",
+        "Offensive Rating": 111,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "DET",
+        "player": "Dennis Schröder",
+        "Offensive Rating": 111,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "GSW",
+        "player": "Dennis Schröder",
+        "Offensive Rating": 111,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "DAL",
+        "player": "Dereck Lively II",
+        "Offensive Rating": 138,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "LAC",
+        "player": "Derrick Jones Jr.",
+        "Offensive Rating": 117,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "BOS",
+        "player": "Derrick White",
+        "Offensive Rating": 123,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "MEM",
+        "player": "Desmond Bane",
+        "Offensive Rating": 119,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "PHO",
+        "player": "Devin Booker",
+        "Offensive Rating": 119,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "SAC",
+        "player": "Devin Carter",
+        "Offensive Rating": 103,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "SAS",
+        "player": "Devin Vassell",
+        "Offensive Rating": 108,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "HOU",
+        "player": "Dillon Brooks",
+        "Offensive Rating": 116,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "OKC",
+        "player": "Dillon Jones",
+        "Offensive Rating": 100,
+        "Defensive Rating": 107
+    },
+    {
+        "team": "SAC",
+        "player": "Domantas Sabonis",
+        "Offensive Rating": 127,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "ATL",
+        "player": "Dominick Barlow",
+        "Offensive Rating": 126,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "POR",
+        "player": "Donovan Clingan",
+        "Offensive Rating": 119,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "CLE",
+        "player": "Donovan Mitchell",
+        "Offensive Rating": 118,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "MIN",
+        "player": "Donte DiVincenzo",
+        "Offensive Rating": 113,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "BRK",
+        "player": "Dorian Finney-Smith",
+        "Offensive Rating": 115,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "LAL",
+        "player": "Dorian Finney-Smith",
+        "Offensive Rating": 115,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "SAC",
+        "player": "Doug McDermott",
+        "Offensive Rating": 104,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "GSW",
+        "player": "Draymond Green",
+        "Offensive Rating": 106,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "LAC",
+        "player": "Drew Eubanks",
+        "Offensive Rating": 117,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "UTA",
+        "player": "Drew Eubanks",
+        "Offensive Rating": 117,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "BOS",
+        "player": "Drew Peterson",
+        "Offensive Rating": 113,
+        "Defensive Rating": 107
+    },
+    {
+        "team": "BRK",
+        "player": "Drew Timme",
+        "Offensive Rating": 98,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "MIA",
+        "player": "Dru Smith",
+        "Offensive Rating": 114,
+        "Defensive Rating": 106
+    },
+    {
+        "team": "MIA",
+        "player": "Duncan Robinson",
+        "Offensive Rating": 109,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "POR",
+        "player": "Duop Reath",
+        "Offensive Rating": 117,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "DAL",
+        "player": "Dwight Powell",
+        "Offensive Rating": 142,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "ATL",
+        "player": "Dyson Daniels",
+        "Offensive Rating": 110,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "CHI",
+        "player": "E.J. Liddell",
+        "Offensive Rating": 122,
+        "Defensive Rating": 124
+    },
+    {
+        "team": "CHO",
+        "player": "Elfrid Payton",
+        "Offensive Rating": 87,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "NOP",
+        "player": "Elfrid Payton",
+        "Offensive Rating": 87,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "UTA",
+        "player": "Elijah Harkless",
+        "Offensive Rating": 98,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "CHI",
+        "player": "Emanuel Miller",
+        "Offensive Rating": 139,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "CLE",
+        "player": "Emoni Bates",
+        "Offensive Rating": 108,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "IND",
+        "player": "Enrique Freeman",
+        "Offensive Rating": 103,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "PHI",
+        "player": "Eric Gordon",
+        "Offensive Rating": 113,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "CLE",
+        "player": "Evan Mobley",
+        "Offensive Rating": 124,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "ORL",
+        "player": "Franz Wagner",
+        "Offensive Rating": 113,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "HOU",
+        "player": "Fred VanVleet",
+        "Offensive Rating": 116,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "LAL",
+        "player": "Gabe Vincent",
+        "Offensive Rating": 104,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "TOR",
+        "player": "Garrett Temple",
+        "Offensive Rating": 97,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "ATL",
+        "player": "Garrison Mathews",
+        "Offensive Rating": 114,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "ORL",
+        "player": "Gary Harris",
+        "Offensive Rating": 98,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "GSW",
+        "player": "Gary Payton II",
+        "Offensive Rating": 121,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "MIL",
+        "player": "Gary Trent Jr.",
+        "Offensive Rating": 112,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "ATL",
+        "player": "Georges Niang",
+        "Offensive Rating": 112,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "CLE",
+        "player": "Georges Niang",
+        "Offensive Rating": 112,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "MEM",
+        "player": "GG Jackson II",
+        "Offensive Rating": 98,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "MIL",
+        "player": "Giannis Antetokounmpo",
+        "Offensive Rating": 123,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "ORL",
+        "player": "Goga Bitadze",
+        "Offensive Rating": 126,
+        "Defensive Rating": 104
+    },
+    {
+        "team": "TOR",
+        "player": "Gradey Dick",
+        "Offensive Rating": 106,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "CHO",
+        "player": "Grant Williams",
+        "Offensive Rating": 113,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "PHO",
+        "player": "Grayson Allen",
+        "Offensive Rating": 116,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "PHI",
+        "player": "Guerschon Yabusele",
+        "Offensive Rating": 121,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "GSW",
+        "player": "Gui Santos",
+        "Offensive Rating": 114,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "SAS",
+        "player": "Harrison Barnes",
+        "Offensive Rating": 130,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "SAS",
+        "player": "Harrison Ingram",
+        "Offensive Rating": 114,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "MIA",
+        "player": "Haywood Highsmith",
+        "Offensive Rating": 113,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "NOP",
+        "player": "Herbert Jones",
+        "Offensive Rating": 107,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "DEN",
+        "player": "Hunter Tyson",
+        "Offensive Rating": 103,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "TOR",
+        "player": "Immanuel Quickley",
+        "Offensive Rating": 119,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "SAC",
+        "player": "Isaac Jones",
+        "Offensive Rating": 121,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "CLE",
+        "player": "Isaac Okoro",
+        "Offensive Rating": 122,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "UTA",
+        "player": "Isaiah Collier",
+        "Offensive Rating": 99,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "SAC",
+        "player": "Isaiah Crawford",
+        "Offensive Rating": 90,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "OKC",
+        "player": "Isaiah Hartenstein",
+        "Offensive Rating": 124,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "IND",
+        "player": "Isaiah Jackson",
+        "Offensive Rating": 115,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "OKC",
+        "player": "Isaiah Joe",
+        "Offensive Rating": 122,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "PHI",
+        "player": "Isaiah Mobley",
+        "Offensive Rating": 108,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "MIA",
+        "player": "Isaiah Stevens",
+        "Offensive Rating": 0,
+        "Defensive Rating": 71
+    },
+    {
+        "team": "DET",
+        "player": "Isaiah Stewart",
+        "Offensive Rating": 123,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "CHO",
+        "player": "Isaiah Wong",
+        "Offensive Rating": 98,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "LAC",
+        "player": "Ivica Zubac",
+        "Offensive Rating": 129,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "MEM",
+        "player": "Ja Morant",
+        "Offensive Rating": 112,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "TOR",
+        "player": "Ja'Kobe Walter",
+        "Offensive Rating": 105,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "HOU",
+        "player": "Jabari Smith Jr.",
+        "Offensive Rating": 117,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "POR",
+        "player": "Jabari Walker",
+        "Offensive Rating": 116,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "HOU",
+        "player": "Jack McVeigh",
+        "Offensive Rating": 74,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "GSW",
+        "player": "Jackson Rowe",
+        "Offensive Rating": 110,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "ATL",
+        "player": "Jacob Toppin",
+        "Offensive Rating": 104,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "NYK",
+        "player": "Jacob Toppin",
+        "Offensive Rating": 104,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "DAL",
+        "player": "Jaden Hardy",
+        "Offensive Rating": 97,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "DET",
+        "player": "Jaden Ivey",
+        "Offensive Rating": 107,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "MIN",
+        "player": "Jaden McDaniels",
+        "Offensive Rating": 114,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "BOS",
+        "player": "Jaden Springer",
+        "Offensive Rating": 104,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "UTA",
+        "player": "Jaden Springer",
+        "Offensive Rating": 104,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "SAC",
+        "player": "Jae Crowder",
+        "Offensive Rating": 100,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "HOU",
+        "player": "Jae'Sean Tate",
+        "Offensive Rating": 122,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "IND",
+        "player": "Jahlil Okafor",
+        "Offensive Rating": 221,
+        "Defensive Rating": 126
+    },
+    {
+        "team": "CHI",
+        "player": "Jahmir Young",
+        "Offensive Rating": 166,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "MIA",
+        "player": "Jaime Jaquez Jr.",
+        "Offensive Rating": 106,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "MEM",
+        "player": "Jake LaRavia",
+        "Offensive Rating": 116,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "SAC",
+        "player": "Jake LaRavia",
+        "Offensive Rating": 116,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "TOR",
+        "player": "Jakob Poeltl",
+        "Offensive Rating": 122,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "PHO",
+        "player": "Jalen Bridges",
+        "Offensive Rating": 63,
+        "Defensive Rating": 130
+    },
+    {
+        "team": "NYK",
+        "player": "Jalen Brunson",
+        "Offensive Rating": 124,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "DET",
+        "player": "Jalen Duren",
+        "Offensive Rating": 133,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "HOU",
+        "player": "Jalen Green",
+        "Offensive Rating": 110,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "LAL",
+        "player": "Jalen Hood-Schifino",
+        "Offensive Rating": 99,
+        "Defensive Rating": 127
+    },
+    {
+        "team": "PHI",
+        "player": "Jalen Hood-Schifino",
+        "Offensive Rating": 99,
+        "Defensive Rating": 127
+    },
+    {
+        "team": "ATL",
+        "player": "Jalen Johnson",
+        "Offensive Rating": 110,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "WAS",
+        "player": "Jalen McDaniels",
+        "Offensive Rating": 231,
+        "Defensive Rating": 104
+    },
+    {
+        "team": "DEN",
+        "player": "Jalen Pickett",
+        "Offensive Rating": 117,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "CHI",
+        "player": "Jalen Smith",
+        "Offensive Rating": 117,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "ORL",
+        "player": "Jalen Suggs",
+        "Offensive Rating": 101,
+        "Defensive Rating": 106
+    },
+    {
+        "team": "OKC",
+        "player": "Jalen Williams",
+        "Offensive Rating": 116,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "BRK",
+        "player": "Jalen Wilson",
+        "Offensive Rating": 109,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "NOP",
+        "player": "Jamal Cain",
+        "Offensive Rating": 104,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "DEN",
+        "player": "Jamal Murray",
+        "Offensive Rating": 120,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "TOR",
+        "player": "Jamal Shead",
+        "Offensive Rating": 103,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "MIL",
+        "player": "Jamaree Bouyea",
+        "Offensive Rating": 99,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "LAC",
+        "player": "James Harden",
+        "Offensive Rating": 114,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "IND",
+        "player": "James Johnson",
+        "Offensive Rating": 57,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "IND",
+        "player": "James Wiseman",
+        "Offensive Rating": 127,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "TOR",
+        "player": "Jamison Battle",
+        "Offensive Rating": 114,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "IND",
+        "player": "Jarace Walker",
+        "Offensive Rating": 103,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "PHI",
+        "player": "Jared Butler",
+        "Offensive Rating": 111,
+        "Defensive Rating": 124
+    },
+    {
+        "team": "WAS",
+        "player": "Jared Butler",
+        "Offensive Rating": 111,
+        "Defensive Rating": 124
+    },
+    {
+        "team": "PHI",
+        "player": "Jared McCain",
+        "Offensive Rating": 112,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "CHO",
+        "player": "Jared Rhoden",
+        "Offensive Rating": 124,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "TOR",
+        "player": "Jared Rhoden",
+        "Offensive Rating": 124,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "MEM",
+        "player": "Jaren Jackson Jr.",
+        "Offensive Rating": 115,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "LAL",
+        "player": "Jarred Vanderbilt",
+        "Offensive Rating": 115,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "CLE",
+        "player": "Jarrett Allen",
+        "Offensive Rating": 140,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "CLE",
+        "player": "Javonte Green",
+        "Offensive Rating": 112,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "NOP",
+        "player": "Javonte Green",
+        "Offensive Rating": 112,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "LAL",
+        "player": "Jaxson Hayes",
+        "Offensive Rating": 134,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "MEM",
+        "player": "Jay Huff",
+        "Offensive Rating": 123,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "BOS",
+        "player": "Jaylen Brown",
+        "Offensive Rating": 112,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "MIN",
+        "player": "Jaylen Clark",
+        "Offensive Rating": 125,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "BRK",
+        "player": "Jaylen Martin",
+        "Offensive Rating": 98,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "WAS",
+        "player": "Jaylen Martin",
+        "Offensive Rating": 98,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "NOP",
+        "player": "Jaylen Nowell",
+        "Offensive Rating": 96,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "CHO",
+        "player": "Jaylen Sims",
+        "Offensive Rating": 107,
+        "Defensive Rating": 127
+    },
+    {
+        "team": "MEM",
+        "player": "Jaylen Wells",
+        "Offensive Rating": 116,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "OKC",
+        "player": "Jaylin Williams",
+        "Offensive Rating": 124,
+        "Defensive Rating": 103
+    },
+    {
+        "team": "CLE",
+        "player": "Jaylon Tyson",
+        "Offensive Rating": 109,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "BOS",
+        "player": "Jayson Tatum",
+        "Offensive Rating": 117,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "DAL",
+        "player": "Jazian Gortman",
+        "Offensive Rating": 82,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "BOS",
+        "player": "JD Davison",
+        "Offensive Rating": 75,
+        "Defensive Rating": 106
+    },
+    {
+        "team": "HOU",
+        "player": "Jeenathan Williams",
+        "Offensive Rating": 86,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "PHI",
+        "player": "Jeff Dowtin",
+        "Offensive Rating": 120,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "HOU",
+        "player": "Jeff Green",
+        "Offensive Rating": 129,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "POR",
+        "player": "Jerami Grant",
+        "Offensive Rating": 108,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "NOP",
+        "player": "Jeremiah Robinson-Earl",
+        "Offensive Rating": 114,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "SAS",
+        "player": "Jeremy Sochan",
+        "Offensive Rating": 116,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "MIL",
+        "player": "Jericho Sims",
+        "Offensive Rating": 118,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "NYK",
+        "player": "Jericho Sims",
+        "Offensive Rating": 118,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "MIN",
+        "player": "Jesse Edwards",
+        "Offensive Rating": 239,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "ORL",
+        "player": "Jett Howard",
+        "Offensive Rating": 91,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "CHI",
+        "player": "Jevon Carter",
+        "Offensive Rating": 102,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "GSW",
+        "player": "Jimmy Butler",
+        "Offensive Rating": 136,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "MIA",
+        "player": "Jimmy Butler",
+        "Offensive Rating": 136,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "HOU",
+        "player": "Jock Landale",
+        "Offensive Rating": 121,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "MIN",
+        "player": "Joe Ingles",
+        "Offensive Rating": 80,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "PHI",
+        "player": "Joel Embiid",
+        "Offensive Rating": 113,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "UTA",
+        "player": "John Collins",
+        "Offensive Rating": 116,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "MEM",
+        "player": "John Konchar",
+        "Offensive Rating": 120,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "WAS",
+        "player": "Johnny Davis",
+        "Offensive Rating": 92,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "IND",
+        "player": "Johnny Furphy",
+        "Offensive Rating": 102,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "UTA",
+        "player": "Johnny Juzang",
+        "Offensive Rating": 115,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "SAC",
+        "player": "Jonas Valančiūnas",
+        "Offensive Rating": 118,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "WAS",
+        "player": "Jonas Valančiūnas",
+        "Offensive Rating": 118,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "ORL",
+        "player": "Jonathan Isaac",
+        "Offensive Rating": 110,
+        "Defensive Rating": 104
+    },
+    {
+        "team": "GSW",
+        "player": "Jonathan Kuminga",
+        "Offensive Rating": 107,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "TOR",
+        "player": "Jonathan Mogbo",
+        "Offensive Rating": 106,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "UTA",
+        "player": "Jordan Clarkson",
+        "Offensive Rating": 107,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "LAL",
+        "player": "Jordan Goodwin",
+        "Offensive Rating": 108,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "NOP",
+        "player": "Jordan Hawkins",
+        "Offensive Rating": 100,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "SAC",
+        "player": "Jordan McLaughlin",
+        "Offensive Rating": 118,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "SAS",
+        "player": "Jordan McLaughlin",
+        "Offensive Rating": 118,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "LAC",
+        "player": "Jordan Miller",
+        "Offensive Rating": 100,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "WAS",
+        "player": "Jordan Poole",
+        "Offensive Rating": 109,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "BOS",
+        "player": "Jordan Walsh",
+        "Offensive Rating": 90,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "NOP",
+        "player": "Jose Alvarado",
+        "Offensive Rating": 109,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "MIA",
+        "player": "Josh Christopher",
+        "Offensive Rating": 77,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "CHI",
+        "player": "Josh Giddey",
+        "Offensive Rating": 115,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "CHO",
+        "player": "Josh Green",
+        "Offensive Rating": 105,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "NYK",
+        "player": "Josh Hart",
+        "Offensive Rating": 125,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "MIN",
+        "player": "Josh Minott",
+        "Offensive Rating": 113,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "CHO",
+        "player": "Josh Okogie",
+        "Offensive Rating": 111,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "PHO",
+        "player": "Josh Okogie",
+        "Offensive Rating": 111,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "MIA",
+        "player": "Josh Richardson",
+        "Offensive Rating": 85,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "BOS",
+        "player": "Jrue Holiday",
+        "Offensive Rating": 119,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "CLE",
+        "player": "JT Thor",
+        "Offensive Rating": 105,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "WAS",
+        "player": "JT Thor",
+        "Offensive Rating": 105,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "SAS",
+        "player": "Julian Champagnie",
+        "Offensive Rating": 111,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "CHI",
+        "player": "Julian Phillips",
+        "Offensive Rating": 115,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "DEN",
+        "player": "Julian Strawther",
+        "Offensive Rating": 107,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "MIN",
+        "player": "Julius Randle",
+        "Offensive Rating": 117,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "WAS",
+        "player": "Justin Champagnie",
+        "Offensive Rating": 116,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "PHI",
+        "player": "Justin Edwards",
+        "Offensive Rating": 108,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "POR",
+        "player": "Justin Minaya",
+        "Offensive Rating": 83,
+        "Defensive Rating": 107
+    },
+    {
+        "team": "CHO",
+        "player": "Jusuf Nurkić",
+        "Offensive Rating": 102,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "PHO",
+        "player": "Jusuf Nurkić",
+        "Offensive Rating": 102,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "DAL",
+        "player": "Kai Jones",
+        "Offensive Rating": 145,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "LAC",
+        "player": "Kai Jones",
+        "Offensive Rating": 145,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "NYK",
+        "player": "Karl-Anthony Towns",
+        "Offensive Rating": 121,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "NOP",
+        "player": "Karlo Matković",
+        "Offensive Rating": 118,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "LAC",
+        "player": "Kawhi Leonard",
+        "Offensive Rating": 114,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "ATL",
+        "player": "Keaton Wallace",
+        "Offensive Rating": 102,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "SAC",
+        "player": "Keegan Murray",
+        "Offensive Rating": 115,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "NOP",
+        "player": "Keion Brooks Jr.",
+        "Offensive Rating": 111,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "MIA",
+        "player": "Kel'el Ware",
+        "Offensive Rating": 116,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "SAS",
+        "player": "Keldon Johnson",
+        "Offensive Rating": 115,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "NOP",
+        "player": "Kelly Olynyk",
+        "Offensive Rating": 113,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "TOR",
+        "player": "Kelly Olynyk",
+        "Offensive Rating": 113,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "PHI",
+        "player": "Kelly Oubre Jr.",
+        "Offensive Rating": 111,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "OKC",
+        "player": "Kenrich Williams",
+        "Offensive Rating": 119,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "ORL",
+        "player": "Kentavious Caldwell-Pope",
+        "Offensive Rating": 113,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "SAC",
+        "player": "Keon Ellis",
+        "Offensive Rating": 123,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "BRK",
+        "player": "Keon Johnson",
+        "Offensive Rating": 98,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "MIA",
+        "player": "Keshad Johnson",
+        "Offensive Rating": 125,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "DAL",
+        "player": "Kessler Edwards",
+        "Offensive Rating": 119,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "PHO",
+        "player": "Kevin Durant",
+        "Offensive Rating": 117,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "CHI",
+        "player": "Kevin Huerter",
+        "Offensive Rating": 107,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "SAC",
+        "player": "Kevin Huerter",
+        "Offensive Rating": 107,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "GSW",
+        "player": "Kevin Knox",
+        "Offensive Rating": 116,
+        "Defensive Rating": 106
+    },
+    {
+        "team": "MIA",
+        "player": "Kevin Love",
+        "Offensive Rating": 101,
+        "Defensive Rating": 102
+    },
+    {
+        "team": "NYK",
+        "player": "Kevin McCullar Jr.",
+        "Offensive Rating": 94,
+        "Defensive Rating": 104
+    },
+    {
+        "team": "LAC",
+        "player": "Kevin Porter Jr.",
+        "Offensive Rating": 104,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "MIL",
+        "player": "Kevin Porter Jr.",
+        "Offensive Rating": 104,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "GSW",
+        "player": "Kevon Looney",
+        "Offensive Rating": 126,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "UTA",
+        "player": "Keyonte George",
+        "Offensive Rating": 108,
+        "Defensive Rating": 124
+    },
+    {
+        "team": "MIL",
+        "player": "Khris Middleton",
+        "Offensive Rating": 115,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "WAS",
+        "player": "Khris Middleton",
+        "Offensive Rating": 115,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "BRK",
+        "player": "Killian Hayes",
+        "Offensive Rating": 118,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "PHI",
+        "player": "KJ Martin",
+        "Offensive Rating": 121,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "UTA",
+        "player": "KJ Martin",
+        "Offensive Rating": 121,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "CHO",
+        "player": "KJ Simpson",
+        "Offensive Rating": 93,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "DAL",
+        "player": "Klay Thompson",
+        "Offensive Rating": 107,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "LAC",
+        "player": "Kobe Brown",
+        "Offensive Rating": 103,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "ATL",
+        "player": "Kobe Bufkin",
+        "Offensive Rating": 100,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "LAC",
+        "player": "Kris Dunn",
+        "Offensive Rating": 108,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "POR",
+        "player": "Kris Murray",
+        "Offensive Rating": 101,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "BOS",
+        "player": "Kristaps Porziņģis",
+        "Offensive Rating": 123,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "GSW",
+        "player": "Kyle Anderson",
+        "Offensive Rating": 117,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "MIA",
+        "player": "Kyle Anderson",
+        "Offensive Rating": 117,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "UTA",
+        "player": "Kyle Filipowski",
+        "Offensive Rating": 112,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "MIL",
+        "player": "Kyle Kuzma",
+        "Offensive Rating": 96,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "WAS",
+        "player": "Kyle Kuzma",
+        "Offensive Rating": 96,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "PHI",
+        "player": "Kyle Lowry",
+        "Offensive Rating": 115,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "DAL",
+        "player": "Kylor Kelley",
+        "Offensive Rating": 125,
+        "Defensive Rating": 129
+    },
+    {
+        "team": "NOP",
+        "player": "Kylor Kelley",
+        "Offensive Rating": 125,
+        "Defensive Rating": 129
+    },
+    {
+        "team": "DAL",
+        "player": "Kyrie Irving",
+        "Offensive Rating": 119,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "WAS",
+        "player": "Kyshawn George",
+        "Offensive Rating": 97,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "MEM",
+        "player": "Lamar Stevens",
+        "Offensive Rating": 103,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "CHO",
+        "player": "LaMelo Ball",
+        "Offensive Rating": 110,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "NYK",
+        "player": "Landry Shamet",
+        "Offensive Rating": 111,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "ATL",
+        "player": "Larry Nance Jr.",
+        "Offensive Rating": 119,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "UTA",
+        "player": "Lauri Markkanen",
+        "Offensive Rating": 116,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "LAL",
+        "player": "LeBron James",
+        "Offensive Rating": 117,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "MIN",
+        "player": "Leonard Miller",
+        "Offensive Rating": 116,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "NOP",
+        "player": "Lester Quiñones",
+        "Offensive Rating": 97,
+        "Defensive Rating": 125
+    },
+    {
+        "team": "PHI",
+        "player": "Lester Quiñones",
+        "Offensive Rating": 97,
+        "Defensive Rating": 125
+    },
+    {
+        "team": "MIL",
+        "player": "Liam Robbins",
+        "Offensive Rating": 76,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "DET",
+        "player": "Lindy Waters III",
+        "Offensive Rating": 99,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "GSW",
+        "player": "Lindy Waters III",
+        "Offensive Rating": 99,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "PHI",
+        "player": "Lonnie Walker IV",
+        "Offensive Rating": 108,
+        "Defensive Rating": 124
+    },
+    {
+        "team": "CHI",
+        "player": "Lonzo Ball",
+        "Offensive Rating": 107,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "OKC",
+        "player": "Luguentz Dort",
+        "Offensive Rating": 117,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "DAL",
+        "player": "Luka Dončić",
+        "Offensive Rating": 118,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "LAL",
+        "player": "Luka Dončić",
+        "Offensive Rating": 118,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "MIN",
+        "player": "Luka Garza",
+        "Offensive Rating": 112,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "MEM",
+        "player": "Luke Kennard",
+        "Offensive Rating": 125,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "BOS",
+        "player": "Luke Kornet",
+        "Offensive Rating": 152,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "CLE",
+        "player": "Luke Travers",
+        "Offensive Rating": 76,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "ORL",
+        "player": "Mac McClung",
+        "Offensive Rating": 85,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "CHO",
+        "player": "Malachi Flynn",
+        "Offensive Rating": 104,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "SAS",
+        "player": "Malaki Branham",
+        "Offensive Rating": 100,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "WAS",
+        "player": "Malcolm Brogdon",
+        "Offensive Rating": 112,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "OKC",
+        "player": "Malevy Leons",
+        "Offensive Rating": 71,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "DET",
+        "player": "Malik Beasley",
+        "Offensive Rating": 114,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "SAC",
+        "player": "Malik Monk",
+        "Offensive Rating": 110,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "PHI",
+        "player": "Marcus Bagley",
+        "Offensive Rating": 102,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "CHO",
+        "player": "Marcus Garrett",
+        "Offensive Rating": 99,
+        "Defensive Rating": 132
+    },
+    {
+        "team": "DET",
+        "player": "Marcus Sasser",
+        "Offensive Rating": 114,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "MEM",
+        "player": "Marcus Smart",
+        "Offensive Rating": 104,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "WAS",
+        "player": "Marcus Smart",
+        "Offensive Rating": 104,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "LAC",
+        "player": "MarJon Beauchamp",
+        "Offensive Rating": 94,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "MIL",
+        "player": "MarJon Beauchamp",
+        "Offensive Rating": 94,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "NYK",
+        "player": "MarJon Beauchamp",
+        "Offensive Rating": 94,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "CHO",
+        "player": "Mark Williams",
+        "Offensive Rating": 126,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "SAC",
+        "player": "Markelle Fultz",
+        "Offensive Rating": 90,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "DAL",
+        "player": "Markieff Morris",
+        "Offensive Rating": 93,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "LAL",
+        "player": "Markieff Morris",
+        "Offensive Rating": 93,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "MEM",
+        "player": "Marvin Bagley III",
+        "Offensive Rating": 115,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "WAS",
+        "player": "Marvin Bagley III",
+        "Offensive Rating": 115,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "SAC",
+        "player": "Mason Jones",
+        "Offensive Rating": 135,
+        "Defensive Rating": 127
+    },
+    {
+        "team": "PHO",
+        "player": "Mason Plumlee",
+        "Offensive Rating": 130,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "CHI",
+        "player": "Matas Buzelis",
+        "Offensive Rating": 105,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "POR",
+        "player": "Matisse Thybulle",
+        "Offensive Rating": 116,
+        "Defensive Rating": 103
+    },
+    {
+        "team": "NYK",
+        "player": "Matt Ryan",
+        "Offensive Rating": 74,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "DAL",
+        "player": "Max Christie",
+        "Offensive Rating": 107,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "LAL",
+        "player": "Max Christie",
+        "Offensive Rating": 107,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "CLE",
+        "player": "Max Strus",
+        "Offensive Rating": 124,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "DAL",
+        "player": "Maxi Kleber",
+        "Offensive Rating": 101,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "LAL",
+        "player": "Maxi Kleber",
+        "Offensive Rating": 101,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "BRK",
+        "player": "Maxwell Lewis",
+        "Offensive Rating": 98,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "LAL",
+        "player": "Maxwell Lewis",
+        "Offensive Rating": 98,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "UTA",
+        "player": "Micah Potter",
+        "Offensive Rating": 105,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "DEN",
+        "player": "Michael Porter Jr.",
+        "Offensive Rating": 121,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "NYK",
+        "player": "Mikal Bridges",
+        "Offensive Rating": 116,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "MIN",
+        "player": "Mike Conley",
+        "Offensive Rating": 123,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "CHO",
+        "player": "Miles Bridges",
+        "Offensive Rating": 109,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "NYK",
+        "player": "Miles McBride",
+        "Offensive Rating": 116,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "BOS",
+        "player": "Miles Norris",
+        "Offensive Rating": 83,
+        "Defensive Rating": 98
+    },
+    {
+        "team": "NYK",
+        "player": "Mitchell Robinson",
+        "Offensive Rating": 141,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "LAC",
+        "player": "Mo Bamba",
+        "Offensive Rating": 105,
+        "Defensive Rating": 102
+    },
+    {
+        "team": "NOP",
+        "player": "Mo Bamba",
+        "Offensive Rating": 105,
+        "Defensive Rating": 102
+    },
+    {
+        "team": "PHO",
+        "player": "Monte Morris",
+        "Offensive Rating": 111,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "ORL",
+        "player": "Moritz Wagner",
+        "Offensive Rating": 117,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "DAL",
+        "player": "Moses Brown",
+        "Offensive Rating": 117,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "IND",
+        "player": "Moses Brown",
+        "Offensive Rating": 117,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "GSW",
+        "player": "Moses Moody",
+        "Offensive Rating": 113,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "ATL",
+        "player": "Mouhamed Gueye",
+        "Offensive Rating": 113,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "CHO",
+        "player": "Moussa Diabaté",
+        "Offensive Rating": 121,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "IND",
+        "player": "Myles Turner",
+        "Offensive Rating": 112,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "HOU",
+        "player": "N'Faly Dante",
+        "Offensive Rating": 151,
+        "Defensive Rating": 125
+    },
+    {
+        "team": "CLE",
+        "player": "Nae'Qwan Tomlin",
+        "Offensive Rating": 112,
+        "Defensive Rating": 104
+    },
+    {
+        "team": "DAL",
+        "player": "Naji Marshall",
+        "Offensive Rating": 113,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "MIN",
+        "player": "Naz Reid",
+        "Offensive Rating": 113,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "BOS",
+        "player": "Neemias Queta",
+        "Offensive Rating": 130,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "BRK",
+        "player": "Nic Claxton",
+        "Offensive Rating": 114,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "CHO",
+        "player": "Nick Richards",
+        "Offensive Rating": 119,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "PHO",
+        "player": "Nick Richards",
+        "Offensive Rating": 119,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "CHO",
+        "player": "Nick Smith Jr.",
+        "Offensive Rating": 97,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "MIN",
+        "player": "Nickeil Alexander-Walker",
+        "Offensive Rating": 114,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "LAC",
+        "player": "Nicolas Batum",
+        "Offensive Rating": 120,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "DEN",
+        "player": "Nikola Jokić",
+        "Offensive Rating": 133,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "MIA",
+        "player": "Nikola Jović",
+        "Offensive Rating": 113,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "CHI",
+        "player": "Nikola Vučević",
+        "Offensive Rating": 121,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "BRK",
+        "player": "Noah Clowney",
+        "Offensive Rating": 100,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "LAC",
+        "player": "Norman Powell",
+        "Offensive Rating": 116,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "IND",
+        "player": "Obi Toppin",
+        "Offensive Rating": 119,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "TOR",
+        "player": "Ochai Agbaji",
+        "Offensive Rating": 114,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "NYK",
+        "player": "OG Anunoby",
+        "Offensive Rating": 117,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "DAL",
+        "player": "Olivier-Maxence Prosper",
+        "Offensive Rating": 107,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "ATL",
+        "player": "Onyeka Okongwu",
+        "Offensive Rating": 129,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "SAC",
+        "player": "Orlando Robinson",
+        "Offensive Rating": 109,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "TOR",
+        "player": "Orlando Robinson",
+        "Offensive Rating": 109,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "UTA",
+        "player": "Oscar Tshiebwe",
+        "Offensive Rating": 133,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "PHI",
+        "player": "Oshae Brissett",
+        "Offensive Rating": 106,
+        "Defensive Rating": 130
+    },
+    {
+        "team": "PHO",
+        "player": "Oso Ighodaro",
+        "Offensive Rating": 120,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "OKC",
+        "player": "Ousmane Dieng",
+        "Offensive Rating": 104,
+        "Defensive Rating": 102
+    },
+    {
+        "team": "NYK",
+        "player": "P.J. Tucker",
+        "Offensive Rating": 122,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "DAL",
+        "player": "P.J. Washington",
+        "Offensive Rating": 107,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "NYK",
+        "player": "Pacome Dadiet",
+        "Offensive Rating": 89,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "ORL",
+        "player": "Paolo Banchero",
+        "Offensive Rating": 110,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "IND",
+        "player": "Pascal Siakam",
+        "Offensive Rating": 119,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "MIL",
+        "player": "Pat Connaughton",
+        "Offensive Rating": 114,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "GSW",
+        "player": "Pat Spencer",
+        "Offensive Rating": 99,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "LAC",
+        "player": "Patrick Baldwin Jr.",
+        "Offensive Rating": 105,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "WAS",
+        "player": "Patrick Baldwin Jr.",
+        "Offensive Rating": 105,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "CHI",
+        "player": "Patrick Williams",
+        "Offensive Rating": 98,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "LAC",
+        "player": "Patty Mills",
+        "Offensive Rating": 99,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "UTA",
+        "player": "Patty Mills",
+        "Offensive Rating": 99,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "PHI",
+        "player": "Paul George",
+        "Offensive Rating": 104,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "DET",
+        "player": "Paul Reed",
+        "Offensive Rating": 114,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "BOS",
+        "player": "Payton Pritchard",
+        "Offensive Rating": 130,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "MIA",
+        "player": "Pelle Larsson",
+        "Offensive Rating": 112,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "MIL",
+        "player": "Pete Nance",
+        "Offensive Rating": 113,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "PHI",
+        "player": "Pete Nance",
+        "Offensive Rating": 113,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "DEN",
+        "player": "Peyton Watson",
+        "Offensive Rating": 111,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "PHI",
+        "player": "Phillip Wheeler",
+        "Offensive Rating": 52,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "MIN",
+        "player": "PJ Dozier",
+        "Offensive Rating": 114,
+        "Defensive Rating": 99
+    },
+    {
+        "team": "DEN",
+        "player": "PJ Hall",
+        "Offensive Rating": 124,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "NYK",
+        "player": "Precious Achiuwa",
+        "Offensive Rating": 109,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "DAL",
+        "player": "Quentin Grimes",
+        "Offensive Rating": 113,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "PHI",
+        "player": "Quentin Grimes",
+        "Offensive Rating": 113,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "IND",
+        "player": "Quenton Jackson",
+        "Offensive Rating": 121,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "LAL",
+        "player": "Quincy Olivari",
+        "Offensive Rating": 58,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "GSW",
+        "player": "Quinten Post",
+        "Offensive Rating": 113,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "POR",
+        "player": "Rayan Rupert",
+        "Offensive Rating": 94,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "IND",
+        "player": "RayJ Dennis",
+        "Offensive Rating": 92,
+        "Defensive Rating": 101
+    },
+    {
+        "team": "BRK",
+        "player": "Reece Beekman",
+        "Offensive Rating": 94,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "GSW",
+        "player": "Reece Beekman",
+        "Offensive Rating": 94,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "HOU",
+        "player": "Reed Sheppard",
+        "Offensive Rating": 97,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "PHI",
+        "player": "Reggie Jackson",
+        "Offensive Rating": 101,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "WAS",
+        "player": "Richaun Holmes",
+        "Offensive Rating": 139,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "PHI",
+        "player": "Ricky Council IV",
+        "Offensive Rating": 105,
+        "Defensive Rating": 123
+    },
+    {
+        "team": "SAS",
+        "player": "Riley Minix",
+        "Offensive Rating": 0,
+        "Defensive Rating": 126
+    },
+    {
+        "team": "TOR",
+        "player": "RJ Barrett",
+        "Offensive Rating": 108,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "MIN",
+        "player": "Rob Dillingham",
+        "Offensive Rating": 97,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "POR",
+        "player": "Robert Williams",
+        "Offensive Rating": 127,
+        "Defensive Rating": 106
+    },
+    {
+        "team": "DET",
+        "player": "Ron Harper Jr.",
+        "Offensive Rating": 96,
+        "Defensive Rating": 133
+    },
+    {
+        "team": "DET",
+        "player": "Ron Holland",
+        "Offensive Rating": 106,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "PHO",
+        "player": "Royce O'Neale",
+        "Offensive Rating": 111,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "MIN",
+        "player": "Rudy Gobert",
+        "Offensive Rating": 137,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "LAL",
+        "player": "Rui Hachimura",
+        "Offensive Rating": 121,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "DEN",
+        "player": "Russell Westbrook",
+        "Offensive Rating": 104,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "PHO",
+        "player": "Ryan Dunn",
+        "Offensive Rating": 104,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "MIL",
+        "player": "Ryan Rollins",
+        "Offensive Rating": 111,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "BOS",
+        "player": "Sam Hauser",
+        "Offensive Rating": 125,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "CLE",
+        "player": "Sam Merrill",
+        "Offensive Rating": 118,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "SAS",
+        "player": "Sandro Mamukelashvili",
+        "Offensive Rating": 122,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "MEM",
+        "player": "Santi Aldama",
+        "Offensive Rating": 121,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "POR",
+        "player": "Scoot Henderson",
+        "Offensive Rating": 107,
+        "Defensive Rating": 117
+    },
+    {
+        "team": "TOR",
+        "player": "Scottie Barnes",
+        "Offensive Rating": 107,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "MEM",
+        "player": "Scotty Pippen Jr.",
+        "Offensive Rating": 116,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "CHO",
+        "player": "Seth Curry",
+        "Offensive Rating": 116,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "POR",
+        "player": "Shaedon Sharpe",
+        "Offensive Rating": 110,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "OKC",
+        "player": "Shai Gilgeous-Alexander",
+        "Offensive Rating": 129,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "BRK",
+        "player": "Shake Milton",
+        "Offensive Rating": 114,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "LAL",
+        "player": "Shake Milton",
+        "Offensive Rating": 114,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "POR",
+        "player": "Sidy Cissoko",
+        "Offensive Rating": 83,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "SAS",
+        "player": "Sidy Cissoko",
+        "Offensive Rating": 83,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "DET",
+        "player": "Simone Fontecchio",
+        "Offensive Rating": 105,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "SAC",
+        "player": "Skal Labissière",
+        "Offensive Rating": 158,
+        "Defensive Rating": 125
+    },
+    {
+        "team": "DAL",
+        "player": "Spencer Dinwiddie",
+        "Offensive Rating": 114,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "DEN",
+        "player": "Spencer Jones",
+        "Offensive Rating": 80,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "MIL",
+        "player": "Stanley Umude",
+        "Offensive Rating": 56,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "GSW",
+        "player": "Stephen Curry",
+        "Offensive Rating": 119,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "SAS",
+        "player": "Stephon Castle",
+        "Offensive Rating": 105,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "HOU",
+        "player": "Steven Adams",
+        "Offensive Rating": 117,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "UTA",
+        "player": "Svi Mykhailiuk",
+        "Offensive Rating": 102,
+        "Defensive Rating": 125
+    },
+    {
+        "team": "IND",
+        "player": "T.J. McConnell",
+        "Offensive Rating": 113,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "CHO",
+        "player": "Taj Gibson",
+        "Offensive Rating": 101,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "CHI",
+        "player": "Talen Horton-Tucker",
+        "Offensive Rating": 110,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "HOU",
+        "player": "Tari Eason",
+        "Offensive Rating": 118,
+        "Defensive Rating": 106
+    },
+    {
+        "team": "MIL",
+        "player": "Taurean Prince",
+        "Offensive Rating": 112,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "UTA",
+        "player": "Taylor Hendricks",
+        "Offensive Rating": 80,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "POR",
+        "player": "Taze Moore",
+        "Offensive Rating": 65,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "ATL",
+        "player": "Terance Mann",
+        "Offensive Rating": 118,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "LAC",
+        "player": "Terance Mann",
+        "Offensive Rating": 118,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "SAC",
+        "player": "Terence Davis",
+        "Offensive Rating": 38,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "MIN",
+        "player": "Terrence Shannon Jr.",
+        "Offensive Rating": 109,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "MIA",
+        "player": "Terry Rozier",
+        "Offensive Rating": 101,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "SAC",
+        "player": "Terry Taylor",
+        "Offensive Rating": 127,
+        "Defensive Rating": 127
+    },
+    {
+        "team": "IND",
+        "player": "Thomas Bryant",
+        "Offensive Rating": 122,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "MIA",
+        "player": "Thomas Bryant",
+        "Offensive Rating": 122,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "CHO",
+        "player": "Tidjane Salaün",
+        "Offensive Rating": 93,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "DET",
+        "player": "Tim Hardaway Jr.",
+        "Offensive Rating": 116,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "DET",
+        "player": "Tobias Harris",
+        "Offensive Rating": 115,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "DET",
+        "player": "Tolu Smith",
+        "Offensive Rating": 122,
+        "Defensive Rating": 133
+    },
+    {
+        "team": "IND",
+        "player": "Tony Bradley",
+        "Offensive Rating": 126,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "BOS",
+        "player": "Torrey Craig",
+        "Offensive Rating": 116,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "CHI",
+        "player": "Torrey Craig",
+        "Offensive Rating": 116,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "BRK",
+        "player": "Tosan Evbuomwan",
+        "Offensive Rating": 103,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "POR",
+        "player": "Toumani Camara",
+        "Offensive Rating": 116,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "ATL",
+        "player": "Trae Young",
+        "Offensive Rating": 115,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "GSW",
+        "player": "Trayce Jackson-Davis",
+        "Offensive Rating": 123,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "CHI",
+        "player": "Tre Jones",
+        "Offensive Rating": 133,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "SAS",
+        "player": "Tre Jones",
+        "Offensive Rating": 133,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "CHO",
+        "player": "Tre Mann",
+        "Offensive Rating": 109,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "BRK",
+        "player": "Trendon Watford",
+        "Offensive Rating": 104,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "LAC",
+        "player": "Trentyn Flowers",
+        "Offensive Rating": 88,
+        "Defensive Rating": 109
+    },
+    {
+        "team": "ORL",
+        "player": "Trevelin Queen",
+        "Offensive Rating": 98,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "DEN",
+        "player": "Trey Alexander",
+        "Offensive Rating": 79,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "LAL",
+        "player": "Trey Jemison",
+        "Offensive Rating": 101,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "NOP",
+        "player": "Trey Jemison",
+        "Offensive Rating": 101,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "SAC",
+        "player": "Trey Lyles",
+        "Offensive Rating": 115,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "NOP",
+        "player": "Trey Murphy III",
+        "Offensive Rating": 118,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "ORL",
+        "player": "Tristan Da Silva",
+        "Offensive Rating": 106,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "CLE",
+        "player": "Tristan Thompson",
+        "Offensive Rating": 95,
+        "Defensive Rating": 104
+    },
+    {
+        "team": "WAS",
+        "player": "Tristan Vukcevic",
+        "Offensive Rating": 108,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "IND",
+        "player": "Tristen Newton",
+        "Offensive Rating": 49,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "MIN",
+        "player": "Tristen Newton",
+        "Offensive Rating": 49,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "CLE",
+        "player": "Ty Jerome",
+        "Offensive Rating": 127,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "MIA",
+        "player": "Tyler Herro",
+        "Offensive Rating": 116,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "NYK",
+        "player": "Tyler Kolek",
+        "Offensive Rating": 104,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "MIL",
+        "player": "Tyler Smith",
+        "Offensive Rating": 106,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "IND",
+        "player": "Tyrese Haliburton",
+        "Offensive Rating": 130,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "BRK",
+        "player": "Tyrese Martin",
+        "Offensive Rating": 103,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "PHI",
+        "player": "Tyrese Maxey",
+        "Offensive Rating": 115,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "BRK",
+        "player": "Tyson Etienne",
+        "Offensive Rating": 92,
+        "Defensive Rating": 121
+    },
+    {
+        "team": "PHO",
+        "player": "TyTy Washington Jr.",
+        "Offensive Rating": 89,
+        "Defensive Rating": 126
+    },
+    {
+        "team": "PHO",
+        "player": "Tyus Jones",
+        "Offensive Rating": 123,
+        "Defensive Rating": 122
+    },
+    {
+        "team": "TOR",
+        "player": "Ulrich Chomche",
+        "Offensive Rating": 91,
+        "Defensive Rating": 125
+    },
+    {
+        "team": "CHO",
+        "player": "Vasilije Micić",
+        "Offensive Rating": 90,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "SAS",
+        "player": "Victor Wembanyama",
+        "Offensive Rating": 109,
+        "Defensive Rating": 105
+    },
+    {
+        "team": "MEM",
+        "player": "Vince Williams Jr.",
+        "Offensive Rating": 100,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "ATL",
+        "player": "Vit Krejci",
+        "Offensive Rating": 123,
+        "Defensive Rating": 116
+    },
+    {
+        "team": "DEN",
+        "player": "Vlatko Čančar",
+        "Offensive Rating": 79,
+        "Defensive Rating": 113
+    },
+    {
+        "team": "UTA",
+        "player": "Walker Kessler",
+        "Offensive Rating": 128,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "ORL",
+        "player": "Wendell Carter Jr.",
+        "Offensive Rating": 113,
+        "Defensive Rating": 110
+    },
+    {
+        "team": "CHO",
+        "player": "Wendell Moore Jr.",
+        "Offensive Rating": 105,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "DET",
+        "player": "Wendell Moore Jr.",
+        "Offensive Rating": 105,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "BOS",
+        "player": "Xavier Tillman Sr.",
+        "Offensive Rating": 62,
+        "Defensive Rating": 106
+    },
+    {
+        "team": "MEM",
+        "player": "Yuki Kawamura",
+        "Offensive Rating": 113,
+        "Defensive Rating": 108
+    },
+    {
+        "team": "GSW",
+        "player": "Yuri Collins",
+        "Offensive Rating": 144,
+        "Defensive Rating": 93
+    },
+    {
+        "team": "NOP",
+        "player": "Yves Missi",
+        "Offensive Rating": 119,
+        "Defensive Rating": 119
+    },
+    {
+        "team": "ATL",
+        "player": "Zaccharie Risacher",
+        "Offensive Rating": 107,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "CHI",
+        "player": "Zach Collins",
+        "Offensive Rating": 120,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "SAS",
+        "player": "Zach Collins",
+        "Offensive Rating": 120,
+        "Defensive Rating": 112
+    },
+    {
+        "team": "MEM",
+        "player": "Zach Edey",
+        "Offensive Rating": 123,
+        "Defensive Rating": 111
+    },
+    {
+        "team": "CHI",
+        "player": "Zach LaVine",
+        "Offensive Rating": 116,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "SAC",
+        "player": "Zach LaVine",
+        "Offensive Rating": 116,
+        "Defensive Rating": 120
+    },
+    {
+        "team": "DEN",
+        "player": "Zeke Nnaji",
+        "Offensive Rating": 116,
+        "Defensive Rating": 115
+    },
+    {
+        "team": "BRK",
+        "player": "Ziaire Williams",
+        "Offensive Rating": 107,
+        "Defensive Rating": 114
+    },
+    {
+        "team": "NOP",
+        "player": "Zion Williamson",
+        "Offensive Rating": 118,
+        "Defensive Rating": 118
+    },
+    {
+        "team": "MEM",
+        "player": "Zyon Pullin",
+        "Offensive Rating": 0,
+        "Defensive Rating": 126
+    }
+]
 
-let teamDataOffenseMap = new Map(); // 用 Map 儲存球隊進攻數據，方便查找
-let teamDataDefenseMap = new Map(); // 用 Map 儲存球隊防守數據，方便查找
+// 獲取聯盟平均值 (從 allPlayersData 中篩選出 team 為 "average" 的數據)
+const leagueAveragePlayerStats = allPlayersData.find(d => d.team === "average");
+const leagueOffensiveRatingAvg = leagueAveragePlayerStats ? leagueAveragePlayerStats["Offensive Rating"] : 0;
+const leagueDefensiveRatingAvg = leagueAveragePlayerStats ? leagueAveragePlayerStats["Defensive Rating"] : 0;
+
+
+// --- 全域變數 ---
+let leagueAverageOffense = {};
+let leagueAverageDefense = {};
+
+let teamDataOffenseMap = new Map();
+let teamDataDefenseMap = new Map();
 
 let offenseCanvas, offenseCtx;
 let defenseCanvas, defenseCtx;
+let playerScatterCanvas, playerScatterCtx; // 散佈圖 Canvas 和上下文
 
 let teamSelector;
 let teamNameDisplay;
 let hotzoneTooltip; // 熱區提示框元素
+
+// --- 全局變數用於滑鼠互動 ---
+let currentOffenseHoveredZone = null; // 追蹤進攻熱區當前懸停的分區
+let currentDefenseHoveredZone = null; // 追蹤防守熱區當前懸停的分區
+let currentScatterHoveredPlayer = null; // 追蹤散佈圖當前懸停的球員
 
 
 // 新增一個 Image 物件來載入背景圖
 const courtImage = new Image();
 courtImage.src = courtBackgroundImageUrl;
 courtImage.onload = () => {
-    // 圖片載入完成後，如果已經有選定的球隊，則重新繪製熱區圖
-    const selectedTeam = teamSelector.val();
-    if (selectedTeam) {
-        updateHotzoneDisplay(selectedTeam);
-    }
+    // 圖片載入完成後，僅記錄，不在此處觸發繪圖，避免 teamSelector 未初始化問題
     console.log("籃球場背景圖片載入完成。");
 };
 courtImage.onerror = () => {
     console.error("載入籃球場背景圖片失敗，請檢查路徑：", courtBackgroundImageUrl);
 };
 
-// --- 全局變數用於滑鼠互動 ---
-let currentOffenseHoveredZone = null; // 追蹤進攻熱區當前懸停的分區
-let currentDefenseHoveredZone = null; // 追蹤防守熱區當前懸停的分區
 
 // --- 初始化熱區圖儀表板 ---
 $(function() {
@@ -1891,20 +5829,28 @@ $(function() {
 });
 
 function initHotzoneDashboard() {
-    // ... (現有的 Canvas 和上下文獲取代碼) ...
+    // 獲取並初始化所有 Canvas 元素及其上下文
     offenseCanvas = document.getElementById('offenseHotzoneCanvas');
     offenseCtx = offenseCanvas.getContext('2d');
 
     defenseCanvas = document.getElementById('defenseHotzoneCanvas');
     defenseCtx = defenseCanvas.getContext('2d');
 
+    // *** 新增這兩行：初始化散佈圖 Canvas 和上下文 ***
+    playerScatterCanvas = document.getElementById('playerScatterCanvas');
+    playerScatterCtx = playerScatterCanvas.getContext('2d');
+
+
+    // 獲取並初始化其他 DOM 元素
     teamSelector = $('#team-selector');
     teamNameDisplay = $('#team-name-display');
     hotzoneTooltip = document.getElementById('hotzone-tooltip'); // 獲取提示框元素
 
+    // 處理數據並填充選擇器
     processShotData();
     populateTeamSelector();
 
+    // 設置事件監聽器
     teamSelector.on('change', function() {
         const selectedTeam = $(this).val();
         updateHotzoneDisplay(selectedTeam);
@@ -1920,25 +5866,31 @@ function initHotzoneDashboard() {
         }
     });
 
-    // 初始繪圖：確保圖片載入後才嘗試繪製
-    // 這部分邏輯會被 courtImage.onload 處理，但為了首次載入，也可以在這裡呼叫
-    // 如果圖片已經在快取中，onload 可能不會觸發，所以這裡也需要一個邏輯
-    if (courtImage.complete && teamSelector.val()) {
-        updateHotzoneDisplay(teamSelector.val());
-    } else if (courtImage.complete && teamDataOffenseMap.size > 0) {
+    // 初始繪圖邏輯：現在更依賴於 teamSelector 準備就緒
+    const initialSelectedTeam = teamSelector.val(); // 在 teamSelector 初始化後獲取值
+    if (initialSelectedTeam) {
+        // 如果有預設選擇的球隊，則繪製
+        updateHotzoneDisplay(initialSelectedTeam);
+    } else if (teamDataOffenseMap.size > 0) {
+        // 如果沒有預設值，選擇第一個非平均的球隊進行初始顯示
         const firstTeam = Array.from(teamDataOffenseMap.keys()).find(key => key !== 'Average');
         if (firstTeam) {
             teamSelector.val(firstTeam);
             updateHotzoneDisplay(firstTeam);
         }
     }
-    // --- 新增滑鼠事件監聽 ---
+
+
+    // --- 設定滑鼠事件監聽器 ---
     offenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, offenseCanvas, 'offense'));
     offenseCanvas.addEventListener('mouseout', () => hideTooltip('offense'));
 
     defenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, defenseCanvas, 'defense'));
     defenseCanvas.addEventListener('mouseout', () => hideTooltip('defense'));
 
+    // 新增：散佈圖的滑鼠事件監聽器
+    playerScatterCanvas.addEventListener('mousemove', (e) => handleScatterMouseMove(e));
+    playerScatterCanvas.addEventListener('mouseout', () => hideTooltip('scatter'));
 }
 
 
@@ -2073,12 +6025,142 @@ function drawCourt(canvasId, teamId, dataType) {
     });
 }
 
-// --- 更新熱區圖顯示 ---
+
+// --- 繪製散佈圖的函數 ---
+function drawScatterPlot(teamId) {
+    if (!playerScatterCtx || !playerScatterCanvas) return;
+
+    // 設定 Canvas 的實際解析度以確保清晰度，並保持響應式佈局
+    const rect = playerScatterCanvas.getBoundingClientRect();
+    playerScatterCanvas.width = rect.width * window.devicePixelRatio;
+    playerScatterCanvas.height = rect.height * window.devicePixelRatio;
+    playerScatterCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+    playerScatterCtx.clearRect(0, 0, playerScatterCanvas.width / window.devicePixelRatio, playerScatterCanvas.height / window.devicePixelRatio);
+
+    const margin = 40;
+    const width = playerScatterCanvas.width / window.devicePixelRatio; // CSS 寬度
+    const height = playerScatterCanvas.height / window.devicePixelRatio; // CSS 高度
+
+    // 篩選當前球隊的球員
+    const teamPlayers = allPlayersData.filter(p => p.team === teamId && p.player !== "average");
+
+    if (teamPlayers.length === 0) {
+        playerScatterCtx.fillStyle = 'white'; // 確保文字在黑色背景上可見
+        playerScatterCtx.font = '16px Arial';
+        playerScatterCtx.textAlign = 'center';
+        playerScatterCtx.fillText('此隊伍無球員數據或數據錯誤', width / 2, height / 2);
+        return;
+    }
+
+    // *** 修正點：設定固定的軸範圍，而不是完全依賴數據的 min/max ***
+    // 這些值是根據常見的 Offensive/Defensive Rating 範圍來估計的
+    const fixedOffensiveMin = 70;
+    const fixedOffensiveMax = 150;
+    const fixedDefensiveMin = 70;
+    const fixedDefensiveMax = 150;
+
+    // 確保聯盟平均值也在範圍內，並稍微擴展邊界
+    const xMin = Math.min(fixedOffensiveMin, leagueOffensiveRatingAvg) - 5;
+    const xMax = Math.max(fixedOffensiveMax, leagueOffensiveRatingAvg) + 5;
+    const yMin = Math.min(fixedDefensiveMin, leagueDefensiveRatingAvg) - 5;
+    const yMax = Math.max(fixedDefensiveMax, leagueDefensiveRatingAvg) + 5;
+
+
+    // 軸線繪製函數
+    function drawAxis(ctx, x1, y1, x2, y2, color, label, isXAxis) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.fillStyle = color;
+        ctx.font = '12px Arial'; // 調整軸標籤字體大小
+        ctx.textAlign = 'center';
+
+        // 繪製箭頭和標籤
+        if (isXAxis) {
+            ctx.beginPath();
+            ctx.moveTo(x2, y2);
+            ctx.lineTo(x2 - 5, y2 - 5);
+            ctx.lineTo(x2 - 5, y2 + 5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillText(label, x2 - 20, y2 + 20); // X軸標籤位置
+        } else { // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(x2, y2);
+            ctx.lineTo(x2 - 5, y2 + 5);
+            ctx.lineTo(x2 + 5, y2 + 5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillText(label, x2 - 20, y2 + 10); // Y軸標籤位置
+        }
+    }
+
+    // 數據到像素的轉換函數
+    const scaleX = (value) => margin + (value - xMin) / (xMax - xMin) * (width - 2 * margin);
+    const scaleY = (value) => height - margin - (value - yMin) / (yMax - yMin) * (height - 2 * margin); // Y軸反轉
+
+    // 繪製座標軸 (以聯盟平均值為原點)
+    const originX = scaleX(leagueOffensiveRatingAvg);
+    const originY = scaleY(leagueDefensiveRatingAvg);
+
+    // 繪製 X 軸 (Offensive Rating)
+    drawAxis(playerScatterCtx, margin, originY, width - margin, originY, 'gray', 'Offensive Rating', true);
+    // 繪製 Y 軸 (Defensive Rating)
+    drawAxis(playerScatterCtx, originX, height - margin, originX, margin, 'gray', 'Defensive Rating', false);
+
+    // 繪製每個球員的點
+    playerScatterCtx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // 球員點的顏色
+    playerScatterCtx.font = '10px Arial';
+    playerScatterCtx.textAlign = 'left';
+    playerScatterCtx.textBaseline = 'middle';
+
+    playerScatterCtx.playersOnPlot = []; // 清空之前的數據
+
+    teamPlayers.forEach(player => {
+        const x = scaleX(player["Offensive Rating"]);
+        const y = scaleY(player["Defensive Rating"]);
+
+        // 檢查點是否在可見範圍內，避免繪製超出邊界的點
+        if (x >= margin && x <= width - margin && y >= margin && y <= height - margin) {
+            playerScatterCtx.beginPath();
+            playerScatterCtx.arc(x, y, 4, 0, Math.PI * 2); // 點半徑
+            playerScatterCtx.fill();
+
+            playerScatterCtx.fillStyle = 'white'; // 球員名字顏色
+            playerScatterCtx.fillText(player.player, x + 8, y); // 顯示球員名字
+
+            // 儲存球員點位資訊用於滑鼠互動
+            playerScatterCtx.playersOnPlot.push({
+                player: player.player,
+                offRtg: player["Offensive Rating"],
+                defRtg: player["Defensive Rating"],
+                x: x,
+                y: y,
+                radius: 4 // 點的半徑，用於點擊判斷
+            });
+        }
+    });
+
+    // 繪製原點標記
+    playerScatterCtx.fillStyle = 'yellow'; // 原點顏色
+    playerScatterCtx.beginPath();
+    playerScatterCtx.arc(originX, originY, 6, 0, Math.PI * 2); // 原點半徑稍大
+    playerScatterCtx.fill();
+    playerScatterCtx.fillText('聯盟平均', originX + 10, originY - 10); // 原點標籤
+}
+
+// --- 熱區圖和散佈圖顯示 ---
 function updateHotzoneDisplay(teamId) {
     if (!teamId) {
         teamNameDisplay.text("請選擇一支球隊查看熱區圖");
         offenseCtx.clearRect(0, 0, offenseCanvas.width, offenseCanvas.height);
         defenseCtx.clearRect(0, 0, defenseCanvas.width, defenseCanvas.height);
+        playerScatterCtx.clearRect(0, 0, playerScatterCanvas.width, playerScatterCanvas.height); // 清空散佈圖
         return;
     }
 
@@ -2089,6 +6171,9 @@ function updateHotzoneDisplay(teamId) {
 
     // 繪製防守熱區圖
     drawCourt('defenseHotzoneCanvas', teamId, 'defense');
+
+    // 繪製球員散佈圖
+    drawScatterPlot(teamId);
 }
 
 // --- 處理 Dimension 模板的頁面切換 ---
@@ -2138,7 +6223,7 @@ function isPointInPolygon(point, polygon) {
     return inside;
 }
 
-// --- 滑鼠移動事件處理函數 ---
+// --- 滑鼠移動事件處理函數 (熱區圖) ---
 function handleCanvasMouseMove(e, canvas, dataType) {
     const mousePos = getMousePos(canvas, e);
     const currentTeamId = teamSelector.val();
@@ -2154,6 +6239,8 @@ function handleCanvasMouseMove(e, canvas, dataType) {
         const zoneName = feature.properties.name;
         const coordinates = feature.geometry.coordinates[0]; // 獲取多邊形的坐標
 
+        // 由於 getMousePos 已經考慮了 devicePixelRatio，這裡的 coordinates 也應該與 Canvas 的繪圖坐標系一致
+        // 如果您的 GeoJSON 坐標與 Canvas 繪圖坐標系不一致，可能需要額外縮放或轉換
         if (isPointInPolygon(mousePos, coordinates)) {
             hoveredZone = zoneName;
             break; // 找到第一個就跳出迴圈
@@ -2163,12 +6250,10 @@ function handleCanvasMouseMove(e, canvas, dataType) {
     if (hoveredZone && hoveredZone !== currentHoveredTracker) {
         // 只有當滑鼠進入一個新的分區時才更新和顯示提示框
         const zoneName = hoveredZone;
-        // 檢查 teamDataMap.get(currentTeamId) 是否存在，然後再訪問其屬性
         const teamSpecificData = teamDataMap.get(currentTeamId);
-        const teamHitRate = teamSpecificData ? teamSpecificData[zoneName] : undefined;
+        const teamHitRate = teamSpecificData && teamSpecificData.hasOwnProperty(zoneName) ? teamSpecificData[zoneName] : undefined;
 
-        // 檢查 leagueAvgDataMap 是否存在，然後再訪問其屬性
-        const leagueAvgHitRate = leagueAvgDataMap ? leagueAvgDataMap[zoneName] : undefined;
+        const leagueAvgHitRate = leagueAvgDataMap && leagueAvgDataMap.hasOwnProperty(zoneName) ? leagueAvgDataMap[zoneName] : undefined;
 
         let displayTeamRate = '無數據';
         let displayLeagueRate = '無數據';
@@ -2213,8 +6298,40 @@ function handleCanvasMouseMove(e, canvas, dataType) {
     }
 }
 
+// --- 滑鼠移動事件處理函數 (散佈圖) ---
+function handleScatterMouseMove(e) {
+    const mousePos = getMousePos(playerScatterCanvas, e);
+
+    let foundPlayer = null;
+    if (playerScatterCtx.playersOnPlot) {
+        for (const player of playerScatterCtx.playersOnPlot) {
+            // 判斷滑鼠是否在點的範圍內
+            const dist = Math.sqrt(Math.pow(mousePos.x - player.x, 2) + Math.pow(mousePos.y - player.y, 2));
+            if (dist < player.radius + 3) { // 稍微增加點擊範圍，讓滑鼠更容易觸發
+                foundPlayer = player;
+                break;
+            }
+        }
+    }
+
+    if (foundPlayer && foundPlayer !== currentScatterHoveredPlayer) {
+        // 只有當滑鼠進入一個新的球員點時才更新和顯示提示框
+        const tooltipContent = `
+            <strong>球員：</strong> ${foundPlayer.player}<br>
+            <strong>進攻評分：</strong> ${foundPlayer.offRtg}<br>
+            <strong>防守評分：</strong> ${foundPlayer.defRtg}
+        `;
+        showTooltip(e.clientX, e.clientY, tooltipContent);
+        currentScatterHoveredPlayer = foundPlayer; // 更新懸停的球員
+    } else if (!foundPlayer && currentScatterHoveredPlayer) {
+        // 如果滑鼠離開了當前懸停的球員點
+        hideTooltip('scatter');
+    }
+}
+
 // --- 顯示提示框 ---
-function showTooltip(x, y, content) {
+// --- 顯示提示框 ---
+function showTooltip(x, y, content) { // x, y 現在預期是文件坐標 (e.pageX, e.pageY)
     hotzoneTooltip.innerHTML = content;
 
     // 暫時顯示提示框以獲取其寬度和高度
@@ -2224,32 +6341,40 @@ function showTooltip(x, y, content) {
     const tooltipWidth = hotzoneTooltip.offsetWidth;
     const tooltipHeight = hotzoneTooltip.offsetHeight;
 
-    // 獲取視窗的寬度和高度
-    const windowWidth = window.innerWidth || document.documentElement.clientWidth;
-    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+    // 獲取視窗的寬度和高度 (viewport dimensions)
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
-    let finalX = x + 15; // 預設向右偏移
-    let finalY = y + 15; // 預設向下偏移
+    // 獲取當前滾動位置 (scroll offsets)
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
 
-    // 判斷是否超出右邊界
-    if (finalX + tooltipWidth > windowWidth - 10) { // 留 10px 邊距
-        finalX = x - tooltipWidth - 15; // 如果超出，則將提示框移到滑鼠左側
-        // 確保不會超出左邊界（如果滑鼠剛好在左邊邊緣，但提示框很大）
-        if (finalX < 10) { // 如果調整到左邊還是超出，那就靠右對齊視窗
-            finalX = windowWidth - tooltipWidth - 10;
+    let finalX = x + 15; // 預設：滑鼠右側 15px (文件坐標)
+    let finalY = y + 15; // 預設：滑鼠下方 15px (文件坐標)
+
+    // 判斷是否超出右邊界 (將提示框的右邊緣轉換為視窗坐標進行比較)
+    // (finalX - scrollX) 是提示框左邊緣的視窗坐標
+    if ((finalX - scrollX) + tooltipWidth > viewportWidth - 10) { // 留 10px 視窗右邊距
+        finalX = x - tooltipWidth - 15; // 如果超出，則將提示框移到滑鼠左側 (文件坐標)
+        // 確保不會超出左邊界 (將調整後提示框左邊緣轉換為視窗坐標進行比較)
+        if ((finalX - scrollX) < 10) { // 留 10px 視窗左邊距
+            finalX = scrollX + 10; // 靠齊視窗左邊緣 (文件坐標)
         }
     }
 
-    // 判斷是否超出下邊界 (如果需要，也可以處理上方，這裡只處理右側)
-    // 雖然您主要提到右側，但底部也可能超出
-    if (finalY + tooltipHeight > windowHeight - 10) { // 留 10px 邊距
-        finalY = y - tooltipHeight - 15; // 如果超出，則將提示框移到滑鼠上方
-        // 確保不會超出上邊界
-        if (finalY < 10) {
-            finalY = 10; // 直接靠上邊界
+    // 判斷是否超出下邊界 (將提示框的下邊緣轉換為視窗坐標進行比較)
+    // (finalY - scrollY) 是提示框上邊緣的視窗坐標
+    if ((finalY - scrollY) + tooltipHeight > viewportHeight - 10) { // 留 10px 視窗下邊距
+        finalY = y - tooltipHeight - 15; // 如果超出，則將提示框移到滑鼠上方 (文件坐標)
+        // 確保不會超出上邊界 (將調整後提示框上邊緣轉換為視窗坐標進行比較)
+        if ((finalY - scrollY) < 10) { // 留 10px 視窗上邊距
+            finalY = scrollY + 10; // 靠齊視窗上邊緣 (文件坐標)
+        }
+        // 如果提示框被推到上方，且上方空間也不足，則嘗試將其放在下方但靠視窗底部
+        if ((finalY - scrollY) < 10 && (y + 15 + tooltipHeight > viewportHeight - 10)) {
+            finalY = scrollY + viewportHeight - tooltipHeight - 10;
         }
     }
-
 
     hotzoneTooltip.style.left = `${finalX}px`;
     hotzoneTooltip.style.top = `${finalY}px`;
@@ -2260,12 +6385,17 @@ function showTooltip(x, y, content) {
 function hideTooltip(dataType) {
     if (dataType === 'offense') {
         currentOffenseHoveredZone = null;
-    } else {
+    } else if (dataType === 'defense') {
         currentDefenseHoveredZone = null;
+    } else if (dataType === 'scatter') { // 新增 scatter 處理
+        currentScatterHoveredPlayer = null; // 清除散佈圖的懸停狀態
     }
-    // 只有當兩個 Canvas 都沒有懸停分區時才隱藏提示框
-    // 這可以防止在兩個 Canvas 之間快速移動時閃爍
-    if (currentOffenseHoveredZone === null && currentDefenseHoveredZone === null) {
+
+    // 只有當所有相關的懸停狀態都為 null 時才隱藏提示框
+    // 這可以防止在不同 Canvas 或圖表之間快速移動時閃爍
+    if (currentOffenseHoveredZone === null &&
+        currentDefenseHoveredZone === null &&
+        currentScatterHoveredPlayer === null) {
         hotzoneTooltip.style.display = 'none';
     }
 }

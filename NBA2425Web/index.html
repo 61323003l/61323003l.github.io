@@ -213,14 +213,18 @@
                     </select>
                 </div>
                 <!-- 熱區圖 -->
-                <div id="hotzone-canvases">
-                    <div style="text-align: center;">
+                <div id="all-charts-wrapper">
+                    <div class="chart-section">
                         <h3>進攻命中率</h3>
                         <canvas id="offenseHotzoneCanvas" width="500" height="470" style="border: 1px solid #ccc; background-color: #000;"></canvas>
                     </div>
-                    <div style="text-align: center;">
+                    <div class="chart-section">
                         <h3>防守被命中率</h3>
                         <canvas id="defenseHotzoneCanvas" width="500" height="470" style="border: 1px solid #ccc; background-color: #000;"></canvas>
+                    </div>
+                    <div class="chart-section">
+                        <h3>球員能力分佈</h3>
+                        <canvas id="playerScatterCanvas" width="500" height="500" style="border: 1px solid #ccc; background-color: #000;"></canvas>
                     </div>
                 </div>
                 <div id="hotzone-tooltip" style="
