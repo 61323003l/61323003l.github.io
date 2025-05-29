@@ -6338,8 +6338,8 @@ function handleScatterMouseMove(e) {
         // 只有當滑鼠進入一個新的球員點時才更新和顯示提示框
         const tooltipContent = `
             <strong>球員：</strong> ${foundPlayer.player}<br>
-            <strong>進攻評分：</strong> ${foundPlayer.offRtg}<br>
-            <strong>防守評分：</strong> ${foundPlayer.defRtg}
+            <strong>進攻效率：</strong> ${foundPlayer.offRtg}<br>
+            <strong>防守效率：</strong> ${foundPlayer.defRtg}
         `;
         showTooltip(e.clientX, e.clientY, tooltipContent);
         currentScatterHoveredPlayer = foundPlayer; // 更新懸停的球員
@@ -6349,8 +6349,8 @@ function handleScatterMouseMove(e) {
     }
 }
 
-// --- 顯示提示框 ---
-function showTooltip(x, y, content) { // x, y 現在預期是文件坐標 (e.pageX, e.pageY)
+// 顯示提示框
+function showTooltip(x, y, content) { // x, y 參數將不再用於定位，但仍需保留
     hotzoneTooltip.innerHTML = content;
 
     // 暫時顯示提示框以獲取其寬度和高度
@@ -6364,35 +6364,20 @@ function showTooltip(x, y, content) { // x, y 現在預期是文件坐標 (e.pag
     const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
     const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
-    // 獲取當前滾動位置 (scroll offsets)
+    // 獲取當前滾動位置 (scroll offsets) - 確保在滾動時提示框仍在畫面中央
     const scrollX = window.scrollX || window.pageXOffset;
     const scrollY = window.scrollY || window.pageYOffset;
 
-    let finalX = x + 15; // 預設：滑鼠右側 15px (文件坐標)
-    let finalY = y + 15; // 預設：滑鼠下方 15px (文件坐標)
+    // 計算提示框在畫面中央的最終位置 (文件坐標)
+    // 橫向居中：(視窗寬度 / 2) - (提示框寬度 / 2) + 滾動位置
+    let finalX = (viewportWidth / 2) - (tooltipWidth / 2) + scrollX;
+    // 縱向居中：(視窗高度 / 2) - (提示框高度 / 2) + 滾動位置
+    let finalY = (viewportHeight / 2) - (tooltipHeight / 2) + scrollY;
 
-    // 判斷是否超出右邊界 (將提示框的右邊緣轉換為視窗坐標進行比較)
-    // (finalX - scrollX) 是提示框左邊緣的視窗坐標
-    if ((finalX - scrollX) + tooltipWidth > viewportWidth - 10) { // 留 10px 視窗右邊距
-        finalX = x - tooltipWidth - 15; // 如果超出，則將提示框移到滑鼠左側 (文件坐標)
-        // 確保不會超出左邊界 (將調整後提示框左邊緣轉換為視窗坐標進行比較)
-        if ((finalX - scrollX) < 10) { // 留 10px 視窗左邊距
-            finalX = scrollX + 10; // 靠齊視窗左邊緣 (文件坐標)
-        }
-    }
-    // 判斷是否超出下邊界 (將提示框的下邊緣轉換為視窗坐標進行比較)
-    // (finalY - scrollY) 是提示框上邊緣的視窗坐標
-    if ((finalY - scrollY) + tooltipHeight > viewportHeight - 10) { // 留 10px 視窗下邊距
-        finalY = y - tooltipHeight - 15; // 如果超出，則將提示框移到滑鼠上方 (文件坐標)
-        // 確保不會超出上邊界 (將調整後提示框上邊緣轉換為視窗坐標進行比較)
-        if ((finalY - scrollY) < 10) { // 留 10px 視窗上邊距
-            finalY = scrollY + 10; // 靠齊視窗上邊緣 (文件坐標)
-        }
-        // 如果提示框被推到上方，且上方空間也不足，則嘗試將其放在下方但靠視窗底部
-        if ((finalY - scrollY) < 10 && (y + 15 + tooltipHeight > viewportHeight - 10)) {
-            finalY = scrollY + viewportHeight - tooltipHeight - 10;
-        }
-    }
+    // 確保不會超出左上角邊界 (通常在中央顯示時不會發生，但作為保護性程式碼)
+    if (finalX < scrollX) finalX = scrollX;
+    if (finalY < scrollY) finalY = scrollY;
+
 
     hotzoneTooltip.style.left = `${finalX}px`;
     hotzoneTooltip.style.top = `${finalY}px`;
