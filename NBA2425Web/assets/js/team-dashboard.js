@@ -5791,6 +5791,7 @@ const leagueDefensiveRatingAvg = leagueAveragePlayerStats ? leagueAveragePlayerS
 
 
 // --- 全域變數 ---
+// --- 攻守熱區全域變數 ---
 let leagueAverageOffense = {};
 let leagueAverageDefense = {};
 
@@ -5805,10 +5806,20 @@ let teamSelector;
 let teamNameDisplay;
 let hotzoneTooltip; // 熱區提示框元素
 
-// --- 全局變數用於滑鼠互動 ---
+// --- 長條圖相關全域變數 ---
+let playerBarChartCanvas;
+let playerBarChartCtx;
+let playerBarChart; // 用於 Chart.js 圖表實例
+let barChartDataSelector; // 長條圖數據選擇器
+let playerVsOpponentData = []; // 用於儲存從 CSV 載入的所有球員對戰數據
+const playerVsOpponentDataCSVPath = 'data/all_player_data.csv'; // CSV 檔案的實際路徑！
+
+
+// --- 全域變數用於滑鼠互動 ---
 let currentOffenseHoveredZone = null; // 追蹤進攻熱區當前懸停的分區
 let currentDefenseHoveredZone = null; // 追蹤防守熱區當前懸停的分區
 let currentScatterHoveredPlayer = null; // 追蹤散佈圖當前懸停的球員
+
 
 
 // 新增一個 Image 物件來載入背景圖
@@ -5826,6 +5837,64 @@ courtImage.onerror = () => {
 };
 
 
+// --- 新增：載入球員對戰數據的函數 ---
+async function loadPlayerVsOpponentData() {
+    try {
+        const response = await fetch(playerVsOpponentDataCSVPath);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const csvText = await response.text();
+        playerVsOpponentData = parseCSV(csvText); // 使用下面的 parseCSV 函數解析
+
+        console.log('球員對戰數據載入成功:', playerVsOpponentData);
+        populateBarChartDataSelector(); // 數據載入後填充數據選擇器
+    } catch (error) {
+        console.error('載入球員對戰數據失敗:', error);
+    }
+}
+
+// --- 簡單的 CSV 解析函數 (如果您需要更複雜的解析，建議使用 PapaParse) ---
+function parseCSV(csvText) {
+    const lines = csvText.trim().split('\n');
+    if (lines.length === 0) return [];
+
+    const headers = lines[0].split(',').map(header => header.trim());
+    const data = [];
+
+    for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(value => value.trim());
+        if (values.length === headers.length) {
+            const row = {};
+            headers.forEach((header, index) => {
+                // 嘗試將數據欄位轉換為數字，如果可以的話
+                const value = values[index];
+                row[header] = isNaN(Number(value)) ? value : Number(value);
+            });
+            data.push(row);
+        }
+    }
+    return data;
+}
+
+// --- 新增：填充長條圖數據選擇器的函數 ---
+function populateBarChartDataSelector() {
+    // 假設 CSV 的前兩欄是 "player" 和 "Value"，其他是數據欄位
+    if (playerVsOpponentData.length > 0) {
+        const headers = Object.keys(playerVsOpponentData[0]);
+        // 過濾掉非數據欄位，例如 'player' 和 'Value'
+        const dataMetrics = headers.filter(header => header !== 'player' && header !== 'Value');
+
+        barChartDataSelector.empty(); // 清空現有選項
+        barChartDataSelector.append('<option value="">請選擇數據類型</option>'); // 預設選項
+
+        dataMetrics.forEach(metric => {
+            barChartDataSelector.append(`<option value="${metric}">${metric}</option>`);
+        });
+    }
+}
+
+
 // --- 初始化熱區圖儀表板 ---
 $(function() { initHotzoneDashboard(); });
 
@@ -5840,565 +5909,706 @@ function initHotzoneDashboard() {
     playerScatterCanvas = document.getElementById('playerScatterCanvas');
     playerScatterCtx = playerScatterCanvas.getContext('2d');
 
+    playerBarChartCanvas = document.getElementById('playerBarChartCanvas');
+    playerBarChartCtx = playerBarChartCanvas.getContext('2d');
 
     // 獲取並初始化其他 DOM 元素
     teamSelector = $('#team-selector');
     teamNameDisplay = $('#team-name-display');
     hotzoneTooltip = document.getElementById('hotzone-tooltip'); // 獲取提示框元素
+    barChartDataSelector = $('#bar-chart-data-selector'); // 初始化數據選擇器
 
     // 處理數據並填充選擇器
     processShotData();
     populateTeamSelector(); // 這會填充下拉選單，並設定預設的 "請選擇一支球隊"
+    loadPlayerVsOpponentData(); //載入球員對戰數據
 
     // 設置事件監聽器
     teamSelector.on('change', function() {
-        const selectedTeam = $(this).val();
-        updateHotzoneDisplay(selectedTeam);
-    });
+            const selectedTeam = $(this).val();
+            updateHotzoneDisplay(selectedTeam); // 繪製熱區圖和散佈圖
+            // *** 當球隊選擇改變時，也更新長條圖 ***
+            const selectedMetric = barChartDataSelector.val();
+            if (selectedMetric) { // 只有當數據類型已選擇時才更新長條圖
+                drawBarChart(selectedTeam, selectedMetric);
+            });
 
-    $('.team-logo-item').on('click', function(e) {
-        e.preventDefault();
-        const teamId = $(this).data('team-id');
-        if (teamId) {
-            teamSelector.val(teamId);
-            updateHotzoneDisplay(teamId);
-            location.hash = '#team-dashboard';
+        $('.team-logo-item').on('click', function(e) {
+            e.preventDefault();
+            const teamId = $(this).data('team-id');
+            if (teamId) {
+                teamSelector.val(teamId);
+                updateHotzoneDisplay(teamId);
+                location.hash = '#team-dashboard';
+            }
+        });
+
+        // *** 新增：長條圖數據選擇器的 change 事件監聽器 ***
+        barChartDataSelector.on('change', function() {
+            const selectedTeam = teamSelector.val(); // 獲取當前選中的球隊
+            const selectedMetric = $(this).val(); // 獲取選中的數據類型
+            if (selectedTeam && selectedMetric) { // 只有當球隊和數據類型都已選擇時才繪製長條圖
+                drawBarChart(selectedTeam, selectedMetric);
+            } else if (!selectedMetric) { // 如果選擇了 "請選擇數據類型"
+                if (playerBarChart) {
+                    playerBarChart.destroy(); // 銷毀圖表
+                }
+            }
+        });
+
+        // 初始繪圖邏輯：現在交由 ResizeObserver 和 teamSelector 的 change 事件處理
+        let initialSelectedTeam = teamSelector.val(); // 獲取當前選擇器中的值
+
+        // 如果當前沒有選定的球隊 (例如，預設選項是 disabled selected)
+        if (!initialSelectedTeam || initialSelectedTeam === "") {
+            // 嘗試選擇第一個非 "Average" 的球隊作為預設顯示
+            const firstAvailableTeam = Array.from(teamDataOffenseMap.keys()).find(key => key !== 'Average');
+            if (firstAvailableTeam) {
+                teamSelector.val(firstAvailableTeam); // 將這個球隊設定為選擇器中的值
+                initialSelectedTeam = firstAvailableTeam; // 更新變數
+            }
         }
-    });
 
-    // 初始繪圖邏輯：現在交由 ResizeObserver 和 teamSelector 的 change 事件處理
-    let initialSelectedTeam = teamSelector.val(); // 獲取當前選擇器中的值
+        if (initialSelectedTeam) {
+            updateHotzoneDisplay(initialSelectedTeam);
+            // 在初始載入時不立即繪製長條圖，等待用戶選擇數據類型或由 ResizeObserver 觸發
+            // 初始載入時就顯示長條圖，預設選擇第一個數據類型
+            if (playerVsOpponentData.length > 0 && barChartDataSelector.val() === "Points Per Game") {
+                const firstMetric = Object.keys(playerVsOpponentData[0]).filter(h => h !== 'player' && h !== 'Value')[0];
+                if (firstMetric) {
+                    barChartDataSelector.val(firstMetric);
+                    drawBarChart(initialSelectedTeam, firstMetric);
+                }
+            }
+        }
 
-    // 如果當前沒有選定的球隊 (例如，預設選項是 disabled selected)
-    if (!initialSelectedTeam || initialSelectedTeam === "") {
-        // 嘗試選擇第一個非 "Average" 的球隊作為預設顯示
-        const firstAvailableTeam = Array.from(teamDataOffenseMap.keys()).find(key => key !== 'Average');
-        if (firstAvailableTeam) {
-            teamSelector.val(firstAvailableTeam); // 將這個球隊設定為選擇器中的值
-            initialSelectedTeam = firstAvailableTeam; // 更新變數
+        // *** 新增：ResizeObserver 監聽器 ***
+        // 監聽 playerScatterCanvas 的尺寸變化，並在變化時重新繪製
+        const scatterCanvasObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                // 確保是 playerScatterCanvas 的尺寸變化
+                if (entry.target === playerScatterCanvas) {
+                    const currentTeam = teamSelector.val(); // 獲取當前選中的球隊
+                    if (currentTeam) {
+                        // 重新繪製散佈圖，確保使用最新的 Canvas 尺寸
+                        drawScatterPlot(currentTeam);
+                    }
+                }
+            }
+        }); scatterCanvasObserver.observe(playerScatterCanvas); // 開始監聽 playerScatterCanvas
+
+        // 首次載入時，如果已經有選定的球隊，觸發一次更新 (ResizeObserver 會在首次觀察到尺寸時觸發繪圖)
+        if (initialSelectedTeam) {
+            updateHotzoneDisplay(initialSelectedTeam); // 會觸發熱區圖和散佈圖的繪製
+        }
+
+
+        // --- 設定滑鼠事件監聽器 ---
+        offenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, offenseCanvas, 'offense')); offenseCanvas.addEventListener('mouseout', () => hideTooltip('offense'));
+
+        defenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, defenseCanvas, 'defense')); defenseCanvas.addEventListener('mouseout', () => hideTooltip('defense'));
+
+        // 散佈圖的滑鼠事件監聽器
+        playerScatterCanvas.addEventListener('mousemove', (e) => handleScatterMouseMove(e)); playerScatterCanvas.addEventListener('mouseout', () => hideTooltip('scatter'));
+    }
+
+
+
+
+
+
+    // --- 數據處理函數 ---
+    function processShotData() {
+        // 處理進攻數據
+        offenseShotData.forEach(data => {
+            if (data.team === "Average") {
+                leagueAverageOffense = data;
+            } else {
+                teamDataOffenseMap.set(data.team, data);
+            }
+        });
+
+        // 處理防守數據
+        defenseShotData.forEach(data => {
+            if (data.team === "Average") {
+                leagueAverageDefense = data;
+            } else {
+                teamDataDefenseMap.set(data.team, data);
+            }
+        });
+
+        console.log("聯盟平均進攻數據:", leagueAverageOffense);
+        console.log("球隊進攻數據映射:", teamDataOffenseMap);
+    }
+
+    // --- 填充球隊選擇器下拉選單 ---
+    function populateTeamSelector() {
+        teamSelector.empty(); // 清空現有選項
+        teamSelector.append($('<option disabled selected value="">請選擇一支球隊</option>')); // 添加預設選項
+
+        const teamNames = Array.from(teamDataOffenseMap.keys()).filter(team => team !== "Average").sort();
+        teamNames.forEach(team => {
+            teamSelector.append($('<option>', {
+                value: team,
+                text: team
+            }));
+        });
+    }
+
+    // --- 根據命中率差異獲取顏色 ---
+    function getColorForDifference(difference) {
+        // difference 是百分點差異 (例如 +10, -5)
+        if (difference >= 10) {
+            return 'rgba(255, 0, 0, 0.7)'; // 紅色 (高 10 以上)
+        } else if (difference >= 5) {
+            return 'rgba(230, 100, 100, 0.7)'; // 淺紅色/橘色 (高 5 以上)
+        } else if (difference <= -10) {
+            return 'rgba(0, 0, 255, 0.7)'; // 藍色 (低 10 以上)
+        } else if (difference <= -5) {
+            return 'rgba(100, 100, 255, 0.4)'; // 淺藍色 (低 5 以上)
+        } else {
+            return 'rgba(255, 255, 100, 0.4)'; // 淡黃色 (介於高 5 ~ 低 5 之間)
         }
     }
 
-    // *** 新增：ResizeObserver 監聽器 ***
-    // 監聽 playerScatterCanvas 的尺寸變化，並在變化時重新繪製
-    const scatterCanvasObserver = new ResizeObserver(entries => {
-        for (let entry of entries) {
-            // 確保是 playerScatterCanvas 的尺寸變化
-            if (entry.target === playerScatterCanvas) {
-                const currentTeam = teamSelector.val(); // 獲取當前選中的球隊
-                if (currentTeam) {
-                    // 重新繪製散佈圖，確保使用最新的 Canvas 尺寸
-                    drawScatterPlot(currentTeam);
+    // --- 繪製球場熱區圖 ---
+    function drawCourt(canvasId, teamId, dataType) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) {
+            console.error(`找不到 Canvas 元素: ${canvasId}`);
+            return;
+        }
+        const ctx = canvas.getContext('2d');
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // 清空畫布
+
+        // 繪製背景圖片
+        if (courtImage.complete && courtImage.naturalWidth > 0) {
+            // 將圖片繪製到整個 Canvas 上，自動縮放以適應
+            ctx.drawImage(courtImage, 0, 0, canvas.width, canvas.height);
+        } else {
+            // 如果圖片未載入或載入失敗，則使用純色背景
+            ctx.fillStyle = '#000'; // 黑色背景
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        ctx.strokeStyle = '#555'; // 邊框顏色
+        ctx.lineWidth = 2; // 邊框寬度
+
+        let teamData = null;
+        let leagueAvgData = null;
+
+        if (dataType === 'offense') {
+            teamData = teamDataOffenseMap.get(teamId);
+            leagueAvgData = leagueAverageOffense;
+        } else if (dataType === 'defense') {
+            // 確保 defenseShotData 和 teamDataDefenseMap 已被填充
+            teamData = teamDataDefenseMap.get(teamId);
+            leagueAvgData = leagueAverageDefense;
+        }
+
+        courtPolygonsData.features.forEach(feature => {
+            const zoneName = feature.properties.name;
+            const coordinates = feature.geometry.coordinates[0];
+
+            let fillColor = 'rgba(128, 128, 128, 0.6)'; // 預設灰色 (無數據)
+
+            let teamHitRate = null;
+            // 檢查 teamData 是否存在，並且 teamData 物件中是否有 zoneName 這個屬性
+            if (teamData && teamData.hasOwnProperty(zoneName)) {
+                teamHitRate = teamData[zoneName];
+            }
+
+            let leagueAvgHitRate = null;
+            // 檢查 leagueAvgData 是否存在，並且 leagueAvgData 物件中是否有 zoneName 這個屬性
+            if (leagueAvgData && leagueAvgData.hasOwnProperty(zoneName)) {
+                leagueAvgHitRate = leagueAvgData[zoneName];
+            }
+
+            // 只有當兩者都有有效數據時才計算差異並上色
+            if (teamHitRate !== null && leagueAvgHitRate !== null) {
+                const difference = teamHitRate - leagueAvgHitRate;
+                fillColor = getColorForDifference(difference);
+            }
+
+            ctx.beginPath();
+            if (coordinates.length > 0) {
+                ctx.moveTo(coordinates[0][0], coordinates[0][1]);
+                for (let i = 1; i < coordinates.length; i++) {
+                    ctx.lineTo(coordinates[i][0], coordinates[i][1]);
+                }
+            }
+            ctx.closePath();
+
+            ctx.fillStyle = fillColor;
+            ctx.fill();
+            ctx.stroke();
+        });
+    }
+
+
+    // --- 繪製散佈圖的函數 ---
+    function drawScatterPlot(teamId) {
+        if (!playerScatterCtx || !playerScatterCanvas) return;
+
+        // 設定 Canvas 的實際解析度以確保清晰度，並保持響應式佈局
+        const rect = playerScatterCanvas.getBoundingClientRect();
+        playerScatterCanvas.width = rect.width * window.devicePixelRatio;
+        playerScatterCanvas.height = rect.height * window.devicePixelRatio;
+        playerScatterCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+        playerScatterCtx.clearRect(0, 0, playerScatterCanvas.width / window.devicePixelRatio, playerScatterCanvas.height / window.devicePixelRatio);
+
+        const margin = 40;
+        const width = playerScatterCanvas.width / window.devicePixelRatio; // CSS 寬度
+        const height = playerScatterCanvas.height / window.devicePixelRatio; // CSS 高度
+
+        // 篩選當前球隊的球員
+        const teamPlayers = allPlayersData.filter(p => p.team === teamId && p.player !== "average");
+
+        if (teamPlayers.length === 0) {
+            playerScatterCtx.fillStyle = 'white'; // 確保文字在黑色背景上可見
+            playerScatterCtx.font = '16px Arial';
+            playerScatterCtx.textAlign = 'center';
+            playerScatterCtx.fillText('此隊伍無球員數據或數據錯誤', width / 2, height / 2);
+            return;
+        }
+
+        // *** 修正點：設定固定的軸範圍，而不是完全依賴數據的 min/max ***
+        // 這些值是根據常見的 Offensive/Defensive Rating 範圍來估計的
+        const fixedOffensiveMin = 70;
+        const fixedOffensiveMax = 150;
+        const fixedDefensiveMin = 70;
+        const fixedDefensiveMax = 150;
+
+        // 確保聯盟平均值也在範圍內，並稍微擴展邊界
+        const xMin = Math.min(fixedOffensiveMin, leagueOffensiveRatingAvg) - 5;
+        const xMax = Math.max(fixedOffensiveMax, leagueOffensiveRatingAvg) + 5;
+        const yMin = Math.min(fixedDefensiveMin, leagueDefensiveRatingAvg) - 5;
+        const yMax = Math.max(fixedDefensiveMax, leagueDefensiveRatingAvg) + 5;
+
+
+        // 軸線繪製函數
+        function drawAxis(ctx, x1, y1, x2, y2, color, label, isXAxis) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+
+            ctx.fillStyle = color;
+            ctx.font = '12px Arial'; // 調整軸標籤字體大小
+            ctx.textAlign = 'center';
+
+            // 繪製箭頭和標籤
+            if (isXAxis) {
+                ctx.beginPath();
+                ctx.moveTo(x2, y2);
+                ctx.lineTo(x2 - 5, y2 - 5);
+                ctx.lineTo(x2 - 5, y2 + 5);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillText(label, x2 - 20, y2 + 20); // X軸標籤位置
+            } else { // Y-axis
+                ctx.beginPath();
+                ctx.moveTo(x2, y2);
+                ctx.lineTo(x2 - 5, y2 + 5);
+                ctx.lineTo(x2 + 5, y2 + 5);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillText(label, x2 - 20, y2 + 10); // Y軸標籤位置
+            }
+        }
+
+        // 數據到像素的轉換函數
+        const scaleX = (value) => margin + (value - xMin) / (xMax - xMin) * (width - 2 * margin);
+        const scaleY = (value) => height - margin - (value - yMin) / (yMax - yMin) * (height - 2 * margin); // Y軸反轉
+
+        // 繪製座標軸 (以聯盟平均值為原點)
+        const originX = scaleX(leagueOffensiveRatingAvg);
+        const originY = scaleY(leagueDefensiveRatingAvg);
+
+        // 繪製 X 軸 (Offensive Rating)
+        drawAxis(playerScatterCtx, margin, originY, width - margin, originY, 'gray', 'Offensive Rating', true);
+        // 繪製 Y 軸 (Defensive Rating)
+        drawAxis(playerScatterCtx, originX, height - margin, originX, margin, 'gray', 'Defensive Rating', false);
+
+        // 繪製每個球員的點
+        playerScatterCtx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // 球員點的顏色
+        playerScatterCtx.font = '10px Arial';
+        playerScatterCtx.textAlign = 'left';
+        playerScatterCtx.textBaseline = 'middle';
+
+        playerScatterCtx.playersOnPlot = []; // 清空之前的數據
+
+        teamPlayers.forEach(player => {
+            const x = scaleX(player["Offensive Rating"]);
+            const y = scaleY(player["Defensive Rating"]);
+
+            // 檢查點是否在可見範圍內，避免繪製超出邊界的點
+            if (x >= margin && x <= width - margin && y >= margin && y <= height - margin) {
+                playerScatterCtx.beginPath();
+                playerScatterCtx.arc(x, y, 4, 0, Math.PI * 2); // 點半徑
+                playerScatterCtx.fill();
+
+                playerScatterCtx.fillStyle = 'white'; // 球員名字顏色
+                playerScatterCtx.fillText(player.player, x + 8, y); // 顯示球員名字
+
+                // 儲存球員點位資訊用於滑鼠互動
+                playerScatterCtx.playersOnPlot.push({
+                    player: player.player,
+                    offRtg: player["Offensive Rating"],
+                    defRtg: player["Defensive Rating"],
+                    x: x,
+                    y: y,
+                    radius: 4 // 點的半徑，用於點擊判斷
+                });
+            }
+        });
+
+        // 繪製原點標記
+        playerScatterCtx.fillStyle = 'yellow'; // 原點顏色
+        playerScatterCtx.beginPath();
+        playerScatterCtx.arc(originX, originY, 6, 0, Math.PI * 2); // 原點半徑稍大
+        playerScatterCtx.fill();
+        playerScatterCtx.fillText('聯盟平均', originX + 10, originY - 10); // 原點標籤
+    }
+
+    // --- 新增：繪製長條圖的函數 (基本結構，待填充邏輯) ---
+    function drawBarChart(teamId, metric) {
+        if (!playerBarChartCtx || !playerBarChartCanvas) return;
+
+        // 清理之前的圖表實例
+        if (playerBarChart) {
+            playerBarChart.destroy();
+        }
+
+        // 設定 Canvas 的實際解析度
+        const rect = playerBarChartCanvas.getBoundingClientRect();
+        playerBarChartCanvas.width = rect.width * window.devicePixelRatio;
+        playerBarChartCanvas.height = rect.height * window.devicePixelRatio; // 使用 CSS 高度
+        playerBarChartCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+        // 過濾數據：找到所有球員在對戰 teamId 時的數據
+        const filteredData = playerVsOpponentData.filter(row => row.Value === teamId);
+
+        // 排序數據：根據選定的 metric 降序排序
+        const sortedData = [...filteredData].sort((a, b) => b[metric] - a[metric]);
+
+        // 取前 10 名
+        const top10Data = sortedData.slice(0, 10);
+
+        // 準備 Chart.js 所需的 labels (X 軸) 和 data (Y 軸)
+        const labels = top10Data.map(row => row.player);
+        const dataValues = top10Data.map(row => row[metric]);
+
+        // 繪製長條圖
+        playerBarChart = new Chart(playerBarChartCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `${teamId} 對戰表現 - ${metric}`,
+                    data: dataValues,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // 條形顏色
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // 讓 Canvas 尺寸更具彈性
+                indexAxis: 'x', // X軸是分類軸，Y軸是數值軸
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: metric
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: '球員'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: `${teamId} 對戰表現最佳球員 - ${metric} (前10名)`
+                    },
+                    // *** 待處理：自定義提示框邏輯 ***
+                    tooltip: {
+                        enabled: false, // 禁用 Chart.js 內建提示框
+                        external: function(context) {
+                            // Chart.js 的提示框回調函數
+                            const tooltipModel = context.tooltip;
+                            if (tooltipModel.opacity === 0) {
+                                hideTooltip('playerBarChart'); // 隱藏提示框
+                                return;
+                            }
+
+                            if (tooltipModel.dataPoints.length > 0) {
+                                const dataPoint = tooltipModel.dataPoints[0];
+                                const player = dataPoint.label;
+                                const value = dataPoint.raw;
+                                const rank = dataPoint.dataIndex + 1; // 排名是從 1 開始
+
+                                const content = `
+                                <strong>球員:</strong> ${player}<br>
+                                <strong>${metric}:</strong> ${value}<br>
+                                <strong>排名:</strong> ${rank}
+                            `;
+
+                                // 獲取滑鼠在文件中的位置 (需要從 Canvas 座標轉換)
+                                const canvasRect = playerBarChartCanvas.getBoundingClientRect();
+                                const mouseX = canvasRect.left + tooltipModel.caretX;
+                                const mouseY = canvasRect.top + tooltipModel.caretY;
+
+                                showTooltip(mouseX, mouseY, content); // 使用您現有的 showTooltip 函數
+                            } else {
+                                hideTooltip('playerBarChart');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+    // --- 熱區圖和散佈圖顯示 ---
+    function updateHotzoneDisplay(teamId) {
+        if (!teamId) {
+            teamNameDisplay.text("請選擇一支球隊查看熱區圖");
+            offenseCtx.clearRect(0, 0, offenseCanvas.width, offenseCanvas.height);
+            defenseCtx.clearRect(0, 0, defenseCanvas.width, defenseCanvas.height);
+            playerScatterCtx.clearRect(0, 0, playerScatterCanvas.width, playerScatterCanvas.height); // 清空散佈圖
+            return;
+        }
+
+        teamNameDisplay.text(`${teamId} 球隊數據`); // 更新標題
+
+        // 繪製進攻熱區圖
+        drawCourt('offenseHotzoneCanvas', teamId, 'offense');
+
+        // 繪製防守熱區圖
+        drawCourt('defenseHotzoneCanvas', teamId, 'defense');
+
+        // 繪製球員散佈圖
+        drawScatterPlot(teamId);
+    }
+
+    // --- 處理 Dimension 模板的頁面切換 ---
+    // 監聽 URL Hash 變化，以確保當直接訪問 #team-dashboard 時也能載入數據
+    $(window).on('hashchange', function() {
+        if (location.hash === '#team-dashboard') {
+            const selectedTeam = teamSelector.val();
+            if (selectedTeam) {
+                updateHotzoneDisplay(selectedTeam);
+            } else {
+                // 如果從其他頁面切換過來但沒有選擇球隊，預設顯示第一個球隊
+                const firstTeam = Array.from(teamDataOffenseMap.keys()).find(key => key !== 'Average');
+                if (firstTeam) {
+                    teamSelector.val(firstTeam);
+                    updateHotzoneDisplay(firstTeam);
                 }
             }
         }
     });
-    scatterCanvasObserver.observe(playerScatterCanvas); // 開始監聽 playerScatterCanvas
 
-    // 首次載入時，如果已經有選定的球隊，觸發一次更新 (ResizeObserver 會在首次觀察到尺寸時觸發繪圖)
-    if (initialSelectedTeam) {
-        updateHotzoneDisplay(initialSelectedTeam); // 會觸發熱區圖和散佈圖的繪製
+    // --- 輔助函數：獲取滑鼠在 Canvas 上的坐標 ---
+    function getMousePos(canvas, evt) {
+        const rect = canvas.getBoundingClientRect(); // 獲取 Canvas 的大小和位置
+        return {
+            x: evt.clientX - rect.left,
+            y: evt.clientY - rect.top
+        };
     }
 
+    // --- 輔助函數：判斷點是否在多邊形內 (Ray Casting Algorithm) ---
+    function isPointInPolygon(point, polygon) {
+        // point = [x, y]
+        // polygon = [[x1, y1], [x2, y2], ...]
+        let x = point.x,
+            y = point.y;
+        let inside = false;
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+            let xi = polygon[i][0],
+                yi = polygon[i][1];
+            let xj = polygon[j][0],
+                yj = polygon[j][1];
 
-    // --- 設定滑鼠事件監聽器 ---
-    offenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, offenseCanvas, 'offense'));
-    offenseCanvas.addEventListener('mouseout', () => hideTooltip('offense'));
-
-    defenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, defenseCanvas, 'defense'));
-    defenseCanvas.addEventListener('mouseout', () => hideTooltip('defense'));
-
-    // 散佈圖的滑鼠事件監聽器
-    playerScatterCanvas.addEventListener('mousemove', (e) => handleScatterMouseMove(e));
-    playerScatterCanvas.addEventListener('mouseout', () => hideTooltip('scatter'));
-}
-
-
-
-
-// --- 數據處理函數 ---
-function processShotData() {
-    // 處理進攻數據
-    offenseShotData.forEach(data => {
-        if (data.team === "Average") {
-            leagueAverageOffense = data;
-        } else {
-            teamDataOffenseMap.set(data.team, data);
+            // 判斷射線是否與邊相交
+            let intersect = ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            if (intersect) inside = !inside;
         }
-    });
-
-    // 處理防守數據
-    defenseShotData.forEach(data => {
-        if (data.team === "Average") {
-            leagueAverageDefense = data;
-        } else {
-            teamDataDefenseMap.set(data.team, data);
-        }
-    });
-
-    console.log("聯盟平均進攻數據:", leagueAverageOffense);
-    console.log("球隊進攻數據映射:", teamDataOffenseMap);
-}
-
-// --- 填充球隊選擇器下拉選單 ---
-function populateTeamSelector() {
-    teamSelector.empty(); // 清空現有選項
-    teamSelector.append($('<option disabled selected value="">請選擇一支球隊</option>')); // 添加預設選項
-
-    const teamNames = Array.from(teamDataOffenseMap.keys()).filter(team => team !== "Average").sort();
-    teamNames.forEach(team => {
-        teamSelector.append($('<option>', {
-            value: team,
-            text: team
-        }));
-    });
-}
-
-// --- 根據命中率差異獲取顏色 ---
-function getColorForDifference(difference) {
-    // difference 是百分點差異 (例如 +10, -5)
-    if (difference >= 10) {
-        return 'rgba(255, 0, 0, 0.7)'; // 紅色 (高 10 以上)
-    } else if (difference >= 5) {
-        return 'rgba(230, 100, 100, 0.7)'; // 淺紅色/橘色 (高 5 以上)
-    } else if (difference <= -10) {
-        return 'rgba(0, 0, 255, 0.7)'; // 藍色 (低 10 以上)
-    } else if (difference <= -5) {
-        return 'rgba(100, 100, 255, 0.4)'; // 淺藍色 (低 5 以上)
-    } else {
-        return 'rgba(255, 255, 100, 0.4)'; // 淡黃色 (介於高 5 ~ 低 5 之間)
-    }
-}
-
-// --- 繪製球場熱區圖 ---
-function drawCourt(canvasId, teamId, dataType) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) {
-        console.error(`找不到 Canvas 元素: ${canvasId}`);
-        return;
-    }
-    const ctx = canvas.getContext('2d');
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // 清空畫布
-
-    // 繪製背景圖片
-    if (courtImage.complete && courtImage.naturalWidth > 0) {
-        // 將圖片繪製到整個 Canvas 上，自動縮放以適應
-        ctx.drawImage(courtImage, 0, 0, canvas.width, canvas.height);
-    } else {
-        // 如果圖片未載入或載入失敗，則使用純色背景
-        ctx.fillStyle = '#000'; // 黑色背景
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        return inside;
     }
 
-    ctx.strokeStyle = '#555'; // 邊框顏色
-    ctx.lineWidth = 2; // 邊框寬度
+    // --- 滑鼠移動事件處理函數 (熱區圖) ---
+    function handleCanvasMouseMove(e, canvas, dataType) {
+        const mousePos = getMousePos(canvas, e);
+        const currentTeamId = teamSelector.val();
 
-    let teamData = null;
-    let leagueAvgData = null;
+        let teamDataMap = (dataType === 'offense') ? teamDataOffenseMap : teamDataDefenseMap;
+        let leagueAvgDataMap = (dataType === 'offense') ? leagueAverageOffense : leagueAverageDefense;
+        let currentHoveredTracker = (dataType === 'offense') ? currentOffenseHoveredZone : currentDefenseHoveredZone;
 
-    if (dataType === 'offense') {
-        teamData = teamDataOffenseMap.get(teamId);
-        leagueAvgData = leagueAverageOffense;
-    } else if (dataType === 'defense') {
-        // 確保 defenseShotData 和 teamDataDefenseMap 已被填充
-        teamData = teamDataDefenseMap.get(teamId);
-        leagueAvgData = leagueAverageDefense;
-    }
+        let hoveredZone = null;
 
-    courtPolygonsData.features.forEach(feature => {
-        const zoneName = feature.properties.name;
-        const coordinates = feature.geometry.coordinates[0];
+        // 遍歷所有熱區分區，判斷滑鼠是否在其中一個多邊形內
+        for (const feature of courtPolygonsData.features) {
+            const zoneName = feature.properties.name;
+            const coordinates = feature.geometry.coordinates[0]; // 獲取多邊形的坐標
 
-        let fillColor = 'rgba(128, 128, 128, 0.6)'; // 預設灰色 (無數據)
-
-        let teamHitRate = null;
-        // 檢查 teamData 是否存在，並且 teamData 物件中是否有 zoneName 這個屬性
-        if (teamData && teamData.hasOwnProperty(zoneName)) {
-            teamHitRate = teamData[zoneName];
-        }
-
-        let leagueAvgHitRate = null;
-        // 檢查 leagueAvgData 是否存在，並且 leagueAvgData 物件中是否有 zoneName 這個屬性
-        if (leagueAvgData && leagueAvgData.hasOwnProperty(zoneName)) {
-            leagueAvgHitRate = leagueAvgData[zoneName];
-        }
-
-        // 只有當兩者都有有效數據時才計算差異並上色
-        if (teamHitRate !== null && leagueAvgHitRate !== null) {
-            const difference = teamHitRate - leagueAvgHitRate;
-            fillColor = getColorForDifference(difference);
-        }
-
-        ctx.beginPath();
-        if (coordinates.length > 0) {
-            ctx.moveTo(coordinates[0][0], coordinates[0][1]);
-            for (let i = 1; i < coordinates.length; i++) {
-                ctx.lineTo(coordinates[i][0], coordinates[i][1]);
-            }
-        }
-        ctx.closePath();
-
-        ctx.fillStyle = fillColor;
-        ctx.fill();
-        ctx.stroke();
-    });
-}
-
-
-// --- 繪製散佈圖的函數 ---
-function drawScatterPlot(teamId) {
-    if (!playerScatterCtx || !playerScatterCanvas) return;
-
-    // 設定 Canvas 的實際解析度以確保清晰度，並保持響應式佈局
-    const rect = playerScatterCanvas.getBoundingClientRect();
-    playerScatterCanvas.width = rect.width * window.devicePixelRatio;
-    playerScatterCanvas.height = rect.height * window.devicePixelRatio;
-    playerScatterCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
-
-    playerScatterCtx.clearRect(0, 0, playerScatterCanvas.width / window.devicePixelRatio, playerScatterCanvas.height / window.devicePixelRatio);
-
-    const margin = 40;
-    const width = playerScatterCanvas.width / window.devicePixelRatio; // CSS 寬度
-    const height = playerScatterCanvas.height / window.devicePixelRatio; // CSS 高度
-
-    // 篩選當前球隊的球員
-    const teamPlayers = allPlayersData.filter(p => p.team === teamId && p.player !== "average");
-
-    if (teamPlayers.length === 0) {
-        playerScatterCtx.fillStyle = 'white'; // 確保文字在黑色背景上可見
-        playerScatterCtx.font = '16px Arial';
-        playerScatterCtx.textAlign = 'center';
-        playerScatterCtx.fillText('此隊伍無球員數據或數據錯誤', width / 2, height / 2);
-        return;
-    }
-
-    // *** 修正點：設定固定的軸範圍，而不是完全依賴數據的 min/max ***
-    // 這些值是根據常見的 Offensive/Defensive Rating 範圍來估計的
-    const fixedOffensiveMin = 70;
-    const fixedOffensiveMax = 150;
-    const fixedDefensiveMin = 70;
-    const fixedDefensiveMax = 150;
-
-    // 確保聯盟平均值也在範圍內，並稍微擴展邊界
-    const xMin = Math.min(fixedOffensiveMin, leagueOffensiveRatingAvg) - 5;
-    const xMax = Math.max(fixedOffensiveMax, leagueOffensiveRatingAvg) + 5;
-    const yMin = Math.min(fixedDefensiveMin, leagueDefensiveRatingAvg) - 5;
-    const yMax = Math.max(fixedDefensiveMax, leagueDefensiveRatingAvg) + 5;
-
-
-    // 軸線繪製函數
-    function drawAxis(ctx, x1, y1, x2, y2, color, label, isXAxis) {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-
-        ctx.fillStyle = color;
-        ctx.font = '12px Arial'; // 調整軸標籤字體大小
-        ctx.textAlign = 'center';
-
-        // 繪製箭頭和標籤
-        if (isXAxis) {
-            ctx.beginPath();
-            ctx.moveTo(x2, y2);
-            ctx.lineTo(x2 - 5, y2 - 5);
-            ctx.lineTo(x2 - 5, y2 + 5);
-            ctx.closePath();
-            ctx.fill();
-            ctx.fillText(label, x2 - 20, y2 + 20); // X軸標籤位置
-        } else { // Y-axis
-            ctx.beginPath();
-            ctx.moveTo(x2, y2);
-            ctx.lineTo(x2 - 5, y2 + 5);
-            ctx.lineTo(x2 + 5, y2 + 5);
-            ctx.closePath();
-            ctx.fill();
-            ctx.fillText(label, x2 - 20, y2 + 10); // Y軸標籤位置
-        }
-    }
-
-    // 數據到像素的轉換函數
-    const scaleX = (value) => margin + (value - xMin) / (xMax - xMin) * (width - 2 * margin);
-    const scaleY = (value) => height - margin - (value - yMin) / (yMax - yMin) * (height - 2 * margin); // Y軸反轉
-
-    // 繪製座標軸 (以聯盟平均值為原點)
-    const originX = scaleX(leagueOffensiveRatingAvg);
-    const originY = scaleY(leagueDefensiveRatingAvg);
-
-    // 繪製 X 軸 (Offensive Rating)
-    drawAxis(playerScatterCtx, margin, originY, width - margin, originY, 'gray', 'Offensive Rating', true);
-    // 繪製 Y 軸 (Defensive Rating)
-    drawAxis(playerScatterCtx, originX, height - margin, originX, margin, 'gray', 'Defensive Rating', false);
-
-    // 繪製每個球員的點
-    playerScatterCtx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // 球員點的顏色
-    playerScatterCtx.font = '10px Arial';
-    playerScatterCtx.textAlign = 'left';
-    playerScatterCtx.textBaseline = 'middle';
-
-    playerScatterCtx.playersOnPlot = []; // 清空之前的數據
-
-    teamPlayers.forEach(player => {
-        const x = scaleX(player["Offensive Rating"]);
-        const y = scaleY(player["Defensive Rating"]);
-
-        // 檢查點是否在可見範圍內，避免繪製超出邊界的點
-        if (x >= margin && x <= width - margin && y >= margin && y <= height - margin) {
-            playerScatterCtx.beginPath();
-            playerScatterCtx.arc(x, y, 4, 0, Math.PI * 2); // 點半徑
-            playerScatterCtx.fill();
-
-            playerScatterCtx.fillStyle = 'white'; // 球員名字顏色
-            playerScatterCtx.fillText(player.player, x + 8, y); // 顯示球員名字
-
-            // 儲存球員點位資訊用於滑鼠互動
-            playerScatterCtx.playersOnPlot.push({
-                player: player.player,
-                offRtg: player["Offensive Rating"],
-                defRtg: player["Defensive Rating"],
-                x: x,
-                y: y,
-                radius: 4 // 點的半徑，用於點擊判斷
-            });
-        }
-    });
-
-    // 繪製原點標記
-    playerScatterCtx.fillStyle = 'yellow'; // 原點顏色
-    playerScatterCtx.beginPath();
-    playerScatterCtx.arc(originX, originY, 6, 0, Math.PI * 2); // 原點半徑稍大
-    playerScatterCtx.fill();
-    playerScatterCtx.fillText('聯盟平均', originX + 10, originY - 10); // 原點標籤
-}
-
-// --- 熱區圖和散佈圖顯示 ---
-function updateHotzoneDisplay(teamId) {
-    if (!teamId) {
-        teamNameDisplay.text("請選擇一支球隊查看熱區圖");
-        offenseCtx.clearRect(0, 0, offenseCanvas.width, offenseCanvas.height);
-        defenseCtx.clearRect(0, 0, defenseCanvas.width, defenseCanvas.height);
-        playerScatterCtx.clearRect(0, 0, playerScatterCanvas.width, playerScatterCanvas.height); // 清空散佈圖
-        return;
-    }
-
-    teamNameDisplay.text(`${teamId} 球隊數據`); // 更新標題
-
-    // 繪製進攻熱區圖
-    drawCourt('offenseHotzoneCanvas', teamId, 'offense');
-
-    // 繪製防守熱區圖
-    drawCourt('defenseHotzoneCanvas', teamId, 'defense');
-
-    // 繪製球員散佈圖
-    drawScatterPlot(teamId);
-}
-
-// --- 處理 Dimension 模板的頁面切換 ---
-// 監聽 URL Hash 變化，以確保當直接訪問 #team-dashboard 時也能載入數據
-$(window).on('hashchange', function() {
-    if (location.hash === '#team-dashboard') {
-        const selectedTeam = teamSelector.val();
-        if (selectedTeam) {
-            updateHotzoneDisplay(selectedTeam);
-        } else {
-            // 如果從其他頁面切換過來但沒有選擇球隊，預設顯示第一個球隊
-            const firstTeam = Array.from(teamDataOffenseMap.keys()).find(key => key !== 'Average');
-            if (firstTeam) {
-                teamSelector.val(firstTeam);
-                updateHotzoneDisplay(firstTeam);
-            }
-        }
-    }
-});
-
-// --- 輔助函數：獲取滑鼠在 Canvas 上的坐標 ---
-function getMousePos(canvas, evt) {
-    const rect = canvas.getBoundingClientRect(); // 獲取 Canvas 的大小和位置
-    return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
-    };
-}
-
-// --- 輔助函數：判斷點是否在多邊形內 (Ray Casting Algorithm) ---
-function isPointInPolygon(point, polygon) {
-    // point = [x, y]
-    // polygon = [[x1, y1], [x2, y2], ...]
-    let x = point.x,
-        y = point.y;
-    let inside = false;
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        let xi = polygon[i][0],
-            yi = polygon[i][1];
-        let xj = polygon[j][0],
-            yj = polygon[j][1];
-
-        // 判斷射線是否與邊相交
-        let intersect = ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-        if (intersect) inside = !inside;
-    }
-    return inside;
-}
-
-// --- 滑鼠移動事件處理函數 (熱區圖) ---
-function handleCanvasMouseMove(e, canvas, dataType) {
-    const mousePos = getMousePos(canvas, e);
-    const currentTeamId = teamSelector.val();
-
-    let teamDataMap = (dataType === 'offense') ? teamDataOffenseMap : teamDataDefenseMap;
-    let leagueAvgDataMap = (dataType === 'offense') ? leagueAverageOffense : leagueAverageDefense;
-    let currentHoveredTracker = (dataType === 'offense') ? currentOffenseHoveredZone : currentDefenseHoveredZone;
-
-    let hoveredZone = null;
-
-    // 遍歷所有熱區分區，判斷滑鼠是否在其中一個多邊形內
-    for (const feature of courtPolygonsData.features) {
-        const zoneName = feature.properties.name;
-        const coordinates = feature.geometry.coordinates[0]; // 獲取多邊形的坐標
-
-        // 由於 getMousePos 已經考慮了 devicePixelRatio，這裡的 coordinates 也應該與 Canvas 的繪圖坐標系一致
-        // 如果您的 GeoJSON 坐標與 Canvas 繪圖坐標系不一致，可能需要額外縮放或轉換
-        if (isPointInPolygon(mousePos, coordinates)) {
-            hoveredZone = zoneName;
-            break; // 找到第一個就跳出迴圈
-        }
-    }
-
-    if (hoveredZone && hoveredZone !== currentHoveredTracker) {
-        // 只有當滑鼠進入一個新的分區時才更新和顯示提示框
-        const zoneName = hoveredZone;
-        const teamSpecificData = teamDataMap.get(currentTeamId);
-        const teamHitRate = teamSpecificData && teamSpecificData.hasOwnProperty(zoneName) ? teamSpecificData[zoneName] : undefined;
-
-        const leagueAvgHitRate = leagueAvgDataMap && leagueAvgDataMap.hasOwnProperty(zoneName) ? leagueAvgDataMap[zoneName] : undefined;
-
-        let displayTeamRate = '無數據';
-        let displayLeagueRate = '無數據';
-        let displayDifference = '無數據';
-        let differenceClass = ''; // 用於 CSS 顏色類別
-
-        if (teamHitRate !== undefined && leagueAvgHitRate !== undefined) {
-            const difference = teamHitRate - leagueAvgHitRate;
-            displayTeamRate = `${teamHitRate.toFixed(2)}%`;
-            displayLeagueRate = `${leagueAvgHitRate.toFixed(2)}%`;
-            displayDifference = `${difference.toFixed(2)}%`;
-
-            if (difference > 0) {
-                displayDifference = `+${displayDifference}`;
-                differenceClass = 'positive-diff'; // 紅色
-            } else if (difference < 0) {
-                differenceClass = 'negative-diff'; // 藍色
-            } else {
-                differenceClass = 'neutral-diff'; // 黃色
+            // 由於 getMousePos 已經考慮了 devicePixelRatio，這裡的 coordinates 也應該與 Canvas 的繪圖坐標系一致
+            // 如果您的 GeoJSON 坐標與 Canvas 繪圖坐標系不一致，可能需要額外縮放或轉換
+            if (isPointInPolygon(mousePos, coordinates)) {
+                hoveredZone = zoneName;
+                break; // 找到第一個就跳出迴圈
             }
         }
 
-        const tooltipContent = `
+        if (hoveredZone && hoveredZone !== currentHoveredTracker) {
+            // 只有當滑鼠進入一個新的分區時才更新和顯示提示框
+            const zoneName = hoveredZone;
+            const teamSpecificData = teamDataMap.get(currentTeamId);
+            const teamHitRate = teamSpecificData && teamSpecificData.hasOwnProperty(zoneName) ? teamSpecificData[zoneName] : undefined;
+
+            const leagueAvgHitRate = leagueAvgDataMap && leagueAvgDataMap.hasOwnProperty(zoneName) ? leagueAvgDataMap[zoneName] : undefined;
+
+            let displayTeamRate = '無數據';
+            let displayLeagueRate = '無數據';
+            let displayDifference = '無數據';
+            let differenceClass = ''; // 用於 CSS 顏色類別
+
+            if (teamHitRate !== undefined && leagueAvgHitRate !== undefined) {
+                const difference = teamHitRate - leagueAvgHitRate;
+                displayTeamRate = `${teamHitRate.toFixed(2)}%`;
+                displayLeagueRate = `${leagueAvgHitRate.toFixed(2)}%`;
+                displayDifference = `${difference.toFixed(2)}%`;
+
+                if (difference > 0) {
+                    displayDifference = `+${displayDifference}`;
+                    differenceClass = 'positive-diff'; // 紅色
+                } else if (difference < 0) {
+                    differenceClass = 'negative-diff'; // 藍色
+                } else {
+                    differenceClass = 'neutral-diff'; // 黃色
+                }
+            }
+
+            const tooltipContent = `
             <strong>分區名稱：</strong> ${zoneName}<br>
             <strong>聯盟平均命中率：</strong> ${displayLeagueRate}<br>
             <strong>當前球隊命中率：</strong> ${displayTeamRate}<br>
             <strong>命中率正負值：</strong> <span class="${differenceClass}">${displayDifference}</span>
         `;
 
-        showTooltip(e.clientX, e.clientY, tooltipContent);
+            showTooltip(e.clientX, e.clientY, tooltipContent);
 
-        // 更新當前懸停的分區
-        if (dataType === 'offense') {
-            currentOffenseHoveredZone = hoveredZone;
-        } else {
-            currentDefenseHoveredZone = hoveredZone;
+            // 更新當前懸停的分區
+            if (dataType === 'offense') {
+                currentOffenseHoveredZone = hoveredZone;
+            } else {
+                currentDefenseHoveredZone = hoveredZone;
+            }
+
+        } else if (!hoveredZone && currentHoveredTracker) {
+            // 如果滑鼠離開了當前懸停的分區
+            hideTooltip(dataType);
         }
-
-    } else if (!hoveredZone && currentHoveredTracker) {
-        // 如果滑鼠離開了當前懸停的分區
-        hideTooltip(dataType);
     }
-}
 
-// --- 滑鼠移動事件處理函數 (散佈圖) ---
-function handleScatterMouseMove(e) {
-    const mousePos = getMousePos(playerScatterCanvas, e);
+    // --- 滑鼠移動事件處理函數 (散佈圖) ---
+    function handleScatterMouseMove(e) {
+        const mousePos = getMousePos(playerScatterCanvas, e);
 
-    let foundPlayer = null;
-    if (playerScatterCtx.playersOnPlot) {
-        for (const player of playerScatterCtx.playersOnPlot) {
-            // 判斷滑鼠是否在點的範圍內
-            const dist = Math.sqrt(Math.pow(mousePos.x - player.x, 2) + Math.pow(mousePos.y - player.y, 2));
-            if (dist < player.radius + 3) { // 稍微增加點擊範圍，讓滑鼠更容易觸發
-                foundPlayer = player;
-                break;
+        let foundPlayer = null;
+        if (playerScatterCtx.playersOnPlot) {
+            for (const player of playerScatterCtx.playersOnPlot) {
+                // 判斷滑鼠是否在點的範圍內
+                const dist = Math.sqrt(Math.pow(mousePos.x - player.x, 2) + Math.pow(mousePos.y - player.y, 2));
+                if (dist < player.radius + 3) { // 稍微增加點擊範圍，讓滑鼠更容易觸發
+                    foundPlayer = player;
+                    break;
+                }
             }
         }
-    }
 
-    if (foundPlayer && foundPlayer !== currentScatterHoveredPlayer) {
-        // 只有當滑鼠進入一個新的球員點時才更新和顯示提示框
-        const tooltipContent = `
+        if (foundPlayer && foundPlayer !== currentScatterHoveredPlayer) {
+            // 只有當滑鼠進入一個新的球員點時才更新和顯示提示框
+            const tooltipContent = `
             <strong>球員：</strong> ${foundPlayer.player}<br>
             <strong>進攻效率：</strong> ${foundPlayer.offRtg}<br>
             <strong>防守效率：</strong> ${foundPlayer.defRtg}
         `;
-        showTooltip(e.clientX, e.clientY, tooltipContent);
-        currentScatterHoveredPlayer = foundPlayer; // 更新懸停的球員
-    } else if (!foundPlayer && currentScatterHoveredPlayer) {
-        // 如果滑鼠離開了當前懸停的球員點
-        hideTooltip('scatter');
-    }
-}
-
-// 顯示提示框
-function showTooltip(x, y, content) { // x, y 參數將不再用於定位，但仍需保留
-    hotzoneTooltip.innerHTML = content;
-
-    // 暫時顯示提示框以獲取其寬度和高度
-    hotzoneTooltip.style.display = 'block';
-    hotzoneTooltip.style.visibility = 'hidden'; // 暫時隱藏，不影響佈局
-
-    const tooltipWidth = hotzoneTooltip.offsetWidth;
-    const tooltipHeight = hotzoneTooltip.offsetHeight;
-
-    // 獲取視窗的寬度和高度 (viewport dimensions)
-    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-
-    // 獲取當前滾動位置 (scroll offsets) - 確保在滾動時提示框仍在畫面中央
-    const scrollX = window.scrollX || window.pageXOffset;
-    const scrollY = window.scrollY || window.pageYOffset;
-
-    // 計算提示框在畫面中央的最終位置 (文件坐標)
-    // 橫向居中：(視窗寬度 / 2) - (提示框寬度 / 2) + 滾動位置
-    let finalX = (viewportWidth / 2) - (tooltipWidth / 2) + scrollX;
-    // 縱向居中：(視窗高度 / 2) - (提示框高度 / 2) + 滾動位置
-    let finalY = (viewportHeight / 2) - (tooltipHeight / 2) + scrollY;
-
-    // 確保不會超出左上角邊界 (通常在中央顯示時不會發生，但作為保護性程式碼)
-    if (finalX < scrollX) finalX = scrollX;
-    if (finalY < scrollY) finalY = scrollY;
-
-
-    hotzoneTooltip.style.left = `${finalX}px`;
-    hotzoneTooltip.style.top = `${finalY}px`;
-    hotzoneTooltip.style.visibility = 'visible'; // 顯示提示框
-}
-
-// --- 隱藏提示框 ---
-function hideTooltip(dataType) {
-    if (dataType === 'offense') {
-        currentOffenseHoveredZone = null;
-    } else if (dataType === 'defense') {
-        currentDefenseHoveredZone = null;
-    } else if (dataType === 'scatter') { // 新增 scatter 處理
-        currentScatterHoveredPlayer = null; // 清除散佈圖的懸停狀態
+            showTooltip(e.clientX, e.clientY, tooltipContent);
+            currentScatterHoveredPlayer = foundPlayer; // 更新懸停的球員
+        } else if (!foundPlayer && currentScatterHoveredPlayer) {
+            // 如果滑鼠離開了當前懸停的球員點
+            hideTooltip('scatter');
+        }
     }
 
-    // 只有當所有相關的懸停狀態都為 null 時才隱藏提示框
-    // 這可以防止在不同 Canvas 或圖表之間快速移動時閃爍
-    if (currentOffenseHoveredZone === null &&
-        currentDefenseHoveredZone === null &&
-        currentScatterHoveredPlayer === null) {
-        hotzoneTooltip.style.display = 'none';
+    // 顯示提示框
+    function showTooltip(x, y, content) { // x, y 參數將不再用於定位，但仍需保留
+        hotzoneTooltip.innerHTML = content;
+
+        // 暫時顯示提示框以獲取其寬度和高度
+        hotzoneTooltip.style.display = 'block';
+        hotzoneTooltip.style.visibility = 'hidden'; // 暫時隱藏，不影響佈局
+
+        const tooltipWidth = hotzoneTooltip.offsetWidth;
+        const tooltipHeight = hotzoneTooltip.offsetHeight;
+
+        // 獲取視窗的寬度和高度 (viewport dimensions)
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+        // 獲取當前滾動位置 (scroll offsets) - 確保在滾動時提示框仍在畫面中央
+        const scrollX = window.scrollX || window.pageXOffset;
+        const scrollY = window.scrollY || window.pageYOffset;
+
+        // 計算提示框在畫面中央的最終位置 (文件坐標)
+        // 橫向居中：(視窗寬度 / 2) - (提示框寬度 / 2) + 滾動位置
+        let finalX = (viewportWidth / 2) - (tooltipWidth / 2) + scrollX;
+        // 縱向居中：(視窗高度 / 2) - (提示框高度 / 2) + 滾動位置
+        let finalY = (viewportHeight / 2) - (tooltipHeight / 2) + scrollY;
+
+        // 確保不會超出左上角邊界 (通常在中央顯示時不會發生，但作為保護性程式碼)
+        if (finalX < scrollX) finalX = scrollX;
+        if (finalY < scrollY) finalY = scrollY;
+
+
+        hotzoneTooltip.style.left = `${finalX}px`;
+        hotzoneTooltip.style.top = `${finalY}px`;
+        hotzoneTooltip.style.visibility = 'visible'; // 顯示提示框
     }
-}
+
+    // --- 隱藏提示框 ---
+    function hideTooltip(dataType) {
+        if (dataType === 'offense') {
+            currentOffenseHoveredZone = null;
+        } else if (dataType === 'defense') {
+            currentDefenseHoveredZone = null;
+        } else if (dataType === 'scatter') { // 新增 scatter 處理
+            currentScatterHoveredPlayer = null; // 清除散佈圖的懸停狀態
+        }
+
+        // 只有當所有相關的懸停狀態都為 null 時才隱藏提示框
+        // 這可以防止在不同 Canvas 或圖表之間快速移動時閃爍
+        if (currentOffenseHoveredZone === null &&
+            currentDefenseHoveredZone === null &&
+            currentScatterHoveredPlayer === null) {
+            hotzoneTooltip.style.display = 'none';
+        }
+    }

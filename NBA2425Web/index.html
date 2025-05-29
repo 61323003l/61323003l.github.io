@@ -229,6 +229,15 @@
                         <canvas id="playerScatterCanvas" width="500" height="500" style="border: 1px solid #ccc; background-color: #000;"></canvas>
                     </div>
                     <!-- 長條圖 -->
+                    <div id="bar-chart-container" class="col-12 col-12-xsmall">
+                        <h3 id="bar-chart-title">對戰表現最佳球員</h3>
+                        <div class="field">
+                            <select name="bar-chart-data-selector" id="bar-chart-data-selector">
+                                <option value="">請選擇數據類型</option>
+                            </select>
+                        </div>
+                        <canvas id="playerBarChartCanvas"></canvas>
+                    </div>
                 </div>
                 <div id="hotzone-tooltip" style="
         position: absolute;
