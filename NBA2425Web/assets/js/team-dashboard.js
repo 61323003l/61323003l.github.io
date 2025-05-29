@@ -5791,12 +5791,11 @@ const leagueDefensiveRatingAvg = leagueAveragePlayerStats ? leagueAveragePlayerS
 
 
 // --- 全域變數 ---
-// --- 攻守熱區全域變數 ---
-let leagueAverageOffense = {};
-let leagueAverageDefense = {};
+let leagueAverageOffense = {}; // 用來儲存聯盟平均進攻數據
+let leagueAverageDefense = {}; // 用來儲存聯盟聯盟平均防守數據
 
-let teamDataOffenseMap = new Map();
-let teamDataDefenseMap = new Map();
+let teamDataOffenseMap = new Map(); // 用 Map 儲存球隊進攻數據，方便查找
+let teamDataDefenseMap = new Map(); // 用 Map 儲存球隊防守數據，方便查找
 
 let offenseCanvas, offenseCtx;
 let defenseCanvas, defenseCtx;
@@ -5806,30 +5805,25 @@ let teamSelector;
 let teamNameDisplay;
 let hotzoneTooltip; // 熱區提示框元素
 
-// --- 長條圖相關全域變數 ---
+// --- 全局變數用於滑鼠互動 ---
+let currentOffenseHoveredZone = null; // 追蹤進攻熱區當前懸停的分區
+let currentDefenseHoveredZone = null; // 追蹤防守熱區當前懸停的分區
+let currentScatterHoveredPlayer = null; // 追蹤散佈圖當前懸停的球員
+
+// --- 長條圖相關全局變數 ---
 let playerBarChartCanvas;
 let playerBarChartCtx;
 let playerBarChart; // 用於 Chart.js 圖表實例
 let barChartDataSelector; // 長條圖數據選擇器
 let playerVsOpponentData = []; // 用於儲存從 CSV 載入的所有球員對戰數據
-const playerVsOpponentDataCSVPath = 'data/all_player_data.csv'; // CSV 檔案的實際路徑！
-
-
-// --- 全域變數用於滑鼠互動 ---
-let currentOffenseHoveredZone = null; // 追蹤進攻熱區當前懸停的分區
-let currentDefenseHoveredZone = null; // 追蹤防守熱區當前懸停的分區
-let currentScatterHoveredPlayer = null; // 追蹤散佈圖當前懸停的球員
-
+const playerVsOpponentDataCSVPath = 'data/all_player_data.csv'; // <--- 請將這裡的路徑替換為您的 CSV 檔案的實際路徑！
 
 
 // 新增一個 Image 物件來載入背景圖
 const courtImage = new Image();
 courtImage.src = courtBackgroundImageUrl;
-courtImage.onload = () => { // 圖片載入完成後，如果已經有選定的球隊，則重新繪製熱區圖
-    const selectedTeam = teamSelector.val();
-    if (selectedTeam) {
-        updateHotzoneDisplay(selectedTeam);
-    }
+courtImage.onload = () => {
+    // 圖片載入完成後，僅記錄，不在此處觸發繪圖，避免 teamSelector 未初始化問題
     console.log("籃球場背景圖片載入完成。");
 };
 courtImage.onerror = () => {
@@ -5837,178 +5831,9 @@ courtImage.onerror = () => {
 };
 
 
-// --- 新增：載入球員對戰數據的函數 ---
-async function loadPlayerVsOpponentData() {
-    try {
-        const response = await fetch(playerVsOpponentDataCSVPath);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const csvText = await response.text();
-        playerVsOpponentData = parseCSV(csvText); // 使用下面的 parseCSV 函數解析
-
-        console.log('球員對戰數據載入成功:', playerVsOpponentData);
-        populateBarChartDataSelector(); // 數據載入後填充數據選擇器
-    } catch (error) {
-        console.error('載入球員對戰數據失敗:', error);
-    }
-}
-
-// --- 簡單的 CSV 解析函數 (如果您需要更複雜的解析，建議使用 PapaParse) ---
-function parseCSV(csvText) {
-    const lines = csvText.trim().split('\n');
-    if (lines.length === 0) return [];
-
-    const headers = lines[0].split(',').map(header => header.trim());
-    const data = [];
-
-    for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',').map(value => value.trim());
-        if (values.length === headers.length) {
-            const row = {};
-            headers.forEach((header, index) => {
-                // 嘗試將數據欄位轉換為數字，如果可以的話
-                const value = values[index];
-                row[header] = isNaN(Number(value)) ? value : Number(value);
-            });
-            data.push(row);
-        }
-    }
-    return data;
-}
-
-// --- 新增：填充長條圖數據選擇器的函數 ---
-function populateBarChartDataSelector() {
-    // 假設 CSV 的前兩欄是 "player" 和 "Value"，其他是數據欄位
-    if (playerVsOpponentData.length > 0) {
-        const headers = Object.keys(playerVsOpponentData[0]);
-        // 過濾掉非數據欄位，例如 'player' 和 'Value'
-        const dataMetrics = headers.filter(header => header !== 'player' && header !== 'Value');
-
-        barChartDataSelector.empty(); // 清空現有選項
-        barChartDataSelector.append('<option value="">請選擇數據類型</option>'); // 預設選項
-
-        dataMetrics.forEach(metric => {
-            barChartDataSelector.append(`<option value="${metric}">${metric}</option>`);
-        });
-    }
-}
-
-
-// --- 初始化熱區圖儀表板 ---
-$(function() { initHotzoneDashboard(); });
-
-function initHotzoneDashboard() {
-    // 獲取並初始化所有 Canvas 元素及其上下文
-    offenseCanvas = document.getElementById('offenseHotzoneCanvas');
-    offenseCtx = offenseCanvas.getContext('2d');
-
-    defenseCanvas = document.getElementById('defenseHotzoneCanvas');
-    defenseCtx = defenseCanvas.getContext('2d');
-
-    playerScatterCanvas = document.getElementById('playerScatterCanvas');
-    playerScatterCtx = playerScatterCanvas.getContext('2d');
-
-    playerBarChartCanvas = document.getElementById('playerBarChartCanvas');
-    playerBarChartCtx = playerBarChartCanvas.getContext('2d');
-
-    // 獲取並初始化其他 DOM 元素
-    teamSelector = $('#team-selector');
-    teamNameDisplay = $('#team-name-display');
-    hotzoneTooltip = document.getElementById('hotzone-tooltip'); // 獲取提示框元素
-    barChartDataSelector = $('#bar-chart-data-selector'); // 初始化數據選擇器
-
-    // 處理數據並填充選擇器
-    processShotData();
-    populateTeamSelector(); // 這會填充下拉選單，並設定預設的 "請選擇一支球隊"
-    loadPlayerVsOpponentData(); // 載入球員對戰數據
-
-    // 設置事件監聽器 (這些監聽器現在都在 initHotzoneDashboard 的頂層)
-    teamSelector.on('change', function() {
-        const selectedTeam = $(this).val();
-        updateHotzoneDisplay(selectedTeam); // 繪製熱區圖和散佈圖
-        // 當球隊選擇改變時，也更新長條圖
-        const selectedMetric = barChartDataSelector.val();
-        if (selectedMetric) { // 只有當數據類型已選擇時才更新長條圖
-            drawBarChart(selectedTeam, selectedMetric);
-        }
-    });
-
-    $('.team-logo-item').on('click', function(e) {
-        e.preventDefault();
-        const teamId = $(this).data('team-id');
-        if (teamId) {
-            teamSelector.val(teamId);
-            updateHotzoneDisplay(teamId);
-            location.hash = '#team-dashboard';
-        }
-    });
-
-    // 長條圖數據選擇器的 change 事件監聽器
-    barChartDataSelector.on('change', function() {
-        const selectedTeam = teamSelector.val(); // 獲取當前選中的球隊
-        const selectedMetric = $(this).val(); // 獲取選中的數據類型
-        console.log('長條圖數據選擇器改變:', '球隊:', selectedTeam, '指標:', selectedMetric);
-        if (selectedTeam && selectedMetric) { // 只有當球隊和數據類型都已選擇時才繪製長條圖
-            drawBarChart(selectedTeam, selectedMetric);
-        } else if (!selectedMetric) { // 如果選擇了 "請選擇數據類型"
-            if (playerBarChart) {
-                playerBarChart.destroy(); // 銷毀圖表
-                console.log('長條圖已銷毀。');
-            }
-        }
-    });
-
-    // ResizeObserver 監聽器
-    const scatterCanvasObserver = new ResizeObserver(entries => {
-        for (let entry of entries) {
-            if (entry.target === playerScatterCanvas) {
-                const currentTeam = teamSelector.val();
-                if (currentTeam) {
-                    drawScatterPlot(currentTeam);
-                }
-            }
-        }
-    });
-    scatterCanvasObserver.observe(playerScatterCanvas);
-
-    // 初始繪圖邏輯
-    let initialSelectedTeam = teamSelector.val(); // 獲取當前選擇器中的值
-
-    // 如果當前沒有選定的球隊 (例如，預設選項是 disabled selected)
-    if (!initialSelectedTeam || initialSelectedTeam === "") {
-        // 嘗試選擇第一個非 "Average" 的球隊作為預設顯示
-        const firstAvailableTeam = Array.from(teamDataOffenseMap.keys()).find(key => key !== 'Average');
-        if (firstAvailableTeam) {
-            teamSelector.val(firstAvailableTeam); // 將這個球隊設定為選擇器中的值
-            initialSelectedTeam = firstAvailableTeam; // 更新變數
-        }
-    }
-
-    if (initialSelectedTeam) {
-        updateHotzoneDisplay(initialSelectedTeam);
-        // 初始載入時就顯示長條圖，預設選擇第一個數據類型
-        // 這裡的邏輯需要確保 playerVsOpponentData 已經載入
-        // 由於 loadPlayerVsOpponentData 是異步的，這裡直接檢查可能還沒載入
-        // 更好的做法是在 populateBarChartDataSelector 之後，如果 initialSelectedTeam 存在，再觸發一次長條圖繪製
-        // 為了確保長條圖在首次載入時顯示，我們可以在 populateBarChartDataSelector 內部觸發它
-    }
-
-
-    // --- 設定滑鼠事件監聽器 ---
-    offenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, offenseCanvas, 'offense'));
-    offenseCanvas.addEventListener('mouseout', () => hideTooltip('offense'));
-
-    defenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, defenseCanvas, 'defense'));
-    defenseCanvas.addEventListener('mouseout', () => hideTooltip('defense'));
-
-    // 散佈圖的滑鼠事件監聽器
-    playerScatterCanvas.addEventListener('mousemove', (e) => handleScatterMouseMove(e));
-    playerScatterCanvas.addEventListener('mouseout', () => hideTooltip('scatter'));
-}
-
 // --- 數據處理函數 ---
 function processShotData() {
+    console.log("processShotData: 開始處理投籃數據。"); // Debug log
     // 處理進攻數據
     offenseShotData.forEach(data => {
         if (data.team === "Average") {
@@ -6027,12 +5852,13 @@ function processShotData() {
         }
     });
 
-    console.log("聯盟平均進攻數據:", leagueAverageOffense);
-    console.log("球隊進攻數據映射:", teamDataOffenseMap);
+    console.log("processShotData: 聯盟平均進攻數據:", leagueAverageOffense);
+    console.log("processShotData: 球隊進攻數據映射:", teamDataOffenseMap);
 }
 
 // --- 填充球隊選擇器下拉選單 ---
 function populateTeamSelector() {
+    console.log("populateTeamSelector: 開始填充球隊選擇器。"); // Debug log
     teamSelector.empty(); // 清空現有選項
     teamSelector.append($('<option disabled selected value="">請選擇一支球隊</option>')); // 添加預設選項
 
@@ -6043,6 +5869,119 @@ function populateTeamSelector() {
             text: team
         }));
     });
+    console.log("populateTeamSelector: 球隊選擇器填充完成。"); // Debug log
+}
+
+// --- 載入球員對戰數據的函數 ---
+async function loadPlayerVsOpponentData() {
+    console.log('loadPlayerVsOpponentData: 嘗試載入球員對戰數據:', playerVsOpponentDataCSVPath); // Debug log
+    try {
+        const response = await fetch(playerVsOpponentDataCSVPath);
+        console.log('loadPlayerVsOpponentData: Fetch 響應狀態:', response.status, response.statusText); // Debug log
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const csvText = await response.text();
+        console.log('loadPlayerVsOpponentData: 載入的 CSV 原始文本 (前200字元):', csvText.substring(0, 200)); // 顯示部分文本
+
+        playerVsOpponentData = parseCSV(csvText); // 使用下面的 parseCSV 函數解析
+        console.log('loadPlayerVsOpponentData: 解析後的 playerVsOpponentData 數據量:', playerVsOpponentData.length); // Debug log
+        if (playerVsOpponentData.length > 0) {
+            console.log('loadPlayerVsOpponentData: 解析後的 playerVsOpponentData 範例:', playerVsOpponentData[0]); // 顯示第一條數據
+        } else {
+            console.warn('loadPlayerVsOpponentData: 解析後的 playerVsOpponentData 為空。'); // Debug log
+        }
+
+        populateBarChartDataSelector(); // 數據載入後填充數據選擇器
+        console.log('loadPlayerVsOpponentData: 數據選擇器已填充。'); // Debug log
+
+        // *** 修正點：在數據載入並選擇器填充後，自動觸發長條圖的初始繪製 ***
+        const selectedTeam = teamSelector.val(); // 獲取當前選中的球隊
+        if (selectedTeam && playerVsOpponentData.length > 0) {
+            const currentMetric = barChartDataSelector.val(); // 獲取當前選擇器中的值
+            let metricToDraw = currentMetric;
+
+            if (!metricToDraw || metricToDraw === "") { // 如果沒有預設選擇指標，嘗試選擇第一個
+                const availableMetrics = Object.keys(playerVsOpponentData[0]).filter(h => h !== 'player' && h !== 'Value');
+                if (availableMetrics.length > 0) {
+                    metricToDraw = availableMetrics[0];
+                    barChartDataSelector.val(metricToDraw); // 設定選擇器為第一個指標
+                    console.log('loadPlayerVsOpponentData: 自動選擇第一個數據指標:', metricToDraw); // Debug log
+                }
+            }
+
+            if (metricToDraw) {
+                drawBarChart(selectedTeam, metricToDraw);
+                console.log('loadPlayerVsOpponentData: 初始長條圖繪製已觸發。'); // Debug log
+            } else {
+                console.warn('loadPlayerVsOpponentData: 無法自動繪製長條圖：沒有可用的數據指標。'); // Debug log
+            }
+        } else {
+            console.warn('loadPlayerVsOpponentData: 無法自動繪製長條圖：沒有選定的球隊或對戰數據為空。'); // Debug log
+        }
+
+    } catch (error) {
+        console.error('loadPlayerVsOpponentData: 載入球員對戰數據失敗:', error); // Debug log
+        // 如果載入失敗，可以考慮在這裡顯示一個錯誤訊息給用戶
+    }
+}
+
+// --- 簡單的 CSV 解析函數 ---
+function parseCSV(csvText) {
+    console.log('parseCSV: 開始解析 CSV 文本。'); // Debug log
+    const lines = csvText.trim().split('\n');
+    console.log('parseCSV: CSV 文本行數:', lines.length); // Debug log
+    if (lines.length === 0) {
+        console.warn('parseCSV: CSV 文本為空。'); // Debug log
+        return [];
+    }
+
+    const headers = lines[0].split(',').map(header => header.trim());
+    console.log('parseCSV: CSV 標頭:', headers); // Debug log
+    const data = [];
+
+    for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(value => value.trim());
+        if (values.length === headers.length) {
+            const row = {};
+            headers.forEach((header, index) => {
+                const value = values[index];
+                // 嘗試將數據欄位轉換為數字，如果可以的話
+                row[header] = isNaN(Number(value)) ? value : Number(value);
+            });
+            data.push(row);
+        } else {
+            console.warn(`parseCSV: 跳過第 ${i + 1} 行，因為欄位數不匹配。預期 ${headers.length} 個，實際 ${values.length} 個。`); // Debug log
+        }
+    }
+    console.log('parseCSV: CSV 解析完成，數據行數:', data.length); // Debug log
+    return data;
+}
+
+// --- 填充長條圖數據選擇器的函數 ---
+function populateBarChartDataSelector() {
+    console.log('populateBarChartDataSelector: 開始填充長條圖數據選擇器...'); // Debug log
+    // 假設 CSV 的前兩欄是 "player" 和 "Value"，其他是數據欄位
+    if (playerVsOpponentData.length > 0) {
+        const headers = Object.keys(playerVsOpponentData[0]);
+        // 過濾掉非數據欄位，例如 'player' 和 'Value'
+        const dataMetrics = headers.filter(header => header !== 'player' && header !== 'Value');
+        console.log('populateBarChartDataSelector: 可用的數據指標:', dataMetrics); // Debug log
+
+        barChartDataSelector.empty(); // 清空現有選項
+        barChartDataSelector.append('<option value="">請選擇數據類型</option>'); // 預設選項
+
+        if (dataMetrics.length > 0) {
+            dataMetrics.forEach(metric => {
+                barChartDataSelector.append(`<option value="${metric}">${metric}</option>`);
+            });
+            console.log('populateBarChartDataSelector: 數據選擇器填充完成。'); // Debug log
+        } else {
+            console.warn('populateBarChartDataSelector: 沒有找到可用的數據指標來填充選擇器。'); // Debug log
+        }
+    } else {
+        console.warn('populateBarChartDataSelector: playerVsOpponentData 為空，無法填充數據選擇器。'); // Debug log
+    }
 }
 
 // --- 根據命中率差異獲取顏色 ---
@@ -6065,10 +6004,11 @@ function getColorForDifference(difference) {
 function drawCourt(canvasId, teamId, dataType) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) {
-        console.error(`找不到 Canvas 元素: ${canvasId}`);
+        console.error(`drawCourt: 找不到 Canvas 元素: ${canvasId}`);
         return;
     }
     const ctx = canvas.getContext('2d');
+    console.log(`drawCourt: 開始繪製 ${canvasId} (Team: ${teamId}, Type: ${dataType})`); // Debug log
 
     ctx.clearRect(0, 0, canvas.width, canvas.height); // 清空畫布
 
@@ -6095,6 +6035,11 @@ function drawCourt(canvasId, teamId, dataType) {
         // 確保 defenseShotData 和 teamDataDefenseMap 已被填充
         teamData = teamDataDefenseMap.get(teamId);
         leagueAvgData = leagueAverageDefense;
+    }
+
+    if (!teamData) {
+        console.warn(`drawCourt: 找不到 ${teamId} 的 ${dataType} 數據。`); // Debug log
+        return; // 如果沒有數據，就沒什麼可繪製的
     }
 
     courtPolygonsData.features.forEach(feature => {
@@ -6134,18 +6079,26 @@ function drawCourt(canvasId, teamId, dataType) {
         ctx.fill();
         ctx.stroke();
     });
+    console.log(`drawCourt: ${canvasId} 繪製完成。`); // Debug log
 }
 
 
 // --- 繪製散佈圖的函數 ---
 function drawScatterPlot(teamId) {
-    if (!playerScatterCtx || !playerScatterCanvas) return;
+    console.log(`drawScatterPlot: 開始繪製散佈圖 (Team: ${teamId})`); // Debug log
+    if (!playerScatterCtx || !playerScatterCanvas) {
+        console.error('drawScatterPlot: 散佈圖 Canvas 或 Context 未初始化。');
+        return;
+    }
 
     // 設定 Canvas 的實際解析度以確保清晰度，並保持響應式佈局
     const rect = playerScatterCanvas.getBoundingClientRect();
     playerScatterCanvas.width = rect.width * window.devicePixelRatio;
     playerScatterCanvas.height = rect.height * window.devicePixelRatio;
     playerScatterCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    console.log('drawScatterPlot: 散佈圖 Canvas 實際尺寸 (CSS):', rect.width, 'x', rect.height); // Debug log
+    console.log('drawScatterPlot: 散佈圖 Canvas 繪圖尺寸 (像素):', playerScatterCanvas.width, 'x', playerScatterCanvas.height); // Debug log
+
 
     playerScatterCtx.clearRect(0, 0, playerScatterCanvas.width / window.devicePixelRatio, playerScatterCanvas.height / window.devicePixelRatio);
 
@@ -6157,6 +6110,7 @@ function drawScatterPlot(teamId) {
     const teamPlayers = allPlayersData.filter(p => p.team === teamId && p.player !== "average");
 
     if (teamPlayers.length === 0) {
+        console.warn(`drawScatterPlot: ${teamId} 無球員數據或數據錯誤，無法繪製散佈圖。`); // Debug log
         playerScatterCtx.fillStyle = 'white'; // 確保文字在黑色背景上可見
         playerScatterCtx.font = '16px Arial';
         playerScatterCtx.textAlign = 'center';
@@ -6179,35 +6133,35 @@ function drawScatterPlot(teamId) {
 
 
     // 軸線繪製函數
-    function drawAxis(ctx, x1, y1, x2, y2, color, label, isXAxis) {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
+    function drawAxis(ctxParam, x1, y1, x2, y2, color, label, isXAxis) { // Changed ctx to ctxParam
+        ctxParam.strokeStyle = color;
+        ctxParam.lineWidth = 1;
+        ctxParam.beginPath();
+        ctxParam.moveTo(x1, y1);
+        ctxParam.lineTo(x2, y2);
+        ctxParam.stroke();
 
-        ctx.fillStyle = color;
-        ctx.font = '12px Arial'; // 調整軸標籤字體大小
-        ctx.textAlign = 'center';
+        ctxParam.fillStyle = color;
+        ctxParam.font = '12px Arial'; // 調整軸標籤字體大小
+        ctxParam.textAlign = 'center';
 
         // 繪製箭頭和標籤
         if (isXAxis) {
-            ctx.beginPath();
-            ctx.moveTo(x2, y2);
-            ctx.lineTo(x2 - 5, y2 - 5);
-            ctx.lineTo(x2 - 5, y2 + 5);
-            ctx.closePath();
-            ctx.fill();
-            ctx.fillText(label, x2 - 20, y2 + 20); // X軸標籤位置
+            ctxParam.beginPath();
+            ctxParam.moveTo(x2, y2);
+            ctxParam.lineTo(x2 - 5, y2 - 5);
+            ctxParam.lineTo(x2 - 5, y2 + 5);
+            ctxParam.closePath();
+            ctxParam.fill();
+            ctxParam.fillText(label, x2 - 20, y2 + 20); // X軸標籤位置
         } else { // Y-axis
-            ctx.beginPath();
-            ctx.moveTo(x2, y2);
-            ctx.lineTo(x2 - 5, y2 + 5);
-            ctx.lineTo(x2 + 5, y2 + 5);
-            ctx.closePath();
-            ctx.fill();
-            ctx.fillText(label, x2 - 20, y2 + 10); // Y軸標籤位置
+            ctxParam.beginPath();
+            ctxParam.moveTo(x2, y2);
+            ctxParam.lineTo(x2 - 5, y2 + 5);
+            ctxParam.lineTo(x2 + 5, y2 + 5);
+            ctxParam.closePath();
+            ctxParam.fill();
+            ctxParam.fillText(label, x2 - 20, y2 + 10); // Y軸標籤位置
         }
     }
 
@@ -6261,121 +6215,14 @@ function drawScatterPlot(teamId) {
     playerScatterCtx.fillStyle = 'yellow'; // 原點顏色
     playerScatterCtx.beginPath();
     playerScatterCtx.arc(originX, originY, 6, 0, Math.PI * 2); // 原點半徑稍大
-    playerScatterCtx.fill();
+    playerScatterCtx.fill(); // *** 修正點：將 ctx.fill() 改為 playerScatterCtx.fill() ***
     playerScatterCtx.fillText('聯盟平均', originX + 10, originY - 10); // 原點標籤
+    console.log(`drawScatterPlot: 散佈圖繪製完成。`); // Debug log
 }
-
-// --- 新增：繪製長條圖的函數 (基本結構，待填充邏輯) ---
-function drawBarChart(teamId, metric) {
-    if (!playerBarChartCtx || !playerBarChartCanvas) return;
-
-    // 清理之前的圖表實例
-    if (playerBarChart) {
-        playerBarChart.destroy();
-    }
-
-    // 設定 Canvas 的實際解析度
-    const rect = playerBarChartCanvas.getBoundingClientRect();
-    playerBarChartCanvas.width = rect.width * window.devicePixelRatio;
-    playerBarChartCanvas.height = rect.height * window.devicePixelRatio; // 使用 CSS 高度
-    playerBarChartCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
-
-    // 過濾數據：找到所有球員在對戰 teamId 時的數據
-    const filteredData = playerVsOpponentData.filter(row => row.Value === teamId);
-
-    // 排序數據：根據選定的 metric 降序排序
-    const sortedData = [...filteredData].sort((a, b) => b[metric] - a[metric]);
-
-    // 取前 10 名
-    const top10Data = sortedData.slice(0, 10);
-
-    // 準備 Chart.js 所需的 labels (X 軸) 和 data (Y 軸)
-    const labels = top10Data.map(row => row.player);
-    const dataValues = top10Data.map(row => row[metric]);
-
-    // 繪製長條圖
-    playerBarChart = new Chart(playerBarChartCtx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: `${teamId} 對戰表現 - ${metric}`,
-                data: dataValues,
-                backgroundColor: 'rgba(75, 192, 192, 0.6)', // 條形顏色
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false, // 讓 Canvas 尺寸更具彈性
-            indexAxis: 'x', // X軸是分類軸，Y軸是數值軸
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: metric
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: '球員'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: `${teamId} 對戰表現最佳球員 - ${metric} (前10名)`
-                },
-                // *** 待處理：自定義提示框邏輯 ***
-                tooltip: {
-                    enabled: false, // 禁用 Chart.js 內建提示框
-                    external: function(context) {
-                        // Chart.js 的提示框回調函數
-                        const tooltipModel = context.tooltip;
-                        if (tooltipModel.opacity === 0) {
-                            hideTooltip('playerBarChart'); // 隱藏提示框
-                            return;
-                        }
-
-                        if (tooltipModel.dataPoints.length > 0) {
-                            const dataPoint = tooltipModel.dataPoints[0];
-                            const player = dataPoint.label;
-                            const value = dataPoint.raw;
-                            const rank = dataPoint.dataIndex + 1; // 排名是從 1 開始
-
-                            const content = `
-                                <strong>球員:</strong> ${player}<br>
-                                <strong>${metric}:</strong> ${value}<br>
-                                <strong>排名:</strong> ${rank}
-                            `;
-
-                            // 獲取滑鼠在文件中的位置 (需要從 Canvas 座標轉換)
-                            const canvasRect = playerBarChartCanvas.getBoundingClientRect();
-                            const mouseX = canvasRect.left + tooltipModel.caretX;
-                            const mouseY = canvasRect.top + tooltipModel.caretY;
-
-                            showTooltip(mouseX, mouseY, content); // 使用您現有的 showTooltip 函數
-                        } else {
-                            hideTooltip('playerBarChart');
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
 
 // --- 熱區圖和散佈圖顯示 ---
 function updateHotzoneDisplay(teamId) {
+    console.log(`updateHotzoneDisplay: 函數被呼叫，當前球隊ID: ${teamId}`); // Debug log
     if (!teamId) {
         teamNameDisplay.text("請選擇一支球隊查看熱區圖");
         offenseCtx.clearRect(0, 0, offenseCanvas.width, offenseCanvas.height);
@@ -6394,21 +6241,30 @@ function updateHotzoneDisplay(teamId) {
 
     // 繪製球員散佈圖
     drawScatterPlot(teamId);
+    console.log(`updateHotzoneDisplay: 顯示更新完成。`); // Debug log
 }
 
 // --- 處理 Dimension 模板的頁面切換 ---
 // 監聽 URL Hash 變化，以確保當直接訪問 #team-dashboard 時也能載入數據
 $(window).on('hashchange', function() {
+    console.log(`Hashchange 事件觸發，當前 hash: ${location.hash}`); // Debug log
     if (location.hash === '#team-dashboard') {
         const selectedTeam = teamSelector.val();
         if (selectedTeam) {
+            console.log(`Hashchange: 已有選定的球隊 ${selectedTeam}，更新顯示。`); // Debug log
             updateHotzoneDisplay(selectedTeam);
+            // 由於 loadPlayerVsOpponentData 是異步的，這裡不直接觸發長條圖
+            // 讓 loadPlayerVsOpponentData 成功後自動觸發長條圖的初始繪製
         } else {
             // 如果從其他頁面切換過來但沒有選擇球隊，預設顯示第一個球隊
             const firstTeam = Array.from(teamDataOffenseMap.keys()).find(key => key !== 'Average');
             if (firstTeam) {
                 teamSelector.val(firstTeam);
+                console.log(`Hashchange: 無選定球隊，預設選擇第一個球隊 ${firstTeam}，執行初次顯示更新。`); // Debug log
                 updateHotzoneDisplay(firstTeam);
+                // 這裡也不直接觸發長條圖
+            } else {
+                console.warn("Hashchange: 無法找到任何球隊數據來預設顯示。"); // Debug log
             }
         }
     }
@@ -6417,15 +6273,18 @@ $(window).on('hashchange', function() {
 // --- 輔助函數：獲取滑鼠在 Canvas 上的坐標 ---
 function getMousePos(canvas, evt) {
     const rect = canvas.getBoundingClientRect(); // 獲取 Canvas 的大小和位置
+    // 考慮 devicePixelRatio 進行調整，以獲取實際繪圖坐標
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
     return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
+        x: (evt.clientX - rect.left) * scaleX,
+        y: (evt.clientY - rect.top) * scaleY
     };
 }
 
 // --- 輔助函數：判斷點是否在多邊形內 (Ray Casting Algorithm) ---
 function isPointInPolygon(point, polygon) {
-    // point = [x, y]
+    // point = {x, y}
     // polygon = [[x1, y1], [x2, y2], ...]
     let x = point.x,
         y = point.y;
@@ -6445,7 +6304,8 @@ function isPointInPolygon(point, polygon) {
 
 // --- 滑鼠移動事件處理函數 (熱區圖) ---
 function handleCanvasMouseMove(e, canvas, dataType) {
-    const mousePos = getMousePos(canvas, e);
+    // console.log(`處理滑鼠移動事件在 ${dataType} 熱區圖。`); // 避免過多日誌
+    const mousePos = getMousePos(canvas, e); // mousePos 是 Canvas 內部坐標
     const currentTeamId = teamSelector.val();
 
     let teamDataMap = (dataType === 'offense') ? teamDataOffenseMap : teamDataDefenseMap;
@@ -6459,8 +6319,6 @@ function handleCanvasMouseMove(e, canvas, dataType) {
         const zoneName = feature.properties.name;
         const coordinates = feature.geometry.coordinates[0]; // 獲取多邊形的坐標
 
-        // 由於 getMousePos 已經考慮了 devicePixelRatio，這裡的 coordinates 也應該與 Canvas 的繪圖坐標系一致
-        // 如果您的 GeoJSON 坐標與 Canvas 繪圖坐標系不一致，可能需要額外縮放或轉換
         if (isPointInPolygon(mousePos, coordinates)) {
             hoveredZone = zoneName;
             break; // 找到第一個就跳出迴圈
@@ -6490,6 +6348,7 @@ function handleCanvasMouseMove(e, canvas, dataType) {
                 displayDifference = `+${displayDifference}`;
                 differenceClass = 'positive-diff'; // 紅色
             } else if (difference < 0) {
+                displayDifference = `${displayDifference}`; // 負號本身就是藍色
                 differenceClass = 'negative-diff'; // 藍色
             } else {
                 differenceClass = 'neutral-diff'; // 黃色
@@ -6503,7 +6362,7 @@ function handleCanvasMouseMove(e, canvas, dataType) {
             <strong>命中率正負值：</strong> <span class="${differenceClass}">${displayDifference}</span>
         `;
 
-        showTooltip(e.clientX, e.clientY, tooltipContent);
+        showTooltip(e.pageX, e.pageY, tooltipContent); // 使用 e.pageX, e.pageY
 
         // 更新當前懸停的分區
         if (dataType === 'offense') {
@@ -6520,7 +6379,8 @@ function handleCanvasMouseMove(e, canvas, dataType) {
 
 // --- 滑鼠移動事件處理函數 (散佈圖) ---
 function handleScatterMouseMove(e) {
-    const mousePos = getMousePos(playerScatterCanvas, e);
+    // console.log('處理滑鼠移動事件在散佈圖。'); // 避免過多日誌
+    const mousePos = getMousePos(playerScatterCanvas, e); // mousePos 是 Canvas 內部坐標
 
     let foundPlayer = null;
     if (playerScatterCtx.playersOnPlot) {
@@ -6538,10 +6398,10 @@ function handleScatterMouseMove(e) {
         // 只有當滑鼠進入一個新的球員點時才更新和顯示提示框
         const tooltipContent = `
             <strong>球員：</strong> ${foundPlayer.player}<br>
-            <strong>進攻效率：</strong> ${foundPlayer.offRtg}<br>
-            <strong>防守效率：</strong> ${foundPlayer.defRtg}
+            <strong>進攻效率：：</strong> ${foundPlayer.offRtg}<br>
+            <strong>防守效率：：</strong> ${foundPlayer.defRtg}
         `;
-        showTooltip(e.clientX, e.clientY, tooltipContent);
+        showTooltip(e.pageX, e.pageY, tooltipContent); // 使用 e.pageX, e.pageY
         currentScatterHoveredPlayer = foundPlayer; // 更新懸停的球員
     } else if (!foundPlayer && currentScatterHoveredPlayer) {
         // 如果滑鼠離開了當前懸停的球員點
@@ -6549,7 +6409,7 @@ function handleScatterMouseMove(e) {
     }
 }
 
-// 顯示提示框
+// --- 顯示提示框 ---
 function showTooltip(x, y, content) { // x, y 參數將不再用於定位，但仍需保留
     hotzoneTooltip.innerHTML = content;
 
@@ -6592,6 +6452,9 @@ function hideTooltip(dataType) {
         currentDefenseHoveredZone = null;
     } else if (dataType === 'scatter') { // 新增 scatter 處理
         currentScatterHoveredPlayer = null; // 清除散佈圖的懸停狀態
+    } else if (dataType === 'playerBarChart') { // 新增長條圖處理
+        // 假設長條圖沒有自己的 currentHovered 變數，因為 Chart.js 內部處理懸停
+        // 這裡只需要確保在外部提示框隱藏時，所有圖表的懸停狀態都被考慮
     }
 
     // 只有當所有相關的懸停狀態都為 null 時才隱藏提示框
@@ -6600,5 +6463,315 @@ function hideTooltip(dataType) {
         currentDefenseHoveredZone === null &&
         currentScatterHoveredPlayer === null) {
         hotzoneTooltip.style.display = 'none';
+    }
+}
+
+// --- 繪製長條圖的函數 ---
+function drawBarChart(teamId, metric) {
+    console.log('drawBarChart: 繪製長條圖:', '球隊:', teamId, '指標:', metric); // Debug log
+    if (!playerBarChartCtx || !playerBarChartCanvas) {
+        console.error('drawBarChart: 長條圖 Canvas 或 Context 未初始化。'); // Debug log
+        return;
+    }
+
+    // 清理之前的圖表實例
+    if (playerBarChart) {
+        playerBarChart.destroy();
+        console.log('drawBarChart: 舊長條圖實例已銷毀。'); // Debug log
+    }
+
+    // 設定 Canvas 的實際解析度
+    const rect = playerBarChartCanvas.getBoundingClientRect();
+    playerBarChartCanvas.width = rect.width * window.devicePixelRatio;
+    playerBarChartCanvas.height = rect.height * window.devicePixelRatio; // 使用 CSS 高度
+    playerBarChartCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    console.log('drawBarChart: 長條圖 Canvas 實際尺寸 (CSS):', rect.width, 'x', rect.height); // Debug log
+    console.log('drawBarChart: 長條圖 Canvas 繪圖尺寸 (像素):', playerBarChartCanvas.width, 'x', playerBarChartCanvas.height); // Debug log
+
+
+    // 過濾數據：找到所有球員在對戰 teamId 時的數據
+    // 注意：這裡的 teamId 應該是作為對手球隊的名稱，對應 CSV 中的 "Value" 欄位
+    const filteredData = playerVsOpponentData.filter(row => row.Value === teamId);
+    console.log(`drawBarChart: 過濾後數據 (對戰 ${teamId}) 數量:`, filteredData.length); // Debug log
+    if (filteredData.length === 0) {
+        playerBarChartCtx.clearRect(0, 0, playerBarChartCanvas.width / window.devicePixelRatio, playerBarChartCanvas.height / window.devicePixelRatio);
+        playerBarChartCtx.fillStyle = 'white';
+        playerBarChartCtx.font = '16px Arial';
+        playerBarChartCtx.textAlign = 'center';
+        playerBarChartCtx.fillText('此隊伍無對戰數據', (playerBarChartCanvas.width / window.devicePixelRatio) / 2, (playerBarChartCanvas.height / window.devicePixelRatio) / 2);
+        console.warn('drawBarChart: 沒有找到對應的對戰數據。'); // Debug log
+        return;
+    }
+
+    // 排序數據：根據選定的 metric 降序排序
+    // 確保 metric 欄位存在且是數字
+    const sortedData = [...filteredData].sort((a, b) => {
+        const valA = a[metric];
+        const valB = b[metric];
+        if (typeof valA === 'number' && typeof valB === 'number') {
+            return valB - valA;
+        }
+        // 如果不是數字，或者欄位不存在，則保持原序或按字母序
+        return 0;
+    });
+    console.log('drawBarChart: 排序後數據範例 (前3):', sortedData.slice(0, 3)); // Debug log
+
+    // 取前 10 名
+    const top10Data = sortedData.slice(0, 10);
+    console.log('drawBarChart: 前10名數據數量:', top10Data.length); // Debug log
+
+    if (top10Data.length === 0) {
+        playerBarChartCtx.clearRect(0, 0, playerBarChartCanvas.width / window.devicePixelRatio, playerBarChartCanvas.height / window.devicePixelRatio);
+        playerBarChartCtx.fillStyle = 'white';
+        playerBarChartCtx.font = '16px Arial';
+        playerBarChartCtx.textAlign = 'center';
+        playerBarChartCtx.fillText('無足夠數據顯示前10名', (playerBarChartCanvas.width / window.devicePixelRatio) / 2, (playerBarChartCanvas.height / window.devicePixelRatio) / 2);
+        console.warn('drawBarChart: 沒有足夠數據顯示前10名。'); // Debug log
+        return;
+    }
+
+    // 準備 Chart.js 所需的 labels (X 軸) 和 data (Y 軸)
+    const labels = top10Data.map(row => row.player);
+    const dataValues = top10Data.map(row => row[metric]);
+    console.log('drawBarChart: 長條圖 Labels:', labels); // Debug log
+    console.log('drawBarChart: 長條圖 Data Values:', dataValues); // Debug log
+
+
+    // 繪製長條圖
+    playerBarChart = new Chart(playerBarChartCtx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `${teamId} 對戰表現 - ${metric}`,
+                data: dataValues,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)', // 條形顏色
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, // 讓 Canvas 尺寸更具彈性
+            indexAxis: 'x', // X軸是分類軸，Y軸是數值軸
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: metric,
+                        color: 'white' // 確保軸標籤在黑色背景上可見
+                    },
+                    ticks: {
+                        color: 'white' // 確保刻度標籤在黑色背景上可見
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)' // 網格線顏色
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: '球員',
+                        color: 'white' // 確保軸標籤在黑色背景上可見
+                    },
+                    ticks: {
+                        color: 'white' // 確保刻度標籤在黑色背景上可見
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)' // 網格線顏色
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: 'white' // 確保圖例文字在黑色背景上可見
+                    }
+                },
+                title: {
+                    display: true,
+                    text: `${teamId} 對戰表現最佳球員 - ${metric} (前10名)`,
+                    color: 'white' // 確保標題文字在黑色背景上可見
+                },
+                tooltip: {
+                    enabled: false, // 禁用 Chart.js 內建提示框
+                    external: function(context) {
+                        const tooltipModel = context.tooltip;
+                        if (tooltipModel.opacity === 0) {
+                            hideTooltip('playerBarChart');
+                            return;
+                        }
+
+                        if (tooltipModel.dataPoints.length > 0) {
+                            const dataPoint = tooltipModel.dataPoints[0];
+                            const player = dataPoint.label;
+                            const value = dataPoint.raw;
+                            // 查找原始 sortedData 中的排名，因為 top10Data 已經是切片後的
+                            const rank = sortedData.findIndex(d => d.player === player && d[metric] === value) + 1;
+
+                            const content = `
+                                <strong>球員:</strong> ${player}<br>
+                                <strong>${metric}:</strong> ${value}<br>
+                                <strong>排名:</strong> ${rank}
+                            `;
+
+                            const canvasRect = playerBarChartCanvas.getBoundingClientRect();
+                            // 這裡的 tooltipModel.caretX/Y 是相對於 Canvas 繪圖區域的像素座標
+                            const mouseX = canvasRect.left + tooltipModel.caretX;
+                            const mouseY = canvasRect.top + tooltipModel.caretY;
+
+                            showTooltip(mouseX, mouseY, content);
+                        } else {
+                            hideTooltip('playerBarChart');
+                        }
+                    }
+                }
+            }
+        }
+    });
+    console.log('drawBarChart: 長條圖繪製完成。'); // Debug log
+}
+
+// --- 初始化函數 ---
+$(document).ready(function() {
+    console.log("jQuery ready 事件觸發，準備初始化熱區儀表板。"); // Debug log
+    initHotzoneDashboard();
+});
+
+function initHotzoneDashboard() {
+    console.log("initHotzoneDashboard: 進入初始化熱區儀表板函數。"); // Debug log
+
+    // 獲取元素
+    offenseCanvas = document.getElementById('offenseHotzoneCanvas');
+    offenseCtx = offenseCanvas ? offenseCanvas.getContext('2d') : null;
+
+    defenseCanvas = document.getElementById('defenseHotzoneCanvas');
+    defenseCtx = defenseCanvas ? defenseCanvas.getContext('2d') : null;
+
+    playerScatterCanvas = document.getElementById('playerScatterCanvas');
+    playerScatterCtx = playerScatterCanvas ? playerScatterCanvas.getContext('2d') : null;
+
+    playerBarChartCanvas = document.getElementById('playerBarChartCanvas');
+    playerBarChartCtx = playerBarChartCanvas ? playerBarChartCanvas.getContext('2d') : null;
+
+    teamSelector = $('#teamSelector');
+    teamNameDisplay = $('#teamNameDisplay');
+    hotzoneTooltip = $('#hotzoneTooltip')[0]; // Get the DOM element
+    barChartDataSelector = $('#barChartDataSelector');
+
+    // 檢查 Canvas 元素是否取得
+    if (!offenseCanvas || !defenseCanvas || !playerScatterCanvas || !playerBarChartCanvas) {
+        console.error("initHotzoneDashboard: 未能獲取所有必要的 Canvas 元素。請檢查您的 HTML ID 是否正確！"); // Debug log
+        return; // Early exit if elements are missing
+    }
+    console.log("initHotzoneDashboard: 所有 Canvas 元素已成功獲取。"); // Debug log
+
+
+    // 處理數據
+    processShotData(); // This should be called
+
+    // 填充球隊選擇器
+    populateTeamSelector(); // This should be called
+
+    // 載入球員對戰數據
+    loadPlayerVsOpponentData(); // This should be called
+
+    // 事件監聽器
+    teamSelector.on('change', function() {
+        const selectedTeam = $(this).val();
+        console.log(`teamSelector: 球隊選擇器值變更為 ${selectedTeam}。`); // Debug log
+        updateHotzoneDisplay(selectedTeam);
+        // 當球隊改變時，長條圖也需要更新
+        const currentMetric = barChartDataSelector.val();
+        if (currentMetric) { // If a metric is already selected
+            drawBarChart(selectedTeam, currentMetric);
+        } else if (playerVsOpponentData.length > 0) { // If no metric selected, but data exists
+            const availableMetrics = Object.keys(playerVsOpponentData[0]).filter(h => h !== 'player' && h !== 'Value');
+            if (availableMetrics.length > 0) {
+                const firstMetric = availableMetrics[0];
+                barChartDataSelector.val(firstMetric); // Set the dropdown
+                drawBarChart(selectedTeam, firstMetric); // Draw the chart
+                console.log(`teamSelector change: Auto-selected and drew bar chart for ${firstMetric}`); // Debug log
+            }
+        }
+    });
+
+    // *** 關鍵修正：點擊球隊 Logo 時，觸發 teamSelector 的 change 事件 ***
+    $('.team-logo-item').on('click', function(e) {
+        e.preventDefault();
+        const teamId = $(this).data('team-id');
+        console.log(`team-logo-item click: 點擊球隊Logo，ID: ${teamId}`); // Debug log
+        if (teamId) {
+            location.hash = '#team-dashboard'; // 導航到儀表板區塊 (先導航)
+            // 設定 teamSelector 的值，並觸發 'change' 事件
+            // 這會執行 teamSelector.on('change') 裡面的所有邏輯
+            teamSelector.val(teamId).trigger('change');
+            console.log(`team-logo-item click: 設定球隊選擇器為 ${teamId} 並觸發 change 事件，設定 hash 為 #team-dashboard。`); // Debug log
+        }
+    });
+
+    // 長條圖數據選擇器事件監聽器
+    barChartDataSelector.on('change', function() {
+        const selectedMetric = $(this).val();
+        const selectedTeam = teamSelector.val();
+        console.log(`barChartDataSelector: 數據指標選擇器值變更為 ${selectedMetric}。`); // Debug log
+        if (selectedTeam && selectedMetric) {
+            drawBarChart(selectedTeam, selectedMetric);
+        } else {
+            console.warn('barChartDataSelector: 無法繪製長條圖：球隊或指標未選擇。'); // Debug log
+        }
+    });
+
+    // ResizeObserver 監聽器
+    const scatterCanvasObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+            if (entry.target === playerScatterCanvas) {
+                const currentTeam = teamSelector.val();
+                if (currentTeam) {
+                    drawScatterPlot(currentTeam);
+                }
+            }
+        }
+    });
+    scatterCanvasObserver.observe(playerScatterCanvas);
+
+    // 熱區圖滑鼠互動事件監聽器
+    offenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, offenseCanvas, 'offense'));
+    offenseCanvas.addEventListener('mouseleave', () => hideTooltip('offense'));
+
+    defenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, defenseCanvas, 'defense'));
+    defenseCanvas.addEventListener('mouseleave', () => hideTooltip('defense'));
+
+    // 散佈圖滑鼠互動事件監聽器
+    playerScatterCanvas.addEventListener('mousemove', handleScatterMouseMove);
+    playerScatterCanvas.addEventListener('mouseleave', () => hideTooltip('scatter'));
+
+    console.log("initHotzoneDashboard: 初始化完成，事件監聽器已綁定。"); // Debug log
+
+    // 首次載入頁面時，如果URL hash是#team-dashboard且沒有預選隊伍，則嘗試預選第一個隊伍並更新顯示。
+    // 如果URL hash不是#team-dashboard，則不做任何操作，等待用戶導航。
+    // 如果有預選隊伍，則直接根據預選隊伍更新顯示。
+    if (location.hash === '#team-dashboard') {
+        const initialSelectedTeam = teamSelector.val();
+        if (initialSelectedTeam) {
+            console.log(`initHotzoneDashboard: 頁面初次載入，Hash 為 #team-dashboard，已選擇球隊 ${initialSelectedTeam}，執行初次顯示更新。`);
+            // 觸發 change 事件以確保所有相關邏輯運行
+            teamSelector.val(initialSelectedTeam).trigger('change');
+        } else {
+            // 嘗試自動選擇第一個球隊並更新顯示
+            const firstAvailableTeam = Array.from(teamDataOffenseMap.keys()).find(key => key !== 'Average');
+            if (firstAvailableTeam) {
+                console.log(`initHotzoneDashboard: 頁面初次載入，Hash 為 #team-dashboard，無預選球隊，自動選擇第一個球隊 ${firstAvailableTeam}，執行初次顯示更新。`);
+                // 觸發 change 事件以確保所有相關邏輯運行
+                teamSelector.val(firstAvailableTeam).trigger('change');
+            } else {
+                console.warn("initHotzoneDashboard: 頁面初次載入，無預選球隊且無法找到可用球隊數據來預設顯示。");
+            }
+        }
+    } else {
+        console.log("initHotzoneDashboard: 頁面初次載入，Hash 不是 #team-dashboard，等待用戶導航。");
     }
 }

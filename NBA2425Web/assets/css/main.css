@@ -2430,7 +2430,9 @@ body.is-preload #footer {
 #playerBarChartCanvas {
     width: 100%;
     /* 讓 Canvas 寬度適應其父容器 */
-    height: 400px;
+    max-width: 600px;
+    /* 限制最大寬度，防止在超大螢幕上過大 */
+    max-height: 400px;
     /* 設定一個固定的高度，例如 400px */
     display: block;
     /* 確保 Canvas 作為塊級元素，佔據其容器的完整寬度 */
@@ -2438,15 +2440,113 @@ body.is-preload #footer {
     /* 為了方便觀察，可以給一個背景色 */
     border-radius: 8px;
     /* 圓角 */
+    margin: 0 auto;
+    /* 居中顯示 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    /* 增加陰影效果 */
 }
 
 /* 確保包含 Canvas 的容器也有足夠的高度，防止內容坍塌 */
-/* 假設您的 HTML 結構是 col-6 或 col-12 包含 Canvas */
-#player-charts-container,
-#bar-chart-container,
-#hotzone-charts-wrapper {
+/* 這些是您 HTML 中可能存在的父容器 class 或 ID */
+/* 針對 #main 內部 #team-dashboard 文章區塊內的 .row 元素 */
+#main>article#team-dashboard .row {
     min-height: 450px;
     /* 略大於 Canvas 高度，以容納標題、選擇器等 */
-    /* 如果是 col-6，它會自動佔據 50% 寬度 */
-    /* 如果是 col-12，它會自動佔據 100% 寬度 */
+    display: flex;
+    /* 使用 flexbox 佈局 */
+    flex-wrap: wrap;
+    /* 允許換行 */
+    justify-content: center;
+    /* 內容居中 */
+    align-items: flex-start;
+    /* 頂部對齊 */
+    margin-bottom: 3em;
+    /* 增加行之間的間距 */
+}
+
+/* 確保 Dimension 模板的 article 顯示正確 */
+/* 如果您的 .main.css 中有類似的規則，請確保它們不會衝突 */
+#main>article {
+    display: none;
+    /* 預設隱藏所有文章區塊 */
+}
+
+#main>article.active {
+    display: block;
+    /* 僅顯示當前活動的文章區塊 */
+}
+
+/* 自定義提示框樣式，確保其可見 */
+.tooltip-custom {
+    position: absolute;
+    display: none;
+    /* 預設隱藏 */
+    background: rgba(0, 0, 0, 0.8);
+    /* 深色背景 */
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    pointer-events: none;
+    /* 讓滑鼠可以穿透 */
+    z-index: 1000;
+    /* 確保在最上層 */
+    font-size: 0.9em;
+    line-height: 1.5;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    /* 確保文字左對齊 */
+}
+
+.tooltip-custom strong {
+    color: #4CAF50;
+    /* 強調文字顏色 */
+}
+
+.tooltip-custom .positive-diff {
+    color: #FF5252;
+    /* 紅色 */
+    font-weight: bold;
+}
+
+.tooltip-custom .negative-diff {
+    color: #2196F3;
+    /* 藍色 */
+    font-weight: bold;
+}
+
+.tooltip-custom .neutral-diff {
+    color: #FFEB3B;
+    /* 黃色 */
+}
+
+/* 確保選擇器和標題的樣式 */
+.form-select {
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 8px 12px;
+    margin-bottom: 15px;
+}
+
+h3,
+h4 {
+    color: white;
+    /* 確保標題在深色背景上可見 */
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+/* 調整 team-logo-item 的樣式，確保點擊區域和視覺效果 */
+.team-logo-item {
+    display: inline-block;
+    /* 讓其可以並排顯示 */
+    padding: 5px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.team-logo-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
 }

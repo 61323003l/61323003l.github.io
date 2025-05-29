@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="assets/css/main.css" />
     <noscript>
         <link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <script src="assets/js/jquery.min.js"></script>
 </head>
 
 <body class="is-preload">
@@ -181,7 +182,7 @@
             <!-- 球隊頁面 -->
             <article id="team-dashboard">
                 <div id="team-dashboard-header-wrapper">
-                    <h2 class="major" id="team-name-display">選擇球隊查看熱區圖</h2>
+                    <h2 class="major" id="teamNameDisplay">選擇球隊查看熱區圖</h2>
                     <div id="hotzone-legend">
                         <div class="legend-item">
                             <span class="legend-color-box red-bg"></span>
@@ -209,8 +210,8 @@
                     </div>
                 </div>
                 <div style="text-align: center; margin-top: 20px;">
-                    <label for="team-selector" style="color: white; margin-right: 10px;">選擇球隊：</label>
-                    <select id="team-selector" style="padding: 8px; border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.5);">
+                    <label for="teamSelector" style="color: white; margin-right: 10px;">選擇球隊：</label>
+                    <select id="teamSelector" style="padding: 8px; border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.5);">
                     </select>
                 </div>
                 <div id="all-charts-wrapper">
@@ -232,14 +233,14 @@
                     <div id="bar-chart-container" class="col-12 col-12-xsmall">
                         <h3 id="bar-chart-title">對戰表現最佳球員</h3>
                         <div class="field">
-                            <select name="bar-chart-data-selector" id="bar-chart-data-selector">
+                            <select name="barChartDataSelector" id="bar-chart-data-selector">
                                 <option value="">請選擇數據類型</option>
                             </select>
                         </div>
                         <canvas id="playerBarChartCanvas"></canvas>
                     </div>
                 </div>
-                <div id="hotzone-tooltip" style="
+                <div id="hotzoneTooltip" style="
         position: absolute;
         background-color: rgba(0, 0, 0, 0.85); /* 半透明黑色背景 */
         color: white;
@@ -253,6 +254,29 @@
         border: 1px solid rgba(255, 255, 255, 0.3);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     ">
+                </div>
+            </article>
+            <article id="player-dashboard">
+                <h2 class="major" id="playerDashboardTitle">球員數據</h2>
+                <div class="row gtr-uniform">
+                    <div class="col-6 col-12-small">
+                        <h4>球員數據圖表 1</h4>
+                        <canvas id="playerStatsCanvas1"></canvas>
+                    </div>
+                    <div class="col-6 col-12-small">
+                        <h4>球員數據圖表 2</h4>
+                        <canvas id="playerStatsCanvas2"></canvas>
+                    </div>
+                </div>
+                <div class="row gtr-uniform mt-4">
+                    <div class="col-6 col-12-small">
+                        <h4>球員數據圖表 3</h4>
+                        <canvas id="playerStatsCanvas3"></canvas>
+                    </div>
+                    <div class="col-6 col-12-small">
+                        <h4>球員數據圖表 4</h4>
+                        <canvas id="playerStatsCanvas4"></canvas>
+                    </div>
                 </div>
             </article>
             <!-- Intro -->
@@ -553,7 +577,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
     <!-- BG -->
     <div id="bg"></div>
     <!-- Scripts -->
-    <script src="assets/js/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script src="assets/js/browser.min.js"></script>
     <script src="assets/js/breakpoints.min.js"></script>
     <script src="assets/js/util.js"></script>
