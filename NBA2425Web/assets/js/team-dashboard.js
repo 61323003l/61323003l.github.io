@@ -5827,9 +5827,7 @@ courtImage.onerror = () => {
 
 
 // --- 初始化熱區圖儀表板 ---
-window.onload = function() {
-    initHotzoneDashboard();
-};
+$(function() { initHotzoneDashboard(); });
 
 function initHotzoneDashboard() {
     // 獲取並初始化所有 Canvas 元素及其上下文
@@ -5868,7 +5866,7 @@ function initHotzoneDashboard() {
         }
     });
 
-    // 初始繪圖邏輯：現在更依賴於 teamSelector 準備就緒
+    // 初始繪圖邏輯：現在交由 ResizeObserver 和 teamSelector 的 change 事件處理
     let initialSelectedTeam = teamSelector.val(); // 獲取當前選擇器中的值
 
     // 如果當前沒有選定的球隊 (例如，預設選項是 disabled selected)
@@ -5881,9 +5879,25 @@ function initHotzoneDashboard() {
         }
     }
 
-    // 如果現在有選定的球隊 (無論是預設的還是剛設定的)
+    // *** 新增：ResizeObserver 監聽器 ***
+    // 監聽 playerScatterCanvas 的尺寸變化，並在變化時重新繪製
+    const scatterCanvasObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+            // 確保是 playerScatterCanvas 的尺寸變化
+            if (entry.target === playerScatterCanvas) {
+                const currentTeam = teamSelector.val(); // 獲取當前選中的球隊
+                if (currentTeam) {
+                    // 重新繪製散佈圖，確保使用最新的 Canvas 尺寸
+                    drawScatterPlot(currentTeam);
+                }
+            }
+        }
+    });
+    scatterCanvasObserver.observe(playerScatterCanvas); // 開始監聽 playerScatterCanvas
+
+    // 首次載入時，如果已經有選定的球隊，觸發一次更新 (ResizeObserver 會在首次觀察到尺寸時觸發繪圖)
     if (initialSelectedTeam) {
-        updateHotzoneDisplay(initialSelectedTeam); // 呼叫繪圖函數
+        updateHotzoneDisplay(initialSelectedTeam); // 會觸發熱區圖和散佈圖的繪製
     }
 
 
@@ -5894,7 +5908,7 @@ function initHotzoneDashboard() {
     defenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, defenseCanvas, 'defense'));
     defenseCanvas.addEventListener('mouseout', () => hideTooltip('defense'));
 
-    // --- 散佈圖的滑鼠事件監聽器 ---
+    // 散佈圖的滑鼠事件監聽器
     playerScatterCanvas.addEventListener('mousemove', (e) => handleScatterMouseMove(e));
     playerScatterCanvas.addEventListener('mouseout', () => hideTooltip('scatter'));
 }
