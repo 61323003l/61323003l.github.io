@@ -9,7 +9,7 @@ $(function() { // 確保 DOM 載入完成後執行
     // 如果是 JSON 檔案，載入方式會有所不同
     function loadPlayersFromCSV(callback) {
         $.ajax({
-            url: 'daat/player_names.csv', // 確保這裡的檔案路徑正確
+            url: 'data/player_names.csv', // 確保這裡的檔案路徑正確
             dataType: 'text', // 指定為文本類型
             success: function(data) {
                 // 簡單的 CSV 解析：按行分割，取第一列作為姓名
