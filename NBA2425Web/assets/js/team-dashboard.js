@@ -6350,7 +6350,6 @@ function handleScatterMouseMove(e) {
 }
 
 // --- 顯示提示框 ---
-// --- 顯示提示框 ---
 function showTooltip(x, y, content) { // x, y 現在預期是文件坐標 (e.pageX, e.pageY)
     hotzoneTooltip.innerHTML = content;
 
@@ -6381,7 +6380,6 @@ function showTooltip(x, y, content) { // x, y 現在預期是文件坐標 (e.pag
             finalX = scrollX + 10; // 靠齊視窗左邊緣 (文件坐標)
         }
     }
-
     // 判斷是否超出下邊界 (將提示框的下邊緣轉換為視窗坐標進行比較)
     // (finalY - scrollY) 是提示框上邊緣的視窗坐標
     if ((finalY - scrollY) + tooltipHeight > viewportHeight - 10) { // 留 10px 視窗下邊距
