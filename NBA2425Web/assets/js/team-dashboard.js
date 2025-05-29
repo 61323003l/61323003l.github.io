@@ -5827,9 +5827,9 @@ courtImage.onerror = () => {
 
 
 // --- 初始化熱區圖儀表板 ---
-$(function() {
+window.onload = function() {
     initHotzoneDashboard();
-});
+};
 
 function initHotzoneDashboard() {
     // 獲取並初始化所有 Canvas 元素及其上下文
@@ -5839,7 +5839,6 @@ function initHotzoneDashboard() {
     defenseCanvas = document.getElementById('defenseHotzoneCanvas');
     defenseCtx = defenseCanvas.getContext('2d');
 
-    // *** 新增這兩行：初始化散佈圖 Canvas 和上下文 ***
     playerScatterCanvas = document.getElementById('playerScatterCanvas');
     playerScatterCtx = playerScatterCanvas.getContext('2d');
 
@@ -5851,7 +5850,7 @@ function initHotzoneDashboard() {
 
     // 處理數據並填充選擇器
     processShotData();
-    populateTeamSelector();
+    populateTeamSelector(); // 這會填充下拉選單，並設定預設的 "請選擇一支球隊"
 
     // 設置事件監聽器
     teamSelector.on('change', function() {
@@ -5869,17 +5868,22 @@ function initHotzoneDashboard() {
         }
     });
 
-    // 初始繪圖：確保圖片載入後才嘗試繪製
-    // 這部分邏輯會被 courtImage.onload 處理，但為了首次載入，也可以在這裡呼叫
-    // 如果圖片已經在快取中，onload 可能不會觸發，所以這裡也需要一個邏輯
-    if (courtImage.complete && teamSelector.val()) {
-        updateHotzoneDisplay(teamSelector.val());
-    } else if (courtImage.complete && teamDataOffenseMap.size > 0) {
-        const firstTeam = Array.from(teamDataOffenseMap.keys()).find(key => key !== 'Average');
-        if (firstTeam) {
-            teamSelector.val(firstTeam);
-            updateHotzoneDisplay(firstTeam);
+    // 初始繪圖邏輯：現在更依賴於 teamSelector 準備就緒
+    let initialSelectedTeam = teamSelector.val(); // 獲取當前選擇器中的值
+
+    // 如果當前沒有選定的球隊 (例如，預設選項是 disabled selected)
+    if (!initialSelectedTeam || initialSelectedTeam === "") {
+        // 嘗試選擇第一個非 "Average" 的球隊作為預設顯示
+        const firstAvailableTeam = Array.from(teamDataOffenseMap.keys()).find(key => key !== 'Average');
+        if (firstAvailableTeam) {
+            teamSelector.val(firstAvailableTeam); // 將這個球隊設定為選擇器中的值
+            initialSelectedTeam = firstAvailableTeam; // 更新變數
         }
+    }
+
+    // 如果現在有選定的球隊 (無論是預設的還是剛設定的)
+    if (initialSelectedTeam) {
+        updateHotzoneDisplay(initialSelectedTeam); // 呼叫繪圖函數
     }
 
 
@@ -5890,7 +5894,7 @@ function initHotzoneDashboard() {
     defenseCanvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, defenseCanvas, 'defense'));
     defenseCanvas.addEventListener('mouseout', () => hideTooltip('defense'));
 
-    // 新增：散佈圖的滑鼠事件監聽器
+    // --- 散佈圖的滑鼠事件監聽器 ---
     playerScatterCanvas.addEventListener('mousemove', (e) => handleScatterMouseMove(e));
     playerScatterCanvas.addEventListener('mouseout', () => hideTooltip('scatter'));
 }

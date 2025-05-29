@@ -2396,7 +2396,7 @@ body.is-preload #footer {
 
 .chart-section {
     text-align: center;
-    /* 可以設定一個最大寬度，例如 500px，以確保在寬螢幕時不會過大 */
+    /* 設定一個最大寬度，例如 500px，以確保在寬螢幕時不會過大 */
     max-width: 500px;
     flex-grow: 1;
     /* 允許在空間不足時佔據更多空間 */
@@ -2409,6 +2409,7 @@ body.is-preload #footer {
     /* 讓 Canvas 響應式縮放 */
     height: auto;
     /* 保持比例 */
+    min-height: 200px;
 }
 
 /* 媒體查詢，當螢幕更小時，讓圖表垂直堆疊 */
