@@ -256,28 +256,35 @@
     ">
                 </div>
             </article>
+            <!-- 球員頁面 -->
             <article id="player-dashboard">
-                <h2 class="major" id="playerDashboardTitle">球員數據</h2>
-                <div class="row gtr-uniform">
-                    <div class="col-6 col-12-small">
-                        <h4>球員數據圖表 1</h4>
-                        <canvas id="playerStatsCanvas1"></canvas>
+                <div id="team-dashboard-header-wrapper">
+                    <h2 class="major" id="playerNameDisplay">球員數據</h2>
+                    <div class="all-charts-wrapper">
+                        <div class="chart-section">
+                            <h4>進攻熱區</h4>
+                            <canvas id="playerHotzoneCanvas"></canvas>
+                        </div>
+                        <div class="chart-section">
+                            <h4>球員數據圖表 2</h4>
+                            <canvas id="playerStatsCanvas2"></canvas>
+                        </div>
                     </div>
-                    <div class="col-6 col-12-small">
-                        <h4>球員數據圖表 2</h4>
-                        <canvas id="playerStatsCanvas2"></canvas>
+                    <div id="hotzoneTooltip" style="
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.85); /* 半透明黑色背景 */
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 0.9em;
+        pointer-events: none; /* 讓滑鼠事件穿透此元素，不會阻擋下方的 Canvas */
+        display: none; /* 預設隱藏 */
+        z-index: 1000; /* 確保在最上層 */
+        white-space: nowrap; /* 確保內容不換行 */
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    ">
                     </div>
-                </div>
-                <div class="row gtr-uniform mt-4">
-                    <div class="col-6 col-12-small">
-                        <h4>球員數據圖表 3</h4>
-                        <canvas id="playerStatsCanvas3"></canvas>
-                    </div>
-                    <div class="col-6 col-12-small">
-                        <h4>球員數據圖表 4</h4>
-                        <canvas id="playerStatsCanvas4"></canvas>
-                    </div>
-                </div>
             </article>
             <!-- Intro -->
             <article id="intro">
@@ -585,6 +592,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
     <script src="assets/js/auto-scroll-logos.js"></script>
     <script src="assets/js/player-autocomplete.js"></script>
     <script src="assets/js/team-dashboard.js"></script>
+    <script src="assets/js/player-dashboard.js"></script>
 </body>
 
 </html>

@@ -76,10 +76,14 @@ $(function() { // 確保 DOM 載入完成後執行
 
                 // 點擊建議項目時的事件處理
                 b.addEventListener("click", function(e) {
-                    playerInput.val(this.getElementsByTagName("input")[0].value); // 將完整姓名填充到輸入框
+                    const selectedPlayerName = this.getElementsByTagName("input")[0].value;
+                    playerInput.val(selectedPlayerName); // 將完整姓名填充到輸入框
                     closeAllLists(); // 關閉建議列表
-                    // 可選：在這裡觸發搜尋或自動提交表單
-                    // $('#player-search-form').submit(); 
+
+                    // *** 修改作用：導航到球員頁面並傳遞球員姓名 ***
+                    console.log(`player-autocomplete.js: 從自動完成選中球員，導航到: ${selectedPlayerName}`);
+                    location.hash = `#player-dashboard?player=${encodeURIComponent(selectedPlayerName)}`;
+                    e.preventDefault(); // 阻止事件的預設行為，防止父層的表單提交
                 });
                 fragment.appendChild(b);
             }
@@ -106,6 +110,19 @@ $(function() { // 確保 DOM 載入完成後執行
                 // 如果沒有選中建議，但按了 Enter，可以考慮觸發搜尋
                 $('#search-player-button').click();
             }
+        }
+    });
+
+    // *** 新增作用：處理搜尋按鈕的直接點擊 ***
+    $('#search-player-button').on('click', function(e) {
+        e.preventDefault(); // 阻止預設的表單提交行為
+        const playerName = playerInput.val().trim(); // 獲取輸入框中的球員姓名
+        if (playerName) {
+            console.log(`player-autocomplete.js: 點擊搜尋按鈕，導航到球員頁面: ${playerName}`);
+            location.hash = `#player-dashboard?player=${encodeURIComponent(playerName)}`;
+        } else {
+            console.warn("請輸入球員名字進行搜尋。");
+            // 可以在這裡顯示一個提示訊息給用戶
         }
     });
 
@@ -152,13 +169,15 @@ $(function() { // 確保 DOM 載入完成後執行
 
     // 阻止表單預設提交，我們將用 JS 處理搜尋
     $('#player-search-form').on('submit', function(e) {
-        e.preventDefault();
-        const playerName = playerInput.val();
+        e.preventDefault(); // 阻止預設的表單提交行為
+        const playerName = playerInput.val().trim(); // 獲取輸入框中的球員姓名
         if (playerName) {
-            console.log("搜尋球員:", playerName);
-            // 在這裡可以觸發顯示球員詳細數據的邏輯
-            // 例如：showPlayerDetailPage(playerName);
-            alert(`正在搜尋球員：${playerName}`); // 暫時代替
+            // *** 修改作用：導航到球員頁面並傳遞球員姓名 ***
+            console.log(`player-autocomplete.js: 表單提交事件觸發，導航到球員頁面: ${playerName}`);
+            location.hash = `#player-dashboard?player=${encodeURIComponent(playerName)}`;
+        } else {
+            console.warn("請輸入球員名字進行搜尋。");
+            // 可以在這裡顯示一個提示訊息給用戶，例如一個短暫的訊息框
         }
     });
 });
