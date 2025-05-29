@@ -5814,8 +5814,11 @@ let currentScatterHoveredPlayer = null; // 追蹤散佈圖當前懸停的球員
 // 新增一個 Image 物件來載入背景圖
 const courtImage = new Image();
 courtImage.src = courtBackgroundImageUrl;
-courtImage.onload = () => {
-    // 圖片載入完成後，僅記錄，不在此處觸發繪圖，避免 teamSelector 未初始化問題
+courtImage.onload = () => { // 圖片載入完成後，如果已經有選定的球隊，則重新繪製熱區圖
+    const selectedTeam = teamSelector.val();
+    if (selectedTeam) {
+        updateHotzoneDisplay(selectedTeam);
+    }
     console.log("籃球場背景圖片載入完成。");
 };
 courtImage.onerror = () => {
@@ -5866,13 +5869,12 @@ function initHotzoneDashboard() {
         }
     });
 
-    // 初始繪圖邏輯：現在更依賴於 teamSelector 準備就緒
-    const initialSelectedTeam = teamSelector.val(); // 在 teamSelector 初始化後獲取值
-    if (initialSelectedTeam) {
-        // 如果有預設選擇的球隊，則繪製
-        updateHotzoneDisplay(initialSelectedTeam);
-    } else if (teamDataOffenseMap.size > 0) {
-        // 如果沒有預設值，選擇第一個非平均的球隊進行初始顯示
+    // 初始繪圖：確保圖片載入後才嘗試繪製
+    // 這部分邏輯會被 courtImage.onload 處理，但為了首次載入，也可以在這裡呼叫
+    // 如果圖片已經在快取中，onload 可能不會觸發，所以這裡也需要一個邏輯
+    if (courtImage.complete && teamSelector.val()) {
+        updateHotzoneDisplay(teamSelector.val());
+    } else if (courtImage.complete && teamDataOffenseMap.size > 0) {
         const firstTeam = Array.from(teamDataOffenseMap.keys()).find(key => key !== 'Average');
         if (firstTeam) {
             teamSelector.val(firstTeam);
