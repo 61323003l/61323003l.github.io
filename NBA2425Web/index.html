@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <!--
-	Dimension by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+    Dimension by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
 <html>
 
@@ -179,7 +179,40 @@
         <div id="main">
             <!-- 球隊頁面 -->
             <article id="team-dashboard">
-                <h2 class="major" id="team-name-display">選擇球隊查看熱區圖</h2>
+                <div id="team-dashboard-header-wrapper">
+                    <h2 class="major" id="team-name-display">選擇球隊查看熱區圖</h2>
+                    <div id="hotzone-legend">
+                        <div class="legend-item">
+                            <span class="legend-color-box red-bg"></span>
+                            <span class="legend-text">> 10%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color-box light-red-bg"></span>
+                            <span class="legend-text">10% ~ 5%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color-box light-yellow-bg"></span>
+                            <span class="legend-text">5% ~ -5%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color-box light-blue-bg"></span>
+                            <span class="legend-text">-5% ~ -10%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color-box blue-bg"></span>
+                            <span class="legend-text">
+                                < -10%</span> </div> <div class="legend-item">
+                                    <span class="legend-color-box gray-bg"></span>
+                                    <span class="legend-text">無數據</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <label for="team-selector" style="color: white; margin-right: 10px;">選擇球隊：</label>
+                    <select id="team-selector" style="padding: 8px; border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.5);">
+                    </select>
+                </div>
+                <!-- 熱區圖 -->
                 <div id="hotzone-canvases">
                     <div style="text-align: center;">
                         <h3>進攻命中率</h3>
@@ -204,11 +237,6 @@
         border: 1px solid rgba(255, 255, 255, 0.3);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     ">
-                </div>
-                <div style="text-align: center; margin-top: 20px;">
-                    <label for="team-selector" style="color: white; margin-right: 10px;">選擇球隊：</label>
-                    <select id="team-selector" style="padding: 8px; border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.5);">
-                    </select>
                 </div>
             </article>
             <!-- Intro -->

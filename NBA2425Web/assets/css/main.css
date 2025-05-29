@@ -2,9 +2,9 @@
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300italic,600italic,300,600");
 
 /*
-	Dimension by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+    Dimension by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
 html,
@@ -2214,5 +2214,170 @@ body.is-preload #footer {
         width: 100%;
         /* 在非常小的螢幕上，Canvas 仍然佔滿寬度 */
         height: auto;
+    }
+}
+
+
+/* 熱區圖詳細資訊 */
+.positive-diff {
+    color: #ff4d4d;
+    font-weight: bold;
+}
+
+.negative-diff {
+    color: #4d4dff;
+    font-weight: bold;
+}
+
+.neutral-diff {
+    color: #ffff66;
+}
+
+
+/* ============================================== */
+/* 熱區圖例樣式和響應式佈局 */
+/* ============================================== */
+
+/* 包裹 H2 和圖例的容器 */
+#team-dashboard-header-wrapper {
+    display: flex;
+    /* 啟用 Flexbox */
+    flex-wrap: wrap;
+    /* 允許項目換行 */
+    align-items: center;
+    /* 垂直居中對齊 Flex 項目 */
+    justify-content: space-between;
+    /* H2 靠左，圖例靠右，中間留白 */
+    margin-bottom: 20px;
+    /* 標題和圖例下方留出間距 */
+    width: 100%;
+    /* 確保容器佔滿可用寬度 */
+    box-sizing: border-box;
+}
+
+/* 調整 H2 標題的樣式，使其在 Flexbox 中行為良好 */
+#team-dashboard-header-wrapper h2.major {
+    display: block;
+    /* 確保 H2 作為塊級元素，以便 flex-grow 生效 */
+    flex-grow: 1;
+    /* 允許 H2 佔據可用空間，將圖例推向右側 */
+    margin-bottom: 0;
+    /* 移除預設的底部間距，避免影響垂直對齊 */
+    padding-bottom: 0;
+    /* 移除預設的底部內邊距 */
+    border-bottom: none;
+    /* 移除 .major 類別可能帶來的底部邊框線 */
+    text-align: left;
+    /* 確保 H2 靠左對齊 */
+}
+
+/* 熱區圖例容器 */
+#hotzone-legend {
+    display: flex;
+    /* 啟用 Flexbox，用於圖例項目內部排列 */
+    flex-wrap: wrap;
+    /* 允許圖例項目換行 */
+    gap: 15px;
+    /* 圖例項目之間的間距 */
+    justify-content: center;
+    /* 圖例項目在圖例容器內水平居中 */
+    align-items: center;
+    /* 圖例項目垂直居中對齊 */
+    padding: 5px 0;
+    /* 圖例容器的上下內邊距 */
+    color: #ccc;
+    /* 圖例文字顏色 */
+    font-size: 0.85em;
+    /* 圖例文字大小 */
+    margin-left: 20px;
+    /* 與 H2 之間留出一些間距 */
+    flex-shrink: 0;
+    /* 防止圖例在空間不足時被壓縮 */
+}
+
+/* 每個圖例項目 (顏色方塊 + 文字) */
+.legend-item {
+    display: flex;
+    align-items: center;
+    /* 顏色方塊和文字垂直居中對齊 */
+    white-space: nowrap;
+    /* 防止文字在圖例項目內換行 */
+}
+
+/* 圖例顏色方塊 */
+.legend-color-box {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    /* 圓角 */
+    margin-right: 8px;
+    /* 顏色方塊與文字之間的間距 */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* 輕微的邊框 */
+}
+
+/* 根據 getColorForDifference 函數定義的顏色類別 */
+.red-bg {
+    background-color: #ff4c4c;
+}
+
+.light-red-bg {
+    background-color: #ed9292;
+}
+
+/* 調整為您 JS 中的淺紅色 */
+.blue-bg {
+    background-color: #4c4cff;
+}
+
+.light-blue-bg {
+    background-color: #c1c1ff;
+}
+
+/* 調整為您 JS 中的淺藍色 */
+.light-yellow-bg {
+    background-color: #ffffc1;
+}
+
+/* 調整為您 JS 中的淡黃色 */
+.gray-bg {
+    background-color: rgba(128, 128, 128, 0.6);
+}
+
+/* 無數據的灰色 */
+
+
+/* 媒體查詢：當螢幕寬度較小時 (例如小於 980px，這是 Dimension 模板的 md 斷點附近) */
+@media screen and (max-width: 980px) {
+    #team-dashboard-header-wrapper {
+        flex-direction: column;
+        /* 將 H2 和圖例垂直堆疊 */
+        align-items: center;
+        /* 垂直堆疊時，讓 H2 和圖例水平居中 */
+        justify-content: center;
+    }
+
+    #team-dashboard-header-wrapper h2.major {
+        text-align: center;
+        /* H2 在堆疊時水平居中 */
+        width: 100%;
+        /* H2 佔滿可用寬度 */
+        margin-bottom: 15px;
+        /* H2 下方留出間距 */
+        margin-left: 0;
+        /* 重置可能存在的左側間距 */
+        margin-right: 0;
+        /* 重置可能存在的右側間距 */
+    }
+
+    #hotzone-legend {
+        width: 100%;
+        /* 圖例佔滿可用寬度，以便其內部項目可以居中 */
+        justify-content: center;
+        /* 確保圖例項目在圖例容器內水平居中 */
+        margin-left: 0;
+        /* 重置可能存在的左側間距 */
+        margin-right: 0;
+        /* 重置可能存在的右側間距 */
     }
 }
