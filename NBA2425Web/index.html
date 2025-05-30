@@ -235,7 +235,37 @@
                         <h3 id="bar-chart-title">對戰表現最佳球員</h3>
                         <div class="field">
                             <select name="barChartDataSelector" id="bar-chart-data-selector">
+                                <!-- player,Value,Games,Games Start,Minutes Played,Field Goals,Field Goal Attempts,3-Point Field Goals,3-Point Field Goal Attempts,Free Throws,Free Throw Attempts,Offensive Rebounds,Total Rebounds,Assists,Steals,Blocks,Turnovers,Personal Fouls,Points, ,Field Goal Percentage,3-Point Field Goal Percentage,Free Throw Percentage,True Shooting Percentage,Usage Percentage,Offensive Rating,Defensive Rating,plus_minus_per_200_poss,Minutes Played Per Game,Points Per Game,Total Rebounds Per Game,Assists Per Game -->
                                 <option value="">請選擇數據類型</option>
+                                <option value="Games">出賽場數</option>
+                                <option value="Games Start">先發場數</option>
+                                <option value="Minutes Played">累積出場時間</option>
+                                <option value="Field Goals">累積進球次數</option>
+                                <option value="Field Goals Attempts">累積出手次數</option>
+                                <option value="3-Point Field Goals">累積三分進球次數</option>
+                                <option value="3-Point Field Goal Attempts">累積三分出手次數</option>
+                                <option value="Free Throws">累積罰球進球次數</option>
+                                <option value="Free Throw Attempts">累積罰球出手次數</option>
+                                <option value="Offensive Rebounds">累積進攻籃板</option>
+                                <option value="Total Rebounds">累積籃板數</option>
+                                <option value="Assists">累積助攻數</option>
+                                <option value="Steals">累積抄截數</option>
+                                <option value="Blocks">累積阻攻數</option>
+                                <option value="Turnovers">累積失誤數</option>
+                                <option value="Personal Fouls">累積犯規數</option>
+                                <option value="Points">累積得分</option>
+                                <option value="Field Goal Percentage">命中率</option>
+                                <option value="3-Point Field Goal Percentage">三分命中率</option>
+                                <option value="Free Throw Percentage">罰球命中率</option>
+                                <option value="True Shooting Percentage">真實投籃命中率</option>
+                                <option value="Usage Percentage">使用率</option>
+                                <option value="Offensive Rating">Offensive Rating</option>
+                                <option value="Defensive Rating">Defensive Rating</option>
+                                <option value="plus_minus_per_200_poss">每200回合正負值</option>
+                                <option value="Minutes Played Per Game">場均出場時間</option>
+                                <option value="Points Per Game">場均得分</option>
+                                <option value="Total Rebounds Per Game">場均籃板</option>
+                                <option value="Assists Per Game">場均助攻</option>
                             </select>
                         </div>
                         <canvas id="playerBarChartCanvas"></canvas>

@@ -5816,7 +5816,7 @@ let playerBarChartCtx;
 let playerBarChart; // 用於 Chart.js 圖表實例
 let barChartDataSelector; // 長條圖數據選擇器
 let playerVsOpponentData = []; // 用於儲存從 CSV 載入的所有球員對戰數據
-const playerVsOpponentDataCSVPath = 'data/all_player_data.csv'; // <--- 請將這裡的路徑替換為您的 CSV 檔案的實際路徑！
+const playerVsOpponentDataCSVPath = 'data/all_player_data.csv'; // <--- 用於顯示球隊長條圖 CSV 實際路徑！
 
 
 // 新增一個 Image 物件來載入背景圖
