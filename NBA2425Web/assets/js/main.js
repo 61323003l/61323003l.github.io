@@ -1,7 +1,7 @@
 /*
-	Dimension by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+    Dimension by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
 (function($) {
@@ -13,6 +13,8 @@
         $footer = $('#footer'),
         $main = $('#main'),
         $main_articles = $main.children('article');
+
+    var $searchForm = $('#search-form'); // 新增：獲取搜尋表單元素
 
     // Breakpoints.
     breakpoints({
@@ -28,6 +30,26 @@
     $window.on('load', function() {
         window.setTimeout(function() {
             $body.removeClass('is-preload');
+            // 頁面載入完成後，根據 URL hash 決定顯示哪個儀表板或文章
+            // 這裡不再直接調用 $main._show，而是讓 hashchange 事件處理
+            // 因為 hashchange 包含了更複雜的儀表板初始化邏輯
+            if (location.hash !== '' && location.hash !== '#') {
+                // 手動觸發 hashchange 事件來處理初始 URL
+                $window.trigger('hashchange');
+            } else {
+                // 如果沒有 hash，保持預設的首頁顯示，或者您希望的初始狀態
+                // 並呼叫 initDashboard (如果存在)
+                if (window.initTeamDashboard) {
+                    window.initTeamDashboard();
+                    console.log("main.js: 首次載入時呼叫 initTeamDashboard() (無 hash)");
+                }
+                if (window.initPlayerDashboard) {
+                    window.initPlayerDashboard();
+                    console.log("main.js: 首次載入時呼叫 initPlayerDashboard() (無 hash)");
+                }
+                // 這裡可以選擇是否顯示 intro
+                $main._show('intro', true); // 顯示 intro 文章
+            }
         }, 100);
     });
 
@@ -337,33 +359,55 @@
 
     });
 
+    // --- 修改：處理 URL Hash 變化事件 ---
     $window.on('hashchange', function(event) {
+        const hash = window.location.hash;
+        console.log("main.js: handleHashChange: 當前 URL Hash:", hash); // 方便除錯
 
-        // Empty hash?
-        if (location.hash == '' ||
-            location.hash == '#') {
+        // 預防預設行為，尤其是在 URL 中有參數時
+        event.preventDefault();
+        event.stopPropagation();
 
-            // Prevent default.
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Hide.
-            $main._hide();
-
+        // 判斷是否需要隱藏當前文章
+        // 如果 hash 為空或回到首頁，則隱藏當前文章
+        if (hash === '' || hash === '#') {
+            $main._hide(true); // 隱藏並更新瀏覽歷史
         }
-
-        // Otherwise, check for a matching article.
-        else if ($main_articles.filter(location.hash).length > 0) {
-
-            // Prevent default.
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Show article.
-            $main._show(location.hash.substr(1));
-
+        // 檢查是否是團隊儀表板
+        else if (hash === '#team-dashboard') {
+            $main._show('team-dashboard'); // 顯示團隊儀表板
+            // 確保團隊儀表板初始化並顯示
+            if (window.initTeamDashboard) {
+                window.initTeamDashboard();
+                console.log("main.js: 呼叫 initTeamDashboard()");
+            } else {
+                console.error("main.js: initTeamDashboard 函數未定義。");
+            }
         }
+        // 檢查是否是球員儀表板 (可能帶有參數)
+        else if (hash.startsWith('#player-dashboard')) {
+            $main._show('player-dashboard'); // 顯示球員儀表板
+            const playerName = window.getUrlParameter('player'); // 從 URL 獲取 player 參數
 
+            if (playerName) {
+                // 呼叫 player-dashboard.js 中的更新函數
+                if (window.updatePlayerDisplay) {
+                    window.updatePlayerDisplay(playerName);
+                    console.log(`main.js: 呼叫 updatePlayerDisplay('${playerName}')`);
+                } else {
+                    console.error("main.js: updatePlayerDisplay 函數未定義。");
+                }
+            } else {
+                // 如果 hash 是 #player-dashboard 但沒有 player 參數
+                // 可以在這裡顯示一個提示訊息，或保持預設狀態
+                $('#playerNameDisplay').text("請輸入球員名稱進行搜尋。"); // 假設有此元素
+                console.warn("main.js: URL Hash 為 #player-dashboard 但未找到球員名字參數。");
+            }
+        }
+        // 處理其他一般文章連結 (例如 #contact, #about 等)
+        else if ($main_articles.filter(hash).length > 0) {
+            $main._show(hash.substr(1)); // 顯示對應文章
+        }
     });
 
     // Scroll restoration.
@@ -389,17 +433,63 @@
 
     }
 
+    // --- 新增：處理搜尋表單提交事件 ---
+    $searchForm.on('submit', function(event) {
+        event.preventDefault(); // 阻止表單預設提交行為
+
+        const playerName = $('#player-search-input').val().trim(); // 獲取輸入框的值
+
+        if (playerName) {
+            // 更新 URL hash，觸發 hashchange 事件，並將球員名稱作為參數
+            // 使用 encodeURIComponent 確保球員名稱中的特殊字元被正確編碼
+            window.location.hash = `#player-dashboard?player=${encodeURIComponent(playerName)}`;
+            // 這裡不需要直接調用 updatePlayerDisplay，因為 hashchange 會處理
+        } else {
+            // 如果搜尋框為空，可以給用戶一些提示
+            // 假設您在 player-dashboard.html 有一個顯示球員名稱的元素，ID 為 playerNameDisplay
+            $('#playerNameDisplay').text("請輸入球員名稱進行搜尋。");
+            // 隱藏球員儀表板，如果它正在顯示
+            // 由於您的 _show/_hide 邏輯是基於 is-article-visible，這裡可能需要額外調整
+            // 或者依賴 hashchange 處理沒有參數的 #player-dashboard
+            $main._hide(true); // 隱藏當前可見的文章
+            // 如果您需要更精細地控制，例如只隱藏 player-dashboard 但不回到首頁
+            // 這邊的邏輯可能需要與 handleHashChange 配合
+        }
+    });
+
     // Initialize.
 
     // Hide main, articles.
     $main.hide();
     $main_articles.hide();
 
-    // Initial article.
-    if (location.hash != '' &&
-        location.hash != '#')
-        $window.on('load', function() {
-            $main._show(location.hash.substr(1), true);
-        });
+    // 初始化儀表板相關函數 (在 window.on('load') 之前執行，確保函數可用)
+    // 這些函數應該由 team-dashboard.js 和 player-dashboard.js 暴露到 window 物件上
+    if (!window.initTeamDashboard) {
+        window.initTeamDashboard = function() { console.warn("initTeamDashboard 尚未載入或定義。"); };
+    }
+    if (!window.initPlayerDashboard) {
+        window.initPlayerDashboard = function() { console.warn("initPlayerDashboard 尚未載入或定義。"); };
+    }
+    if (!window.updatePlayerDisplay) {
+        window.updatePlayerDisplay = function(playerName) { console.warn(`updatePlayerDisplay 尚未載入或定義，無法顯示 ${playerName}。`); };
+    }
+    if (!window.getUrlParameter) {
+        window.getUrlParameter = function(name) {
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(window.location.hash);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        };
+        console.log("main.js: getUrlParameter 函數已在 main.js 中定義為後備方案。");
+    }
+
+    // 原始的 Initial article 邏輯現在已由 $window.on('load') 處理
+    // 這裡可以移除，因為 load 事件中的邏輯會處理首次載入的 hash
+    // 但為安全起見，如果 load 事件中的邏輯不夠，可以考慮將其保留
+    // 但由於已經在 load 事件中觸發 hashchange，這裡就不再需要了
+    // 因此，可以直接移除此區塊。
 
 })(jQuery);
