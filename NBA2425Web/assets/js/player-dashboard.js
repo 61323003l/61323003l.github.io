@@ -1,7 +1,8 @@
-assets / js / player - dashboard.js
+// assets/js/player-dashboard.js
 
 // 使用 IIFE 將所有變數封裝在局部作用域，避免全局衝突
-(function() {
+// 確保接收 jQuery 物件作為參數
+(function($) { // <--- 將這裡修改為 (function($) {
 
     // --- 1. 全域變數宣告與初始化 (現在是局部變數) ---
     let PlayerleagueAverage = {}; // 用來儲存聯盟平均進攻數據
@@ -8942,10 +8943,13 @@ assets / js / player - dashboard.js
      * @returns {string|null} 參數值，如果不存在則為 null。
      */
     function getUrlParameter(name) {
-        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        var results = regex.exec(location.search);
-        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        name = name.replace(/[\[\]]/g, "\\$&"); // 轉義特殊字元
+        // 從 location.hash 中提取參數
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+        var results = regex.exec(window.location.hash); // <-- 關鍵：從 window.location.hash 獲取
+        if (!results) return null; // 如果沒有找到，返回 null
+        if (!results[2]) return ''; // 如果找到但沒有值，返回空字串
+        return decodeURIComponent(results[2].replace(/\+/g, " ")); // 解碼 URL 編碼的字串
     }
 
     /**
@@ -9233,9 +9237,9 @@ assets / js / player - dashboard.js
     }
 
 
-    // 將關鍵函數暴露到全域 window 物件，以便 main.js 可以訪問
+    // 暴露初始化函數給外部
     window.updatePlayerDisplay = updatePlayerDisplay;
-    window.initPlayerDashboard = initPlayerDashboard; // 假設您有一個初始化函數
+    window.initPlayerDashboard = initPlayerDashboard; // 如果您有定義此函數
     window.getUrlParameter = getUrlParameter; // 確保這個也被暴露
-
-})(); // IIFE 結束
+    // 確保 IIFE 結束時傳入 jQuery 物件
+})(jQuery); // <--- 確保這裡有傳入 jQuery
