@@ -367,14 +367,15 @@
         // 預防預設行為，尤其是在 URL 中有參數時
         event.preventDefault();
         event.stopPropagation();
+        $main_articles.hide();
 
-        // 判斷是否需要隱藏當前文章
-        // 如果 hash 為空或回到首頁，則隱藏當前文章
+        // 判斷是否需要隱藏當前文章 (回到首頁)
         if (hash === '' || hash === '#') {
             $main._hide(true); // 隱藏並更新瀏覽歷史
         }
         // 檢查是否是團隊儀表板
         else if (hash === '#team-dashboard') {
+            $('#team-dashboard').show(); // 顯示團隊儀表板 (直接指定 ID 顯示)
             $main._show('team-dashboard'); // 顯示團隊儀表板
             // 確保團隊儀表板初始化並顯示
             if (window.initTeamDashboard) {
@@ -386,6 +387,7 @@
         }
         // 檢查是否是球員儀表板 (可能帶有參數)
         else if (hash.startsWith('#player-dashboard')) {
+            $('#player-dashboard').show(); // 顯示球員儀表板 (直接指定 ID 顯示)
             $main._show('player-dashboard'); // 顯示球員儀表板
             const playerName = window.getUrlParameter('player'); // 從 URL 獲取 player 參數
 
@@ -406,6 +408,7 @@
         }
         // 處理其他一般文章連結 (例如 #contact, #about 等)
         else if ($main_articles.filter(hash).length > 0) {
+            $(hash).show(); // 顯示對應文章 (直接指定 ID 顯示)
             $main._show(hash.substr(1)); // 顯示對應文章
         }
     });
