@@ -2427,7 +2427,8 @@ body.is-preload #footer {
 #offenseHotzoneCanvas,
 #defenseHotzoneCanvas,
 #playerScatterCanvas,
-#playerBarChartCanvas {
+#playerBarChartCanvas,
+#playerHotzoneCanvas {
     width: 100%;
     /* 讓 Canvas 寬度適應其父容器 */
     max-width: 600px;
@@ -2450,6 +2451,24 @@ body.is-preload #footer {
 /* 這些是您 HTML 中可能存在的父容器 class 或 ID */
 /* 針對 #main 內部 #team-dashboard 文章區塊內的 .row 元素 */
 #main>article#team-dashboard .row {
+    min-height: 450px;
+    /* 略大於 Canvas 高度，以容納標題、選擇器等 */
+    display: flex;
+    /* 使用 flexbox 佈局 */
+    flex-wrap: wrap;
+    /* 允許換行 */
+    justify-content: center;
+    /* 內容居中 */
+    align-items: flex-start;
+    /* 頂部對齊 */
+    margin-bottom: 3em;
+    /* 增加行之間的間距 */
+}
+
+/* 確保包含 Canvas 的容器也有足夠的高度，防止內容坍塌 */
+/* 這些是您 HTML 中可能存在的父容器 class 或 ID */
+/* 針對 #main 內部 #player-dashboard 文章區塊內的 .row 元素 */
+#main>article#player-dashboard .row {
     min-height: 450px;
     /* 略大於 Canvas 高度，以容納標題、選擇器等 */
     display: flex;

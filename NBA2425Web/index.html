@@ -231,7 +231,7 @@
                         <canvas id="playerScatterCanvas" width="500" height="500" style="border: 1px solid #ccc; background-color: #000;"></canvas>
                     </div>
                     <!-- 長條圖 -->
-                    <div id="bar-chart-container" class="col-12 col-12-xsmall">
+                    <div id="bar-chart-container" class="chart-section">
                         <h3 id="bar-chart-title">對戰表現最佳球員</h3>
                         <div class="field">
                             <select name="barChartDataSelector" id="bar-chart-data-selector">
@@ -291,6 +291,32 @@
             <article id="player-dashboard" class="main-article">
                 <div id="team-dashboard-header-wrapper">
                     <h2 class="major" id="playerNameDisplay">球員數據</h2>
+                    <!-- 圖例 -->
+                    <div id="hotzone-legend">
+                        <div class="legend-item">
+                            <span class="legend-color-box red-bg"></span>
+                            <span class="legend-text">> 10%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color-box light-red-bg"></span>
+                            <span class="legend-text">10% ~ 5%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color-box light-yellow-bg"></span>
+                            <span class="legend-text">5% ~ -5%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color-box light-blue-bg"></span>
+                            <span class="legend-text">-5% ~ -10%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color-box blue-bg"></span>
+                            <span class="legend-text">
+                                < -10%</span> </div> <div class="legend-item">
+                                    <span class="legend-color-box gray-bg"></span>
+                                    <span class="legend-text">無數據</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="all-charts-wrapper">
                     <div class="chart-section">
