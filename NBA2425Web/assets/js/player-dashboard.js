@@ -23,15 +23,26 @@
     // 新增一個 Image 物件來載入背景圖
     const courtImage = new Image();
 
+    // 新增變數來儲存籃球場圖片的原始尺寸
+    let originalCourtWidth = 0;
+    let originalCourtHeight = 0;
+
     courtImage.src = courtBackgroundImageUrl;
     courtImage.onload = () => {
         console.log("player-dashboard.js: 籃球場背景圖片載入完成。");
+
+        // 確認圖片原始尺寸
+        originalCourtWidth = courtImage.naturalWidth || courtImage.width;
+        originalCourtHeight = courtImage.naturalHeight || courtImage.height;
+        console.log(`player-dashboard.js: 籃球場圖片原始尺寸: ${originalCourtWidth}x${originalCourtHeight}`); // <--- 新增這行
+
         // 圖片載入完成後，如果 playerHotzoneCanvas 已經存在，可以嘗試重新繪製
         const playerName = getUrlParameter('player');
-        if (playerHotzoneCanvas && playerHotzoneCtx && playerName) {
-            updatePlayerDisplay(playerName);
+        if (playerName) {
+            updatePlayerDisplay(playerName); // 這個函數會呼叫 drawPlayerHotzone
         }
     };
+
     courtImage.onerror = () => {
         console.error("player-dashboard.js: 載入籃球場背景圖片失敗，請檢查路徑：", courtBackgroundImageUrl);
     };
@@ -8959,11 +8970,11 @@
      * @returns {string} 顏色代碼。
      */
     function getColorByDiff(diff) {
-        if (diff > 10) return '#FF0000'; // 紅色
-        if (diff > 5) return '#FF6347'; // 淺紅色
-        if (diff >= -5 && diff <= 5) return '#FFD700'; // 黃色
-        if (diff < -5 && diff >= -10) return '#6A5ACD'; // 淺藍色
-        if (diff < -10) return '#0000CD'; // 深藍色
+        if (diff > 10) return 'rgba(255, 0, 0, 0.7)'; // 紅色 (高 10 以上)
+        if (diff > 5) return 'rgba(230, 100, 100, 0.7)'; // 淺紅色/橘色 (高 5 以上)
+        if (diff >= -5 && diff <= 5) return 'rgba(255, 255, 100, 0.4)'; // 淡黃色 (介於高 5 ~ 低 5 之間)
+        if (diff < -5 && diff >= -10) return 'rgba(100, 100, 255, 0.4)'; // 淺藍色 (低 5 以上)
+        if (diff < -10) return 'rgba(0, 0, 255, 0.7)'; // 藍色 (低 10 以上)
         return '#808080'; // 灰色 (無數據或預設)
     }
 
@@ -9017,6 +9028,12 @@
         // 繪製籃球場背景圖
         playerHotzoneCtx.drawImage(courtImage, 0, 0, playerHotzoneCanvas.width, playerHotzoneCanvas.height);
 
+        // 使用實際獲取到的原始圖片尺寸來計算縮放比例
+        // 確保 originalCourtWidth 和 originalCourtHeight 不為 0，避免除以零
+        const scaleX = (originalCourtWidth > 0) ? playerHotzoneCanvas.width / originalCourtWidth : 1;
+        const scaleY = (originalCourtHeight > 0) ? playerHotzoneCanvas.height / originalCourtHeight : 1;
+
+
         // 遍歷所有熱區多邊形數據
         courtPolygonsData.features.forEach(feature => {
             const zoneName = feature.properties.name;
@@ -9046,7 +9063,7 @@
                 }
             }
             playerHotzoneCtx.closePath();
-            playerHotzoneCtx.fillStyle = fillColor + 'B0'; // 添加透明度
+            playerHotzoneCtx.fillStyle = fillColor; // 添加透明度
             playerHotzoneCtx.fill();
             playerHotzoneCtx.strokeStyle = '#FFFFFF'; // 白色邊框
             playerHotzoneCtx.lineWidth = 1;
