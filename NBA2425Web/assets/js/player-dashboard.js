@@ -9126,9 +9126,15 @@
             }
 
             playerHotzoneTooltip.innerHTML = tooltipContent;
-            playerHotzoneTooltip.style.left = `${event.clientX + 10}px`;
-            playerHotzoneTooltip.style.top = `${event.clientY + 10}px`;
-            playerHotzoneTooltip.style.display = 'block';
+            // ===============================================================
+            // !!! 修改這裡的定位邏輯，讓提示框居中顯示 !!!
+            playerHotzoneTooltip.style.position = 'fixed'; // 使用 fixed 定位，相對於視窗
+            playerHotzoneTooltip.style.left = '50%'; // 從左邊緣開始 50%
+            playerHotzoneTooltip.style.top = '50%'; // 從頂部邊緣開始 50%
+            playerHotzoneTooltip.style.transform = 'translate(-50%, -50%)'; // 向上和向左移動自身寬高的一半，實現真正的居中
+            playerHotzoneTooltip.style.zIndex = '1000'; // 確保它在其他元素之上
+            playerHotzoneTooltip.style.display = 'block'; // 確保顯示
+            // ===============================================================
         } else if (!hoveredZone && currentPlayerHoveredZone) {
             hideTooltip();
         }
