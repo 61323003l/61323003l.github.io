@@ -183,6 +183,7 @@
             <article id="team-dashboard" class="main-article">
                 <div id="team-dashboard-header-wrapper">
                     <h2 class="major" id="teamNameDisplay">選擇球隊查看熱區圖</h2>
+                    <!-- 圖例 -->
                     <div id="hotzone-legend">
                         <div class="legend-item">
                             <span class="legend-color-box red-bg"></span>
@@ -260,17 +261,18 @@
             <article id="player-dashboard" class="main-article">
                 <div id="team-dashboard-header-wrapper">
                     <h2 class="major" id="playerNameDisplay">球員數據</h2>
-                    <div class="all-charts-wrapper">
-                        <div class="chart-section">
-                            <h4>進攻熱區</h4>
-                            <canvas id="playerHotzoneCanvas"></canvas>
-                        </div>
-                        <div class="chart-section">
-                            <h4>球員數據圖表 2</h4>
-                            <canvas id="playerStatsCanvas2"></canvas>
-                        </div>
+                </div>
+                <div class="all-charts-wrapper">
+                    <div class="chart-section">
+                        <h4>進攻熱區</h4>
+                        <canvas id="playerHotzoneCanvas" width="500" height="470" style="border: 1px solid #ccc; background-color: #000;"></canvas>
                     </div>
-                    <div id="playerHotzoneTooltip" style="
+                    <div class="chart-section">
+                        <h4>球員數據圖表 2</h4>
+                        <canvas id="playerStatsCanvas2"></canvas>
+                    </div>
+                </div>
+                <div id="playerHotzoneTooltip" style="
         position: absolute;
         background-color: rgba(0, 0, 0, 0.85); /* 半透明黑色背景 */
         color: white;
@@ -284,7 +286,7 @@
         border: 1px solid rgba(255, 255, 255, 0.3);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     ">
-                    </div>
+                </div>
             </article>
         </div>
         <!-- Footer -->

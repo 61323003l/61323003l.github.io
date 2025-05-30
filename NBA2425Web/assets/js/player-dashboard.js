@@ -18,10 +18,11 @@
     let currentPlayerHoveredZone = null; // 追蹤球員熱區當前懸停的分區
 
     // 籃球場背景圖片 URL
-    const courtBackgroundImageUrl = 'img/nba-court.png';
+    const courtBackgroundImageUrl = 'img/basketball_court.png';
 
     // 新增一個 Image 物件來載入背景圖
     const courtImage = new Image();
+
     courtImage.src = courtBackgroundImageUrl;
     courtImage.onload = () => {
         console.log("player-dashboard.js: 籃球場背景圖片載入完成。");
