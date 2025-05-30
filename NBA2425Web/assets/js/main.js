@@ -371,7 +371,24 @@
 
         // 判斷是否需要隱藏當前文章 (回到首頁)
         if (hash === '' || hash === '#') {
-            $main._hide(true); // 隱藏並更新瀏覽歷史
+            // 當回到首頁時，確保 #main 容器和 #wrapper 是顯示的
+            // 由於 _hide(true) 可能也作用於 #main，我們需要明確地重新顯示它們
+            $wrapper.show(); // 確保整個 wrapper 是顯示的
+            $header.show(); // 確保 header 是顯示的
+            $footer.show(); // 確保 footer 是顯示的
+            $main.show(); // 確保 main 容器是顯示的
+
+            // 如果你的 _hide(true) 函數會處理一些動畫或狀態，可以保留它
+            // 但在這裡，我們優先確保 DOM 元素的顯示狀態
+            // $main._hide(true); // 這行可能不需要，或者它的作用是設置 class 來控制動畫，而非直接 display: none;
+            // 如果你確定 _hide(true) 導致 #main 隱藏了，那上面 show() 的方式是直接解決
+            // 如果 _hide(true) 會導致 preload 類別的添加，那它可能仍有必要
+            // 先暫時保留，如果還不行再移除或調整。
+
+            // 頁面回到首頁時，可能需要清除一些特定於頁面的類別
+            $body.removeClass('is-article-visible'); // 如果你有此類別來隱藏主頁內容
+            console.log("main.js: 返回首頁，主介面應已顯示。");
+
         }
         // 檢查是否是團隊儀表板
         else if (hash === '#team-dashboard') {
