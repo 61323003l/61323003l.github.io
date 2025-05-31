@@ -6066,28 +6066,63 @@ function drawScatterPlot(teamId) {
         return;
     }
 
-    const rect = playerScatterCanvas.getBoundingClientRect();
-    playerScatterCanvas.width = rect.width * window.devicePixelRatio;
-    playerScatterCanvas.height = rect.height * window.devicePixelRatio;
-    playerScatterCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    // ✨ 移除這部分，Canvas 的 width/height 和 scale 應由 ResizeObserver 或初始化時處理 ✨
+    // const rect = playerScatterCanvas.getBoundingClientRect();
+    // playerScatterCanvas.width = rect.width * window.devicePixelRatio;
+    // playerScatterCanvas.height = rect.height * window.devicePixelRatio;
+    // playerScatterCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    // ✨ 移除結束 ✨
 
-    playerScatterCtx.clearRect(0, 0, playerScatterCanvas.width / window.devicePixelRatio, playerScatterCanvas.height / window.devicePixelRatio);
+    // ✨ 清空 Canvas 時，使用 CSS 像素尺寸，因為 scale 可能已在別處應用 ✨
+    // ✨ 或者，確保在調用此函數前，Canvas 的 width/height 屬性已正確設定為繪圖緩衝區大小 ✨
+    // ✨ 並且 scale 操作也已正確執行。為簡化，假設 width/height 屬性是正確的繪圖緩衝區大小。✨
+    playerScatterCtx.clearRect(0, 0, playerScatterCanvas.width, playerScatterCanvas.height);
 
-    const margin = 40;
-    const width = playerScatterCanvas.width / window.devicePixelRatio;
-    const height = playerScatterCanvas.height / window.devicePixelRatio;
+
+    // ✨ 如果 devicePixelRatio > 1 並且你沒有在別處 ctx.scale()，
+    // ✨ 那麼這裡的 margin, width, height 計算以及後續繪圖座標都需要考慮 dpr。
+    // ✨ 但更推薦的做法是在 ResizeObserver 回呼中或初始化時進行一次性的 ctx.scale(dpr, dpr)，
+    // ✨ 然後後續所有繪圖都使用 CSS 像素單位，讓 Canvas API 自動處理縮放。
+    // ✨ 為保持與你原代碼的結構，暫時假設 width/height 是 CSS 像素尺寸，
+    // ✨ 並且 playerScatterCtx 已經被正確 scale 過（例如在 ResizeObserver 回呼中）。
+    // ✨ 如果沒有，那麼這裡的 width/height 應該是 playerScatterCanvas.width / window.devicePixelRatio
+    // ✨ 並且後續所有繪圖座標可能也需要調整，或者在繪製前 ctx.save(); ctx.scale(dpr,dpr); ... ctx.restore();
+    // ✨ 為了避免引入更多複雜性，我們暫時假設 ResizeObserver 中的 drawScatterPlot(currentTeam);
+    // ✨ 之前，Canvas 尺寸和 scale 已被正確設定。
+
+    const dpr = window.devicePixelRatio || 1;
+    // 使用 Canvas 繪圖緩衝區的尺寸來計算內部繪圖區域
+    // 如果你的 playerScatterCanvas.width/height 已經是乘以 dpr 後的值，那麼這裡的 width/height 就是 CSS 像素值
+    const canvasBufferWidth = playerScatterCanvas.width;
+    const canvasBufferHeight = playerScatterCanvas.height;
+
+    // 繪圖邏輯應使用相對於 Canvas 繪圖緩衝區的座標
+    // 如果你的 playerScatterCtx 已經 scale(dpr, dpr) 過，那麼可以直接使用 CSS 像素值進行計算
+    // 這裡我們假設 playerScatterCtx 已經被 scale 過，所以 width/height 是 CSS 像素尺寸
+    const cssWidth = canvasBufferWidth / dpr;
+    const cssHeight = canvasBufferHeight / dpr;
+
+    const margin = 40; // 邊距，單位是 CSS 像素
+    // 可繪圖區域的 CSS 像素尺寸
+    const chartWidth = cssWidth - 2 * margin;
+    const chartHeight = cssHeight - 2 * margin;
+
 
     const teamPlayers = allPlayersData.filter(p => p.team === teamId && p.player !== "average");
 
     if (teamPlayers.length === 0) {
         console.warn(`drawScatterPlot: ${teamId} 無球員數據或數據錯誤，無法繪製散佈圖。`);
+        playerScatterCtx.save();
         playerScatterCtx.fillStyle = 'white';
-        playerScatterCtx.font = '16px Arial';
+        playerScatterCtx.font = `${16}px Arial`; // 使用 CSS 像素單位字體大小
         playerScatterCtx.textAlign = 'center';
-        playerScatterCtx.fillText('此隊伍無球員數據或數據錯誤', width / 2, height / 2);
+        playerScatterCtx.textBaseline = 'middle';
+        playerScatterCtx.fillText('此隊伍無球員數據或數據錯誤', cssWidth / 2, cssHeight / 2);
+        playerScatterCtx.restore();
         return;
     }
 
+    // 數據範圍 (保持不變)
     const fixedOffensiveMin = 70;
     const fixedOffensiveMax = 150;
     const fixedDefensiveMin = 70;
@@ -6098,76 +6133,103 @@ function drawScatterPlot(teamId) {
     const yMin = Math.min(fixedDefensiveMin, leagueDefensiveRatingAvg) - 5;
     const yMax = Math.max(fixedDefensiveMax, leagueDefensiveRatingAvg) + 5;
 
+    // 座標軸繪製函數 (保持不變，但注意它接收的 ctxParam 應是已經 scale 過的)
     function drawAxis(ctxParam, x1, y1, x2, y2, color, label, isXAxis) {
+        ctxParam.save(); // 保存繪圖狀態
         ctxParam.strokeStyle = color;
-        ctxParam.lineWidth = 1;
+        ctxParam.lineWidth = 1 / dpr; // 線寬也應考慮 dpr
         ctxParam.beginPath();
         ctxParam.moveTo(x1, y1);
         ctxParam.lineTo(x2, y2);
         ctxParam.stroke();
         ctxParam.fillStyle = color;
-        ctxParam.font = '12px Arial';
+        ctxParam.font = `${12}px Arial`; // CSS 像素單位
         ctxParam.textAlign = 'center';
+        const arrowSize = 5;
         if (isXAxis) {
             ctxParam.beginPath();
             ctxParam.moveTo(x2, y2);
-            ctxParam.lineTo(x2 - 5, y2 - 5);
-            ctxParam.lineTo(x2 - 5, y2 + 5);
+            ctxParam.lineTo(x2 - arrowSize, y2 - arrowSize);
+            ctxParam.lineTo(x2 - arrowSize, y2 + arrowSize);
             ctxParam.closePath();
             ctxParam.fill();
             ctxParam.fillText(label, x2 - 20, y2 + 20);
         } else {
             ctxParam.beginPath();
             ctxParam.moveTo(x2, y2);
-            ctxParam.lineTo(x2 - 5, y2 + 5);
-            ctxParam.lineTo(x2 + 5, y2 + 5);
+            ctxParam.lineTo(x2 - arrowSize, y2 + arrowSize);
+            ctxParam.lineTo(x2 + arrowSize, y2 + arrowSize);
             ctxParam.closePath();
             ctxParam.fill();
             ctxParam.fillText(label, x2 - 20, y2 + 10);
         }
+        ctxParam.restore(); // 恢復繪圖狀態
     }
 
-    const scaleX = (value) => margin + (value - xMin) / (xMax - xMin) * (width - 2 * margin);
-    const scaleY = (value) => height - margin - (value - yMin) / (yMax - yMin) * (height - 2 * margin);
+    // 數據到 CSS 像素座標的轉換函數
+    const scaleX = (value) => margin + (value - xMin) / (xMax - xMin) * chartWidth;
+    const scaleY = (value) => cssHeight - margin - (value - yMin) / (yMax - yMin) * chartHeight; // Y軸反轉
 
     const originX = scaleX(leagueOffensiveRatingAvg);
     const originY = scaleY(leagueDefensiveRatingAvg);
 
-    drawAxis(playerScatterCtx, margin, originY, width - margin, originY, 'gray', 'Offensive Rating', true);
-    drawAxis(playerScatterCtx, originX, height - margin, originX, margin, 'gray', 'Defensive Rating', false);
+    // 繪製座標軸 (傳遞的是 playerScatterCtx，假設它已被正確 scale)
+    drawAxis(playerScatterCtx, margin, originY, cssWidth - margin, originY, 'gray', 'Offensive Rating', true);
+    drawAxis(playerScatterCtx, originX, cssHeight - margin, originX, margin, 'gray', 'Defensive Rating', false);
 
-    playerScatterCtx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    playerScatterCtx.font = '10px Arial';
+    // 準備繪製點和文字
+    playerScatterCtx.save();
     playerScatterCtx.textAlign = 'left';
     playerScatterCtx.textBaseline = 'middle';
-    playerScatterCtx.playersOnPlot = [];
+
+    playerScatterCtx.playersOnPlot = []; // ✨ 清空並準備重新填充 ✨
 
     teamPlayers.forEach(player => {
-        const x = scaleX(player["Offensive Rating"]);
-        const y = scaleY(player["Defensive Rating"]);
-        if (x >= margin && x <= width - margin && y >= margin && y <= height - margin) {
+        const x = scaleX(player["Offensive Rating"]); // x 是 CSS 像素座標
+        const y = scaleY(player["Defensive Rating"]); // y 是 CSS 像素座標
+
+        // 檢查點是否在可繪製範圍內 (基於 CSS 像素)
+        if (x >= margin && x <= cssWidth - margin && y >= margin && y <= cssHeight - margin) {
             playerScatterCtx.beginPath();
-            playerScatterCtx.arc(x, y, 4, 0, Math.PI * 2);
+            playerScatterCtx.arc(x, y, 4, 0, Math.PI * 2); // 半徑 4 是 CSS 像素
+            playerScatterCtx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // 點的顏色
             playerScatterCtx.fill();
-            playerScatterCtx.fillStyle = 'white';
-            playerScatterCtx.fillText(player.player, x + 8, y);
+
+            // ✨✨ 解決點位擁擠問題：移除此處的 fillText ✨✨
+            // playerScatterCtx.fillStyle = 'white';
+            // playerScatterCtx.font = `${10}px Arial`; // CSS 像素單位
+            // playerScatterCtx.fillText(player.player, x + 8, y);
+            // ✨✨ 移除結束 ✨✨
+
+            // 儲存點的資訊用於命中檢測，注意 x, y 應該是相對於 Canvas 繪圖緩衝區的座標
+            // 如果 playerScatterCtx 已經被 scale(dpr, dpr) 過，
+            // 那麼 handleScatterMouseMove 中的 getMousePos 返回的也應該是 scale 後的座標，
+            // 或者 getMousePos 返回 CSS 像素座標，然後在 handleScatterMouseMove 中轉換。
+            // 為了簡單和一致，我們假設 getMousePos 返回的是相對於 Canvas CSS 尺寸的座標，
+            // 並且 playersOnPlot 中儲存的 x, y 也是 CSS 像素座標。
+            // handleScatterMouseMove 中的命中檢測也將在 CSS 像素空間進行。
             playerScatterCtx.playersOnPlot.push({
                 player: player.player,
                 offRtg: player["Offensive Rating"],
                 defRtg: player["Defensive Rating"],
-                x: x,
-                y: y,
-                radius: 4
+                x: x, // 儲存 CSS 像素座標 x
+                y: y, // 儲存 CSS 像素座標 y
+                radius: 4 // 半徑也是 CSS 像素單位
             });
         }
     });
 
+    // 繪製聯盟平均點和文字
     playerScatterCtx.fillStyle = 'yellow';
     playerScatterCtx.beginPath();
-    playerScatterCtx.arc(originX, originY, 6, 0, Math.PI * 2);
+    playerScatterCtx.arc(originX, originY, 6, 0, Math.PI * 2); // 半徑 CSS 像素
     playerScatterCtx.fill();
-    playerScatterCtx.fillText('聯盟平均', originX + 10, originY - 10);
-    console.log(`drawScatterPlot: 散佈圖繪製完成。`);
+    playerScatterCtx.font = `${10}px Arial`; // CSS 像素單位
+    playerScatterCtx.fillText('聯盟平均', originX + 10, originY - 10); // 偏移量 CSS 像素
+
+    playerScatterCtx.restore(); // 恢復繪圖狀態
+
+    console.log(`drawScatterPlot: 散佈圖繪製完成。playersOnPlot 數量: ${playerScatterCtx.playersOnPlot.length}`);
 }
 
 // --- 熱區圖和散佈圖顯示 ---
@@ -6211,14 +6273,20 @@ $(window).on('hashchange', function() {
     }
 });
 
-// --- 輔助函數：獲取滑鼠在 Canvas 上的坐標 ---
+// --- 輔助函數：獲取滑鼠在 Canvas 上的 CSS 像素坐標 ---
 function getMousePos(canvas, evt) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleXVal = canvas.width / rect.width;
-    const scaleYVal = canvas.height / rect.height;
+    if (!canvas) return { x: 0, y: 0 }; // 防止 canvas 未定義
+    const rect = canvas.getBoundingClientRect(); // 獲取 canvas 相對於 viewport 的位置和 CSS 像素尺寸
+
+    // evt.clientX 和 evt.clientY 是滑鼠相對於 viewport 的座標
+    // rect.left 和 rect.top 是 canvas 左上角相對於 viewport 的座標
+    // 相減即可得到滑鼠在 canvas 元素內的 CSS 像素座標
+    const cssX = evt.clientX - rect.left;
+    const cssY = evt.clientY - rect.top;
+
     return {
-        x: (evt.clientX - rect.left) * scaleXVal,
-        y: (evt.clientY - rect.top) * scaleYVal
+        x: cssX,
+        y: cssY
     };
 }
 
@@ -6298,30 +6366,46 @@ function handleCanvasMouseMove(e, canvas, dataType) {
     }
 }
 
-// --- 滑鼠移動事件處理函數 (散佈圖) ---
 function handleScatterMouseMove(e) {
+    // console.log("handleScatterMouseMove triggered"); // ✨ 新增日誌 ✨
+
     const mousePos = getMousePos(playerScatterCanvas, e);
+    // console.log("Mouse position on canvas:", mousePos); // ✨ 新增日誌 ✨
+
     let foundPlayer = null;
-    if (playerScatterCtx.playersOnPlot) {
+    if (playerScatterCtx && playerScatterCtx.playersOnPlot) { // ✨ 增加 playerScatterCtx 的檢查 ✨
+        // console.log("playersOnPlot Samping (first 3):", playerScatterCtx.playersOnPlot.slice(0,3)); // ✨ 新增日誌，檢查數組內容 ✨
         for (const player of playerScatterCtx.playersOnPlot) {
+            if (typeof player.x !== 'number' || typeof player.y !== 'number' || typeof player.radius !== 'number') {
+                // console.warn("Invalid player data in playersOnPlot:", player); // ✨ 新增日誌 ✨
+                continue; // 跳過無效數據
+            }
             const dist = Math.sqrt(Math.pow(mousePos.x - player.x, 2) + Math.pow(mousePos.y - player.y, 2));
+            // console.log(`Checking player: ${player.player}, Dist: ${dist}, Radius: ${player.radius + 3}`); // ✨ 新增日誌（可能會產生大量訊息，小心使用）✨
             if (dist < player.radius + 3) {
                 foundPlayer = player;
+                console.log("Player found:", foundPlayer.player); // ✨ 新增日誌 ✨
                 break;
             }
         }
+    } else {
+        // console.log("playerScatterCtx.playersOnPlot is not available or playerScatterCtx is null"); // ✨ 新增日誌 ✨
     }
 
     if (foundPlayer && foundPlayer !== currentScatterHoveredPlayer) {
+        // console.log("Preparing to show tooltip for:", foundPlayer.player); // ✨ 新增日誌 ✨
         const tooltipContent = `
             <strong>球員：</strong> ${foundPlayer.player}<br>
             <strong>進攻效率：</strong> ${foundPlayer.offRtg}<br>
             <strong>防守效率：</strong> ${foundPlayer.defRtg}
         `;
-        showTooltip(e.pageX, e.pageY, tooltipContent);
+        showTooltip(e.pageX, e.pageY, tooltipContent); // 呼叫 showTooltip
         currentScatterHoveredPlayer = foundPlayer;
     } else if (!foundPlayer && currentScatterHoveredPlayer) {
+        // console.log("Hiding tooltip, no player found or same player as before, currentScatterHoveredPlayer:", currentScatterHoveredPlayer.player); // ✨ 新增日誌 ✨
         hideTooltip('scatter');
+    } else if (foundPlayer && foundPlayer === currentScatterHoveredPlayer) {
+        // console.log("Still hovering over the same player:", foundPlayer.player); // ✨ 新增日誌 (可選) ✨
     }
 }
 
@@ -6347,26 +6431,36 @@ function showTooltip(x, y, content) {
 
 // --- 隱藏提示框 ---
 function hideTooltip(dataType) {
+    let shouldHide = false;
+
     if (dataType === 'offense') {
         currentOffenseHoveredZone = null;
     } else if (dataType === 'defense') {
         currentDefenseHoveredZone = null;
     } else if (dataType === 'scatter') {
         currentScatterHoveredPlayer = null;
-    } else if (dataType === 'playerBarChart') {
-        // Chart.js 的 external tooltip 通常在滑鼠移開時，tooltipModel.opacity 會變為 0，
-        // 此時外部的 hideTooltip 已經被 Chart.js 的事件機制調用了。
-        // 我們不需要在此維護一個特定的 bar chart hover 狀態，
-        // 因為 hotzoneTooltip 是共用的，只要確保它在沒有任何東西懸停時隱藏即可。
     }
+    // 你可能還有 'playerBarChart' 等其他類型，這裡省略
 
+    // 檢查是否所有已知的懸停狀態都已清除
     if (currentOffenseHoveredZone === null &&
         currentDefenseHoveredZone === null &&
-        currentScatterHoveredPlayer === null) {
-        // 檢查 Chart.js 的 tooltip 是否也應該被視為“非懸停”
-        // 通常 Chart.js 的 tooltip 消失時，對應的 external tooltip 函數的 opacity 是 0，
-        // 這時 hideTooltip(dataType) 會被觸發。
-        hotzoneTooltip.style.display = 'none';
+        currentScatterHoveredPlayer === null
+        // && currentBarChartHoveredItem === null // 如果還有其他圖表共用此 tooltip
+    ) {
+        shouldHide = true;
+    }
+
+    // ✨ 如果是特定類型的 hideTooltip 被呼叫，且該類型是最後一個活動的，則隱藏 ✨
+    // ✨ 或者，更簡單的做法是，只要任何一個 hideTooltip 被呼叫，都嘗試判斷是否應該隱藏 ✨
+    if (shouldHide) {
+        if (hotzoneTooltip) { // ✨ 確保 hotzoneTooltip 存在 ✨
+            hotzoneTooltip.style.display = 'none';
+            // console.log(`Tooltip hidden by hideTooltip, called with type: ${dataType}`); // 調試用
+        }
+    } else {
+        // console.log(`Tooltip not hidden by hideTooltip(${dataType}), other zones might be active.`); // 調試用
+        // console.log(currentOffenseHoveredZone, currentDefenseHoveredZone, currentScatterHoveredPlayer); // 調試用
     }
 }
 
@@ -6636,18 +6730,55 @@ function initHotzoneDashboard() {
         }
     });
 
-    if (playerScatterCanvas) { // 確保元素存在
+    // ✨ 將其修改為以下版本：✨
+    if (playerScatterCanvas && playerScatterCtx) { // ✨ 確保 Canvas 和 Context 都存在 ✨
         const scatterCanvasObserver = new ResizeObserver(entries => {
             for (let entry of entries) {
-                if (entry.target === playerScatterCanvas) {
-                    const currentTeam = teamSelector.val();
-                    if (currentTeam) {
-                        drawScatterPlot(currentTeam);
-                    }
+                // entry.target 通常就是 playerScatterCanvas
+                // entry.contentRect 提供了新的 CSS 顯示尺寸
+                const { width: cssWidth, height: cssHeight } = entry.contentRect;
+                const dpr = window.devicePixelRatio || 1;
+
+                // 根據新的 CSS 尺寸和 DPR 設定 Canvas 的繪圖緩衝區大小
+                playerScatterCanvas.width = Math.round(cssWidth * dpr);
+                playerScatterCanvas.height = Math.round(cssHeight * dpr);
+
+                // 清除任何先前的轉換並設定新的 scale
+                // save/restore 不是必須的，如果這是唯一的 scale 操作
+                playerScatterCtx.save();
+                playerScatterCtx.setTransform(dpr, 0, 0, dpr, 0, 0); // 直接設定 transform，避免多次 scale 疊加
+                // 或者 playerScatterCtx.scale(dpr, dpr); 如果之前沒有 scale 過
+
+                console.log(`ResizeObserver: playerScatterCanvas resized to CSS ${cssWidth}x${cssHeight}, Buffer ${playerScatterCanvas.width}x${playerScatterCanvas.height}`);
+
+                const currentTeam = teamSelector.val();
+                if (currentTeam) {
+                    // 現在 drawScatterPlot 繪圖時，會使用已經 scale 過的 context
+                    // 並且其內部的座標計算應基於 CSS 像素
+                    drawScatterPlot(currentTeam);
                 }
+                playerScatterCtx.restore(); // 如果前面用了 save
             }
         });
+        // 觀察 Canvas 元素的 CSS 尺寸變化
         scatterCanvasObserver.observe(playerScatterCanvas);
+
+        // ✨ 首次初始化時，手動觸發一次尺寸設定和繪製 ✨
+        // 這確保了即使 ResizeObserver 沒有立即觸發，或者 Canvas 初始尺寸不對，也能正確繪製
+        // （可以考慮將此邏輯封裝成一個函數）
+        const initialRect = playerScatterCanvas.getBoundingClientRect();
+        const initialDpr = window.devicePixelRatio || 1;
+        if (initialRect.width > 0 && initialRect.height > 0) {
+            playerScatterCanvas.width = Math.round(initialRect.width * initialDpr);
+            playerScatterCanvas.height = Math.round(initialRect.height * initialDpr);
+            playerScatterCtx.save();
+            playerScatterCtx.setTransform(initialDpr, 0, 0, initialDpr, 0, 0);
+            const initialTeam = teamSelector.val();
+            if (initialTeam) {
+                drawScatterPlot(initialTeam);
+            }
+            playerScatterCtx.restore();
+        }
     }
 
 
