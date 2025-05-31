@@ -9445,7 +9445,7 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false, // 建議 false，讓圖表填滿容器
+                maintainAspectRatio: true, // 建議 false，讓圖表填滿容器
                 // devicePixelRatio: dpr, // Chart.js 通常會自動偵測，但明確指定也可以
                 scales: {
                     r: { // 'r' 代表徑向軸 (radial axis)
