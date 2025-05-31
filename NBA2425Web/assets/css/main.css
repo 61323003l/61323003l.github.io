@@ -2412,6 +2412,26 @@ body.is-preload #footer {
     min-height: 200px;
 }
 
+#radar-chart-container {
+    /* 或者你用的 class selector */
+    min-height: 350px;
+    /* ✨ 設定一個最小高度，例如 350px，你可以根據需要調整 ✨ */
+    height: 40vh;
+    /* 或者使用 viewport height，例如螢幕高度的 40% */
+    width: 100%;
+    /* 寬度可以設為100%或一個固定值 */
+    padding: 10px;
+    /* 內距，可選 */
+    box-sizing: border-box;
+    /* border: 1px dashed red; */
+    /* 暫時加上邊框，方便觀察容器實際範圍 */
+}
+
+#playerStatsCanvas2 {
+    max-width: 100%;
+    /* 通常不需要為 canvas 本身設定固定 height，Chart.js 會處理，前提是父容器有高度 */
+}
+
 /* 媒體查詢，當螢幕更小時，讓圖表垂直堆疊 */
 @media screen and (max-width: 1050px) {
 
@@ -2568,4 +2588,61 @@ h4 {
 .team-logo-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
     cursor: pointer;
+}
+
+
+/* --- 球員頁面圖表排列 --- */
+
+.playerall-charts-wrapper {
+    display: flex;
+    /* 預設啟用 Flexbox 佈局 */
+    flex-wrap: wrap;
+    /* 允許子元素在空間不足時換行 */
+    gap: 20px;
+    /* 設定圖表之間的間距，可選 */
+    justify-content: space-around;
+    /* 在寬螢幕時，如果有多餘空間，會平均分配 */
+}
+
+.playerchart-section {
+    flex-grow: 1;
+    /* 允許圖表區塊在 Flex 容器中伸展以填充可用空間 */
+    flex-basis: 300px;
+    /* 設定一個基礎寬度，小於此寬度時可能會開始換行或收縮。這個值需要根據你的圖表最小期望寬度調整 */
+    /* 你可能已經為 .chart-section 設定了最小高度，如我們之前討論的 radar-chart-container */
+    /* min-height: 350px; */
+    /* 確保每個圖表區塊有最小高度 */
+    /* border: 1px solid lightgray; */
+    /* 測試用，方便觀察區塊範圍 */
+}
+
+/* 當 Canvas 的父容器是 Flex Item 時，確保 Canvas 能正確響應 */
+.playerchart-section canvas {
+    max-width: 100%;
+    /* 確保 Canvas 不會超出其 .chart-section 容器 */
+    /* height: auto; */
+    /* 如果 Chart.js 的 maintainAspectRatio 是 true，通常設為 auto */
+}
+
+
+/* --- 窄螢幕時的垂直排列 --- */
+/* 例如，當螢幕寬度小於或等於 768px 時，我們讓圖表垂直堆疊 */
+@media (max-width: 768px) {
+
+    /* 你可以調整這個斷點 (breakpoint) */
+    .playerall-charts-wrapper {
+        flex-direction: column;
+        /* 將主軸改為垂直方向 */
+        align-items: center;
+        /* 讓圖表在交叉軸（現在是水平方向）上居中 */
+    }
+
+    .playerchart-section {
+        flex-basis: 100%;
+        /* 在窄螢幕時，讓每個圖表區塊佔滿父容器的寬度 */
+        width: 95%;
+        /* 或者設定一個接近100%的寬度，並配合 align-items: center */
+        max-width: 500px;
+        /* 可以設定一個最大寬度，避免在極窄但仍符合此斷點的螢幕上過寬 */
+    }
 }

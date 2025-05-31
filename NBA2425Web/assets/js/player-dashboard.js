@@ -27,6 +27,14 @@
     let originalCourtWidth = 0;
     let originalCourtHeight = 0;
 
+    // --- ✨ 請在此處加入以下雷達圖所需的新變數 ✨ ---
+    let playerPRData = []; // 用於儲存從 player_5pr_data.csv 載入的數據
+    const playerPRDataCSVPath = 'data/player_5pr_data.csv'; // CSV 檔案路徑
+    let playerStatsRadarCanvas; // 雷達圖的 Canvas DOM 元素
+    let playerStatsRadarCtx; // 雷達圖 Canvas 的 2D 上下文
+    let playerRadarChart; // 用於儲存 Chart.js 的雷達圖實例
+    // --- ✨ 雷達圖新變數添加結束 ✨ ---
+
     courtImage.src = courtBackgroundImageUrl;
     courtImage.onload = () => {
         console.log("player-dashboard.js: 籃球場背景圖片載入完成。");
@@ -8988,6 +8996,16 @@
         currentPlayerHoveredZone = null;
     }
 
+    // ✨ 請將你的 hideTooltip 修改為或確認為如下：✨
+    function hideTooltip() {
+        if (playerHotzoneTooltip) {
+            playerHotzoneTooltip.style.display = 'none';
+            // console.log("Tooltip hidden by hideTooltip()"); // 調試用
+        }
+        currentPlayerHoveredZone = null; // 熱區圖的懸停狀態重置
+        // 雷達圖的懸停狀態由 radarExternalTooltipHandler 自己管理和隱藏 playerHotzoneTooltip
+    }
+
     /**
      * 檢查點是否在多邊形內。
      * @param {number} x 點的 X 座標。
@@ -9017,8 +9035,12 @@
      * @param {Object} playerData 當前球員的數據。
      */
     function drawPlayerHotzone(playerData) {
-        if (!playerHotzoneCtx || !playerHotzoneCanvas || !courtImage.complete) {
-            console.warn("player-dashboard.js: drawPlayerHotzone: Canvas上下文、Canvas元素或籃球場圖片未準備好。");
+        if (!playerHotzoneCtx || !playerHotzoneCanvas || !courtImage.complete || !courtImage.naturalWidth) { // ✨ 增加檢查 courtImage.naturalWidth ✨
+            console.warn("player-dashboard.js: drawPlayerHotzone: Canvas上下文、Canvas元素、籃球場圖片未準備好或圖片尺寸未載入。");
+            // 如果圖片尺寸還沒載入，可以延遲繪製或等待 onload
+            if (courtImage.complete && !courtImage.naturalWidth && !courtImage.naturalHeight) {
+                console.log("圖片已下載但尺寸未知，可能需要等待 onload 中的 updatePlayerDisplay 觸發重繪");
+            }
             return;
         }
 
@@ -9030,50 +9052,56 @@
 
         // 使用實際獲取到的原始圖片尺寸來計算縮放比例
         // 確保 originalCourtWidth 和 originalCourtHeight 不為 0，避免除以零
-        const scaleX = (originalCourtWidth > 0) ? playerHotzoneCanvas.width / originalCourtWidth : 1;
-        const scaleY = (originalCourtHeight > 0) ? playerHotzoneCanvas.height / originalCourtHeight : 1;
+        // ✨ originalCourtWidth 和 originalCourtHeight 應該在 courtImage.onload 中被正確設定 ✨
+        const currentOriginalCourtWidth = originalCourtWidth || courtImage.naturalWidth; // Fallback
+        const currentOriginalCourtHeight = originalCourtHeight || courtImage.naturalHeight; // Fallback
+
+        if (currentOriginalCourtWidth === 0 || currentOriginalCourtHeight === 0) {
+            console.warn("player-dashboard.js: drawPlayerHotzone: 籃球場圖片原始尺寸為0，無法計算縮放比例。");
+            return; // 無法計算比例則不繼續繪製熱區
+        }
+
+        const scaleX = playerHotzoneCanvas.width / currentOriginalCourtWidth;
+        const scaleY = playerHotzoneCanvas.height / currentOriginalCourtHeight;
 
 
         // 遍歷所有熱區多邊形數據
         courtPolygonsData.features.forEach(feature => {
             const zoneName = feature.properties.name;
-            const polygon = feature.geometry.coordinates[0]; // 假設每個 feature 只有一個多邊形
+            const polygonCoordinates = feature.geometry.coordinates[0]; // 原始座標
 
-            // 獲取球員和聯盟平均在該區域的命中率
             const playerFG = playerData[zoneName];
             const leagueFG = PlayerleagueAverage[zoneName];
 
-            let fillColor = '#808080'; // 預設灰色 (無數據)
+            let fillColor = 'rgba(128, 128, 128, 0.6)'; // 預設灰色，並增加透明度
             let diff = null;
 
             if (typeof playerFG === 'number' && typeof leagueFG === 'number') {
                 diff = playerFG - leagueFG;
-                fillColor = getColorByDiff(diff);
+                fillColor = getColorByDiff(diff, 0.6); // ✨ 假設 getColorByDiff 也接受透明度參數 ✨
+                // 或者在 getColorByDiff 返回的顏色字串中包含透明度
             } else if (typeof playerFG === 'number' && typeof leagueFG === 'undefined') {
-                // 如果聯盟平均無數據，但球員有數據，則顯示為黃色 (表示有數據但無比較基準)
-                fillColor = '#FFD700';
+                fillColor = 'rgba(255, 215, 0, 0.6)'; // 金黃色，並增加透明度
             }
 
             // 繪製多邊形
             playerHotzoneCtx.beginPath();
-            if (polygon && polygon.length > 0) {
-                playerHotzoneCtx.moveTo(polygon[0][0], polygon[0][1]);
-                for (let i = 1; i < polygon.length; i++) {
-                    playerHotzoneCtx.lineTo(polygon[i][0], polygon[i][1]);
+            if (polygonCoordinates && polygonCoordinates.length > 0) {
+                // ✨ 將縮放比例應用到每個點的座標 ✨
+                playerHotzoneCtx.moveTo(polygonCoordinates[0][0] * scaleX, polygonCoordinates[0][1] * scaleY);
+                for (let i = 1; i < polygonCoordinates.length; i++) {
+                    playerHotzoneCtx.lineTo(polygonCoordinates[i][0] * scaleX, polygonCoordinates[i][1] * scaleY);
                 }
             }
             playerHotzoneCtx.closePath();
-            playerHotzoneCtx.fillStyle = fillColor; // 添加透明度
+            playerHotzoneCtx.fillStyle = fillColor;
             playerHotzoneCtx.fill();
-            playerHotzoneCtx.strokeStyle = '#FFFFFF'; // 白色邊框
-            playerHotzoneCtx.lineWidth = 1;
+            playerHotzoneCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; // 白色邊框，可略帶透明
+            playerHotzoneCtx.lineWidth = 1; // 可以根據縮放比例調整線寬，例如 Math.max(1, 1 * Math.min(scaleX, scaleY))
             playerHotzoneCtx.stroke();
 
-            // 在熱區中心顯示命中率和差異 (可選)
-            // 為了簡潔和避免過度擁擠，這裡暫不繪製文字，只在 tooltip 顯示
-            // 如果需要，可以在此處添加 ctx.fillText 邏輯
         });
-        console.log("player-dashboard.js: 熱區圖繪製完成。");
+        // console.log("player-dashboard.js: 熱區圖繪製完成。"); // 可以取消註解以供調試
     }
 
     // --- 7. 熱區圖滑鼠互動事件處理 ---
@@ -9163,8 +9191,33 @@
                 $('body').removeClass('is-article-visible'); // 確保移除所有相關 class
             }
             console.warn("player-dashboard.js: updatePlayerDisplay: 未找到球員數據:", playerName);
+            // --- ✨ 請在此處加入雷達圖清理邏輯 (當找不到球員時) ✨ ---
+            if (playerRadarChart) { // playerRadarChart 是 Chart.js 的雷達圖實例
+                playerRadarChart.destroy();
+                playerRadarChart = null;
+            }
+            if (playerStatsRadarCtx && playerStatsRadarCanvas) { // playerStatsRadarCtx 是雷達圖的 2D 上下文
+                // 在清理之前，獲取當前的 dpr 以便正確清理和繪製文字
+                const dpr = window.devicePixelRatio || 1;
+                // 清理畫布時，要考慮到畫布的實際像素尺寸
+                playerStatsRadarCtx.clearRect(0, 0, playerStatsRadarCanvas.width, playerStatsRadarCanvas.height);
+
+                // 可選：在雷達圖畫布上顯示提示訊息
+                playerStatsRadarCtx.save(); // 保存當前繪圖狀態
+                playerStatsRadarCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                playerStatsRadarCtx.font = `${14 * dpr}px Arial`; // 字體大小也應考慮 dpr
+                playerStatsRadarCtx.textAlign = 'center';
+                playerStatsRadarCtx.textBaseline = 'middle';
+                // 文字定位需考慮 DPR，以確保在 Canvas 內部正確居中
+                //fillText 的 x, y 座標是相對於繪圖緩衝區的，所以是 canvas.width / 2
+                playerStatsRadarCtx.fillText("無此球員雷達圖數據", playerStatsRadarCanvas.width / 2, playerStatsRadarCanvas.height / 2);
+                playerStatsRadarCtx.restore(); // 恢復之前保存的繪圖狀態
+            }
+            // --- ✨ 雷達圖清理邏輯結束 ✨ ---
             return;
         }
+
+
 
         // 更新球員名稱顯示
         playerNameDisplay.text(playerName);
@@ -9181,25 +9234,259 @@
 
         // 調整 Canvas 尺寸以適應容器 (如果需要)
         // 確保 Canvas 尺寸與 CSS 樣式一致，避免內容拉伸
-        const parentWidth = playerHotzoneCanvas.parentElement.clientWidth;
-        const parentHeight = playerHotzoneCanvas.parentElement.clientHeight; // 或設定固定高度
-        playerHotzoneCanvas.width = parentWidth > 500 ? 500 : parentWidth; // 限制最大寬度為500
-        playerHotzoneCanvas.height = playerHotzoneCanvas.width * (470 / 500); // 保持比例
+        if (playerHotzoneCanvas && playerHotzoneCanvas.parentElement) { // ✨ 增加檢查，避免 playerHotzoneCanvas 或其父元素不存在時出錯 ✨
+            const parentWidth = playerHotzoneCanvas.parentElement.clientWidth;
+            // const parentHeight = playerHotzoneCanvas.parentElement.clientHeight; // 或設定固定高度
+            playerHotzoneCanvas.width = parentWidth > 500 ? 500 : parentWidth; // 限制最大寬度為500
+            playerHotzoneCanvas.height = playerHotzoneCanvas.width * (470 / 500); // 保持比例
 
-        // 重新繪製以確保尺寸正確
-        drawPlayerHotzone(currentPlayer);
+            // 重新繪製以確保尺寸正確
+            drawPlayerHotzone(currentPlayer); // 你現有的函數調用
+        }
+        // --- ✨ 請在此處加入繪製雷達圖的呼叫 (當找到球員時) ✨ ---
+        // 確保雷達圖的 Canvas Context 已經準備好
+        if (playerStatsRadarCtx) {
+            // drawPlayerSeasonRadarChart 函數會使用 IIFE 範圍內的 playerStatsRadarCtx 和 playerHotzoneTooltip
+            drawPlayerSeasonRadarChart(playerName);
+        } else {
+            console.warn("updatePlayerDisplay: 無法繪製雷達圖，因為雷達圖 Canvas Context 未初始化。");
+        }
+        // --- ✨ 繪製雷達圖的呼叫結束 ✨ ---
 
         console.log("player-dashboard.js: updatePlayerDisplay: 球員儀表板已更新並顯示。");
     }
 
 
-    // --- 9. 初始化函數 ---
+    // --- 9. 雷達圖 ---
+    /**
+     * @description 簡易 CSV 解析函數，將 CSV 文字轉換為物件陣列
+     * @param {string} csvText - CSV 格式的純文字
+     * @returns {Array<Object>} 解析後的數據陣列
+     */
+    function parseRadarCSV(csvText) {
+        const lines = csvText.trim().split('\n');
+        if (lines.length < 2) { // 至少需要標頭和一行數據
+            console.warn("parseRadarCSV: CSV 數據行數不足。");
+            return [];
+        }
+        const headers = lines[0].split(',').map(header => header.trim());
+        const data = [];
+        for (let i = 1; i < lines.length; i++) {
+            const values = lines[i].split(',').map(value => value.trim());
+            if (values.length === headers.length) {
+                const row = {};
+                headers.forEach((header, index) => {
+                    const value = values[index];
+                    // 除了 'player' 欄位，其他都嘗試轉換為數字
+                    if (header !== 'player') {
+                        // 處理空值或非數字值，給予 null 或保持原樣
+                        const numValue = parseFloat(value);
+                        row[header] = isNaN(numValue) ? (value === "" ? null : value) : numValue;
+                    } else {
+                        row[header] = value;
+                    }
+                });
+                data.push(row);
+            } else {
+                console.warn(`parseRadarCSV: 第 ${i + 1} 行欄位數不匹配。預期 ${headers.length}, 實際 ${values.length}`);
+            }
+        }
+        return data;
+    }
+
+    /**
+     * @description 從 CSV 檔案載入球員PR數據
+     */
+    async function loadPlayerRadarData() {
+        console.log('loadPlayerRadarData: 嘗試載入球員雷達圖數據從:', playerPRDataCSVPath);
+        try {
+            const response = await fetch(playerPRDataCSVPath);
+            if (!response.ok) {
+                throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
+            }
+            const csvText = await response.text();
+            playerPRData = parseRadarCSV(csvText);
+            console.log('loadPlayerRadarData: 球員雷達圖數據載入完成，共載入', playerPRData.length, '筆記錄。');
+            // if (playerPRData.length > 0) { // 用於調試，檢查第一筆數據
+            //     console.log('loadPlayerRadarData: PR 數據範例:', playerPRData[0]);
+            // }
+        } catch (error) {
+            console.error('loadPlayerRadarData: 載入球員雷達圖數據失敗:', error);
+            playerPRData = []; // 載入失敗時確保是空陣列
+        }
+    }
+
+    /**
+     * @description Chart.js 雷達圖的外部 Tooltip 處理函數
+     * 此函數會直接操作 IIFE 範圍內的 playerHotzoneTooltip DOM 元素
+     * @param {Object} context - Chart.js 的 tooltip context
+     * @param {Object} playerDataForTooltip - 當前球員在 player_5pr_data.csv 中的完整數據列
+     */
+    function radarExternalTooltipHandler(context, playerDataForTooltip) {
+        const { chart, tooltip } = context; // 從 context 中解構 chart 和 tooltip
+        const tooltipEl = playerHotzoneTooltip; // ✨ 直接使用在 IIFE 中定義的 playerHotzoneTooltip ✨
+
+        if (!tooltipEl) {
+            // console.warn("radarExternalTooltipHandler: playerHotzoneTooltip DOM 元素未定義或未找到。"); // 調試用
+            return;
+        }
+
+        // 當滑鼠移開圖表作用區或沒有 tooltip 內容時隱藏
+        if (tooltip.opacity === 0 || !playerDataForTooltip) {
+            tooltipEl.style.opacity = '0';
+            tooltipEl.style.display = 'none'; // 使用 display none 來完全隱藏
+            return;
+        }
+
+        // 建構 Tooltip 顯示的 HTML 內容
+        // 確保在取用屬性前檢查 playerDataForTooltip 是否真的有這些屬性
+        const points = playerDataForTooltip['Points Per Game'];
+        const rebounds = playerDataForTooltip['Total Rebounds Per Game'];
+        const assists = playerDataForTooltip['Assists Per Game'];
+        const steals = playerDataForTooltip['Steals Per Game'];
+        const blocks = playerDataForTooltip['Blocks Per Game'];
+
+        const traditionalStats = `
+            <strong>球員:</strong> ${playerDataForTooltip.player || 'N/A'}<br>
+            <strong>場均得分:</strong> ${points !== undefined && points !== null ? points.toFixed(1) : 'N/A'}<br>
+            <strong>場均籃板:</strong> ${rebounds !== undefined && rebounds !== null ? rebounds.toFixed(1) : 'N/A'}<br>
+            <strong>場均助攻:</strong> ${assists !== undefined && assists !== null ? assists.toFixed(1) : 'N/A'}<br>
+            <strong>場均抄截:</strong> ${steals !== undefined && steals !== null ? steals.toFixed(1) : 'N/A'}<br>
+            <strong>場均阻攻:</strong> ${blocks !== undefined && blocks !== null ? blocks.toFixed(1) : 'N/A'}
+        `;
+        tooltipEl.innerHTML = traditionalStats;
+
+        // 將 Tooltip 定位在螢幕中央
+        tooltipEl.style.display = 'block'; // 先顯示才能計算尺寸
+        tooltipEl.style.visibility = 'hidden'; // 暫時隱藏以計算位置
+
+        const tooltipWidth = tooltipEl.offsetWidth;
+        const tooltipHeight = tooltipEl.offsetHeight;
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+        // 定位在螢幕正中央
+        tooltipEl.style.position = 'fixed'; // 使用 fixed 相對於 viewport 定位
+        tooltipEl.style.left = `${(viewportWidth - tooltipWidth) / 2}px`;
+        tooltipEl.style.top = `${(viewportHeight - tooltipHeight) / 2}px`;
+        // 移除 transform，因為 fixed 定位已處理置中
+        tooltipEl.style.transform = '';
+
+        tooltipEl.style.opacity = '1'; // 顯示 tooltip
+        tooltipEl.style.visibility = 'visible'; // 確保可見
+        // 建議在 CSS 中為 #playerHotzoneTooltip 添加樣式，例如：
+        // z-index: 1000; padding: 10px; background: rgba(0,0,0,0.8); color: white; border-radius: 4px; pointer-events: none;
+    }
+
+    /**
+     * @description 繪製球員的數據雷達圖
+     * @param {string} playerName - 要繪製圖表的球員名稱
+     */
+    function drawPlayerSeasonRadarChart(playerName) {
+        if (!playerStatsRadarCtx || !playerStatsRadarCanvas) {
+            console.error('drawPlayerSeasonRadarChart: 雷達圖的 Canvas Context 或 Canvas DOM 元素未初始化。');
+            return;
+        }
+
+        const playerDataRow = playerPRData.find(p => p.player === playerName);
+
+        if (playerRadarChart) { // 銷毀任何已存在的雷達圖實例
+            playerRadarChart.destroy();
+            playerRadarChart = null;
+        }
+
+        // 在繪製新圖表或顯示訊息前，總是先清空畫布
+        const dpr = window.devicePixelRatio || 1;
+        const canvasWidth = playerStatsRadarCanvas.width / dpr; // 獲取 CSS 像素寬度
+        const canvasHeight = playerStatsRadarCanvas.height / dpr; // 獲取 CSS 像素高度
+        playerStatsRadarCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+
+        if (!playerDataRow) {
+            console.warn(`drawPlayerSeasonRadarChart: 找不到球員 ${playerName} 的雷達圖數據。`);
+            // 在 Canvas 上顯示提示訊息
+            playerStatsRadarCtx.save();
+            playerStatsRadarCtx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            playerStatsRadarCtx.font = `${14}px Arial`; // 使用 CSS 像素單位字體大小
+            playerStatsRadarCtx.textAlign = 'center';
+            playerStatsRadarCtx.textBaseline = 'middle';
+            playerStatsRadarCtx.fillText(`找不到 ${playerName} 的雷達圖數據`, canvasWidth / 2, canvasHeight / 2);
+            playerStatsRadarCtx.restore();
+            return;
+        }
+
+        const radarChartLabels = ['得分PR', '籃板PR', '助攻PR', '抄截PR', '阻攻PR'];
+        const radarChartData = [
+            playerDataRow.points_pr,
+            playerDataRow.rebounds_pr,
+            playerDataRow.assists_pr,
+            playerDataRow.steals_pr,
+            playerDataRow.blocks_pr
+        ].map(val => (val === undefined || val === null || isNaN(parseFloat(val))) ? 0 : parseFloat(val)); // 確保數據有效，無效則為0
+
+        // Chart.js v3+ 會根據 canvas 的 CSS 尺寸和 devicePixelRatio 自動調整內部渲染尺寸
+        // 通常不需要手動設定 canvas.width/height 或 ctx.scale()，除非遇到特定問題
+
+        playerRadarChart = new Chart(playerStatsRadarCtx, { // 使用 playerStatsRadarCtx
+            type: 'radar',
+            data: {
+                labels: radarChartLabels,
+                datasets: [{
+                    label: `${playerName} PR值`,
+                    data: radarChartData,
+                    fill: true,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)', // 藍色系
+                    borderColor: 'rgb(54, 162, 235)',
+                    pointBackgroundColor: 'rgb(54, 162, 235)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(54, 162, 235)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // 建議 false，讓圖表填滿容器
+                // devicePixelRatio: dpr, // Chart.js 通常會自動偵測，但明確指定也可以
+                scales: {
+                    r: { // 'r' 代表徑向軸 (radial axis)
+                        angleLines: { color: 'rgba(255, 255, 255, 0.4)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.4)' },
+                        pointLabels: { color: 'white', font: { size: 12 } }, // 調整軸標籤字體大小
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            backdropColor: 'transparent',
+                            stepSize: 2, // 0-100 的 PR 值，每 2 一個刻度
+                            font: { size: 10 } // 調整刻度字體大小
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 10
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: 'white' }
+                    },
+                    tooltip: {
+                        enabled: false, // 禁用 Chart.js 預設的 tooltip
+                        external: function(context) {
+                            // radarExternalTooltipHandler 會使用 IIFE 範圍內的 playerHotzoneTooltip
+                            radarExternalTooltipHandler(context, playerDataRow);
+                        }
+                    }
+                }
+            }
+        });
+        // console.log(`drawPlayerSeasonRadarChart: 球員 ${playerName} 的雷達圖已繪製。`); // 調試用
+    }
+    // --- ✨ 新輔助函數添加結束 ✨ ---
+
+    // --- 10. 初始化函數 ---
 
     /**
      * 初始化球員儀表板。
      * 獲取 DOM 元素並綁定事件監聽器。
      */
-    function initPlayerDashboard() {
+    async function initPlayerDashboard() {
         console.log("player-dashboard.js: initPlayerDashboard: 開始初始化球員儀表板...");
 
         playerHotzoneCanvas = document.getElementById('playerHotzoneCanvas');
@@ -9227,21 +9514,68 @@
             return;
         }
 
+        // --- ✨ 請在此處加入獲取雷達圖 Canvas 的程式碼 ✨ ---
+        playerStatsRadarCanvas = document.getElementById('playerStatsCanvas2');
+        if (playerStatsRadarCanvas) {
+            playerStatsRadarCtx = playerStatsRadarCanvas.getContext('2d');
+            console.log("player-dashboard.js: playerStatsRadarCanvas 和 ctx 已獲取。");
+            // 注意：雷達圖的尺寸將由 Chart.js 的 responsive:true 選項自動處理，
+            // 或者在 drawPlayerSeasonRadarChart 函數中根據其父容器動態設定。
+            // 此處不需要像 playerHotzoneCanvas 一樣立即設定固定尺寸。
+        } else {
+            console.error("player-dashboard.js: initPlayerDashboard: 未找到雷達圖 Canvas 'playerStatsCanvas2' 元素。雷達圖功能可能無法使用。");
+        }
+
+        // --- ✨ 在這裡加入載入雷達圖數據的呼叫 ✨ ---
+        try {
+            // 假設你可能還有其他的異步數據載入，例如 getCourtPolygonData(), getPlayerData()
+            // await getCourtPolygonData(); // 如果你有這個函數並且需要它先完成
+            // await getPlayerData();     // 如果你有這個函數並且需要它先完成
+
+            await loadPlayerRadarData(); // 載入雷達圖專用數據
+            console.log("player-dashboard.js: initPlayerDashboard: 球員PR數據請求已發出。");
+        } catch (error) {
+            console.error("player-dashboard.js: initPlayerDashboard: 數據載入過程中發生錯誤:", error);
+        }
+        // --- ✨ 雷達圖數據載入結束 ✨ ---
+
+
         // 監聽 Canvas 尺寸變化（如果父元素尺寸變化）
-        new ResizeObserver(entries => {
-            for (let entry of entries) {
-                if (entry.target === playerHotzoneCanvas) {
-                    const playerName = getUrlParameter('player');
-                    if (playerName) {
-                        updatePlayerDisplay(playerName);
+        if (playerHotzoneCanvas && playerHotzoneCanvas.parentElement) { // ✨ 確保 playerHotzoneCanvas 和其父元素存在 ✨
+            let initialResizeCall = true; // 用於忽略初次觀察時可能觸發的 Resize
+
+            new ResizeObserver(entries => {
+                if (initialResizeCall) {
+                    initialResizeCall = false; // 忽略第一次觸發
+                    return;
+                }
+                for (let entry of entries) {
+                    if (entry.target === playerHotzoneCanvas.parentElement) { // ✨ 改為觀察父元素的尺寸變化 ✨
+                        console.log("player-dashboard.js: ResizeObserver 偵測到父元素尺寸變化。");
+                        const newParentWidth = entry.contentRect.width;
+
+                        // ✨ 直接在此處調整 playerHotzoneCanvas 尺寸並重繪熱區圖 ✨
+                        playerHotzoneCanvas.width = newParentWidth > 500 ? 500 : newParentWidth;
+                        playerHotzoneCanvas.height = playerHotzoneCanvas.width * (470 / 500); // 保持比例
+
+                        const playerName = getUrlParameter('player');
+                        const currentPlayer = playerDataMap.get(playerName); // ✨ 需要獲取 currentPlayer 數據來重繪 ✨
+                        if (currentPlayer) {
+                            console.log("player-dashboard.js: ResizeObserver 正在重繪熱區圖 for player:", playerName);
+                            drawPlayerHotzone(currentPlayer); // ✨ 直接呼叫繪製函數 ✨
+                        } else {
+                            // console.warn("player-dashboard.js: ResizeObserver 無法重繪熱區圖，找不到 currentPlayer 數據。");
+                        }
                     }
                 }
-            }
-        }).observe(playerHotzoneCanvas);
+            }).observe(playerHotzoneCanvas.parentElement); // ✨ 改為觀察父元素 ✨
+        }
 
         // 熱區圖滑鼠互動事件監聽器
-        playerHotzoneCanvas.addEventListener('mousemove', handlePlayerHotzoneMouseMove);
-        playerHotzoneCanvas.addEventListener('mouseleave', hideTooltip);
+        if (playerHotzoneCanvas) { // ✨ 確保 playerHotzoneCanvas 存在再綁定事件 ✨
+            playerHotzoneCanvas.addEventListener('mousemove', handlePlayerHotzoneMouseMove);
+            playerHotzoneCanvas.addEventListener('mouseleave', hideTooltip);
+        }
 
         console.log("player-dashboard.js: initPlayerDashboard: 初始化完成，事件監聽器已綁定。");
 

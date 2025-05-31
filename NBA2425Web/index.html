@@ -318,14 +318,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="all-charts-wrapper">
+                <div class="playerall-charts-wrapper">
                     <!-- 球員進攻熱區圖 -->
-                    <div class="chart-section">
+                    <div class="playerchart-section">
                         <h4>進攻熱區</h4>
                         <canvas id="playerHotzoneCanvas" width="500" height="470" style="border: 1px solid #ccc; background-color: #000;"></canvas>
                     </div>
                     <!-- 球員雷達圖 -->
-                    <div class="chart-section">
+                    <div class="playerchart-section" id="radar-chart-container">
                         <h4>球員賽季數據表現雷達圖</h4>
                         <canvas id="playerStatsCanvas2"></canvas>
                     </div>
@@ -337,7 +337,7 @@
         padding: 10px 15px;
         border-radius: 5px;
         font-size: 0.9em;
-        pointer-events: none; /* 讓滑鼠事件穿透此元素，不會阻擋下方的 Canvas */
+            pointer-events: none;  /* 讓滑鼠事件穿透此元素，不會阻擋下方的 Canvas */
         display: none; /* 預設隱藏 */
         z-index: 1000; /* 確保在最上層 */
         white-space: nowrap; /* 確保內容不換行 */
