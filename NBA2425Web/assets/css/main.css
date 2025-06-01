@@ -1754,7 +1754,6 @@ body.is-preload #footer {
     /* 允許水平滾動 */
     overflow-y: hidden;
     /* 保持垂直方向隱藏，以維持模板原有設計 */
-    /* 這裡不需要 !important，放在檔案末尾，會自動覆蓋 */
 }
 
 /* 確保父層不會阻止鼠標事件 */
@@ -1791,7 +1790,6 @@ body.is-preload #footer {
     align-items: center;
     /* 垂直居中對齊 */
 
-    /* 在小螢幕上可以考慮調整高度，如果 logo 大小不一 */
     /* min-height: 120px; */
 
     /* *** 新增修正：讓滑鼠也能拖曳滾動 *** */
@@ -2325,7 +2323,7 @@ body.is-preload #footer {
     background-color: #ed9292;
 }
 
-/* 調整為您 JS 中的淺紅色 */
+/* 調整為 JS 中的淺紅色 */
 .blue-bg {
     background-color: #4c4cff;
 }
@@ -2334,12 +2332,12 @@ body.is-preload #footer {
     background-color: #c1c1ff;
 }
 
-/* 調整為您 JS 中的淺藍色 */
+/* 調整為 JS 中的淺藍色 */
 .light-yellow-bg {
     background-color: #ffffc1;
 }
 
-/* 調整為您 JS 中的淡黃色 */
+/* 調整為 JS 中的淡黃色 */
 .gray-bg {
     background-color: rgba(128, 128, 128, 0.6);
 }
@@ -2448,7 +2446,6 @@ body.is-preload #footer {
 }
 
 /* 確保包含 Canvas 的容器也有足夠的高度，防止內容坍塌 */
-/* 這些是您 HTML 中可能存在的父容器 class 或 ID */
 /* 針對 #main 內部 #team-dashboard 文章區塊內的 .row 元素 */
 #main>article#team-dashboard .row {
     min-height: 450px;
@@ -2466,7 +2463,6 @@ body.is-preload #footer {
 }
 
 /* 確保包含 Canvas 的容器也有足夠的高度，防止內容坍塌 */
-/* 這些是您 HTML 中可能存在的父容器 class 或 ID */
 /* 針對 #main 內部 #player-dashboard 文章區塊內的 .row 元素 */
 #main>article#player-dashboard .row {
     min-height: 450px;
@@ -2484,7 +2480,6 @@ body.is-preload #footer {
 }
 
 /* 確保 Dimension 模板的 article 顯示正確 */
-/* 如果您的 .main.css 中有類似的規則，請確保它們不會衝突 */
 #main>article {
     display: none;
     /* 預設隱藏所有文章區塊 */

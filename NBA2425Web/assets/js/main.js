@@ -37,7 +37,7 @@
                 // 手動觸發 hashchange 事件來處理初始 URL
                 $window.trigger('hashchange');
             } else {
-                // 如果沒有 hash，保持預設的首頁顯示，或者您希望的初始狀態
+                // 如果沒有 hash，保持預設的首頁顯示，或者初始狀態
                 // 並呼叫 initDashboard (如果存在)
                 if (window.initTeamDashboard) {
                     window.initTeamDashboard();
@@ -466,13 +466,12 @@
             // 這裡不需要直接調用 updatePlayerDisplay，因為 hashchange 會處理
         } else {
             // 如果搜尋框為空，可以給用戶一些提示
-            // 假設您在 player-dashboard.html 有一個顯示球員名稱的元素，ID 為 playerNameDisplay
             $('#playerNameDisplay').text("請輸入球員名稱進行搜尋。");
             // 隱藏球員儀表板，如果它正在顯示
-            // 由於您的 _show/_hide 邏輯是基於 is-article-visible，這裡可能需要額外調整
+            // 由於_show/_hide 邏輯是基於 is-article-visible，這裡可能需要額外調整
             // 或者依賴 hashchange 處理沒有參數的 #player-dashboard
             $main._hide(true); // 隱藏當前可見的文章
-            // 如果您需要更精細地控制，例如只隱藏 player-dashboard 但不回到首頁
+            // 如果需要更精細地控制，例如只隱藏 player-dashboard 但不回到首頁
             // 這邊的邏輯可能需要與 handleHashChange 配合
         }
     });

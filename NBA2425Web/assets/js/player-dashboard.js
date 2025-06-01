@@ -8990,7 +8990,7 @@
      * 隱藏熱區提示框。
      */
     function hideTooltip(callerIdentifier = "unknown_hide_caller") { // ✨ 讓它接受一個可選參數 ✨
-        console.log(`hideTooltip CALLED from: ${callerIdentifier}. Current hovered zone before reset: ${currentPlayerHoveredZone}, Tooltip display: ${playerHotzoneTooltip ? playerHotzoneTooltip.style.display : 'N/A'}`);
+        // console.log(`hideTooltip CALLED from: ${callerIdentifier}. Current hovered zone before reset: ${currentPlayerHoveredZone}, Tooltip display: ${playerHotzoneTooltip ? playerHotzoneTooltip.style.display : 'N/A'}`);
         if (playerHotzoneTooltip) {
             playerHotzoneTooltip.style.display = 'none';
             playerHotzoneTooltip.style.opacity = '0'; // ✨ 建議在隱藏時也將 opacity 設為 0 ✨
@@ -9149,13 +9149,13 @@
         }
 
         // --- ✨ 新增日誌點 ✨ ---
-        console.log(`Hotzone MouseMove: mouse(X:${mouseX.toFixed(0)},Y:${mouseY.toFixed(0)}), hoveredZone: ${hoveredZone}, currentHovered: ${currentPlayerHoveredZone}, tooltipDisplay: ${playerHotzoneTooltip ? playerHotzoneTooltip.style.display : 'N/A'}`);
+        // console.log(`Hotzone MouseMove: mouse(X:${mouseX.toFixed(0)},Y:${mouseY.toFixed(0)}), hoveredZone: ${hoveredZone}, currentHovered: ${currentPlayerHoveredZone}, tooltipDisplay: ${playerHotzoneTooltip ? playerHotzoneTooltip.style.display : 'N/A'}`);
 
         if (hoveredZone) {
             const prevTooltipDisplay = playerHotzoneTooltip ? playerHotzoneTooltip.style.display : 'N/A'; // ✨ 記錄之前的狀態 ✨
 
             if (hoveredZone !== currentPlayerHoveredZone || prevTooltipDisplay === 'none') {
-                console.log(`Hotzone: Condition MET (zone changed or tooltip was hidden). Updating tooltip for: ${hoveredZone}`); // ✨ 新增日誌 ✨
+                // console.log(`Hotzone: Condition MET (zone changed or tooltip was hidden). Updating tooltip for: ${hoveredZone}`); // ✨ 新增日誌 ✨
                 currentPlayerHoveredZone = hoveredZone;
                 const playerData = playerDataMap.get(playerNameDisplay.text());
                 const leagueFG = PlayerleagueAverage[hoveredZone];
@@ -9194,7 +9194,7 @@
 
         } else { // 如果沒有 hoveredZone
             if (currentPlayerHoveredZone !== null) {
-                console.log(`Hotzone: No hoveredZone, but currentPlayerHoveredZone was ${currentPlayerHoveredZone}. Calling hideTooltip.`); // ✨ 新增日誌 ✨
+                // console.log(`Hotzone: No hoveredZone, but currentPlayerHoveredZone was ${currentPlayerHoveredZone}. Calling hideTooltip.`); // ✨ 新增日誌 ✨
                 hideTooltip('hotzone_mousemove_no_hover'); // ✨ 傳遞標識符 ✨
             }
         }
@@ -9340,7 +9340,7 @@
             playerPRData = parseRadarCSV(csvText);
             // console.log('loadPlayerRadarData: 球員雷達圖數據載入完成，共載入', playerPRData.length, '筆記錄。');
             // if (playerPRData.length > 0) { // 用於調試，檢查第一筆數據
-            //     console.log('loadPlayerRadarData: PR 數據範例:', playerPRData[0]);
+            //     // console.log('loadPlayerRadarData: PR 數據範例:', playerPRData[0]);
             // }
         } catch (error) {
             console.error('loadPlayerRadarData: 載入球員雷達圖數據失敗:', error);
@@ -9365,7 +9365,7 @@
 
         // 當滑鼠移開圖表作用區或沒有 tooltip 內容時隱藏
         if (tooltip.opacity === 0 || !playerDataForTooltip) {
-            console.log("Radar: Hiding tooltip via radarExternalTooltipHandler (opacity 0 or no data)"); // ✨ 新增日誌 ✨
+            // console.log("Radar: Hiding tooltip via radarExternalTooltipHandler (opacity 0 or no data)"); // ✨ 新增日誌 ✨
 
             tooltipEl.style.opacity = '0';
             tooltipEl.style.display = 'none'; // 使用 display none 來完全隱藏
@@ -9624,14 +9624,14 @@
         //         playerNameDisplay.text("請搜尋球員");
         //     }
         // } else {
-        //     console.log("player-dashboard.js: initPlayerDashboard: 頁面初次載入，Hash 不是 #player-dashboard，等待用戶導航。");
+        //     // console.log("player-dashboard.js: initPlayerDashboard: 頁面初次載入，Hash 不是 #player-dashboard，等待用戶導航。");
         // }
     }
 
 
     // 暴露初始化函數給外部
     window.updatePlayerDisplay = updatePlayerDisplay;
-    window.initPlayerDashboard = initPlayerDashboard; // 如果您有定義此函數
+    window.initPlayerDashboard = initPlayerDashboard;
     window.getUrlParameter = getUrlParameter; // 確保這個也被暴露
     // 確保 IIFE 結束時傳入 jQuery 物件
 })(jQuery); // <--- 確保這裡有傳入 jQuery
