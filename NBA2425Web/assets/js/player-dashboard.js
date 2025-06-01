@@ -37,12 +37,12 @@
 
     courtImage.src = courtBackgroundImageUrl;
     courtImage.onload = () => {
-        console.log("player-dashboard.js: 籃球場背景圖片載入完成。");
+        // console.log("player-dashboard.js: 籃球場背景圖片載入完成。");
 
         // 確認圖片原始尺寸
         originalCourtWidth = courtImage.naturalWidth || courtImage.width;
         originalCourtHeight = courtImage.naturalHeight || courtImage.height;
-        console.log(`player-dashboard.js: 籃球場圖片原始尺寸: ${originalCourtWidth}x${originalCourtHeight}`); // <--- 新增這行
+        // console.log(`player-dashboard.js: 籃球場圖片原始尺寸: ${originalCourtWidth}x${originalCourtHeight}`); // <--- 新增這行
 
         // 圖片載入完成後，如果 playerHotzoneCanvas 已經存在，可以嘗試重新繪製
         const playerName = getUrlParameter('player');
@@ -8953,7 +8953,7 @@
         }
     });
 
-    console.log("player-dashboard.js: 球員數據載入完成，聯盟平均數據已提取。");
+    // console.log("player-dashboard.js: 球員數據載入完成，聯盟平均數據已提取。");
 
     // --- 5. 工具函數 ---
 
@@ -8989,21 +8989,15 @@
     /**
      * 隱藏熱區提示框。
      */
-    function hideTooltip() {
+    function hideTooltip(callerIdentifier = "unknown_hide_caller") { // ✨ 讓它接受一個可選參數 ✨
+        console.log(`hideTooltip CALLED from: ${callerIdentifier}. Current hovered zone before reset: ${currentPlayerHoveredZone}, Tooltip display: ${playerHotzoneTooltip ? playerHotzoneTooltip.style.display : 'N/A'}`);
         if (playerHotzoneTooltip) {
             playerHotzoneTooltip.style.display = 'none';
+            playerHotzoneTooltip.style.opacity = '0'; // ✨ 建議在隱藏時也將 opacity 設為 0 ✨
+
         }
         currentPlayerHoveredZone = null;
-    }
-
-    // ✨ 請將你的 hideTooltip 修改為或確認為如下：✨
-    function hideTooltip() {
-        if (playerHotzoneTooltip) {
-            playerHotzoneTooltip.style.display = 'none';
-            // console.log("Tooltip hidden by hideTooltip()"); // 調試用
-        }
-        currentPlayerHoveredZone = null; // 熱區圖的懸停狀態重置
-        // 雷達圖的懸停狀態由 radarExternalTooltipHandler 自己管理和隱藏 playerHotzoneTooltip
+        // console.trace(); // ✨ 可以取消註解這一行來查看呼叫堆疊 ✨
     }
 
     /**
@@ -9039,7 +9033,7 @@
             console.warn("player-dashboard.js: drawPlayerHotzone: Canvas上下文、Canvas元素、籃球場圖片未準備好或圖片尺寸未載入。");
             // 如果圖片尺寸還沒載入，可以延遲繪製或等待 onload
             if (courtImage.complete && !courtImage.naturalWidth && !courtImage.naturalHeight) {
-                console.log("圖片已下載但尺寸未知，可能需要等待 onload 中的 updatePlayerDisplay 觸發重繪");
+                // console.log("圖片已下載但尺寸未知，可能需要等待 onload 中的 updatePlayerDisplay 觸發重繪");
             }
             return;
         }
@@ -9112,59 +9106,97 @@
      * @param {MouseEvent} event 滑鼠事件物件。
      */
     function handlePlayerHotzoneMouseMove(event) {
-        if (!playerHotzoneCanvas || !playerHotzoneTooltip || !playerHotzoneCtx) return;
+        if (!playerHotzoneCanvas || !playerHotzoneTooltip || !playerHotzoneCtx) {
+            // console.log("handlePlayerHotzoneMouseMove: prerequisites not met"); // 調試用
+            return;
+        }
 
         const rect = playerHotzoneCanvas.getBoundingClientRect();
-        const scaleX = playerHotzoneCanvas.width / rect.width;
-        const scaleY = playerHotzoneCanvas.height / rect.height;
+        const canvasPhysicalWidth = playerHotzoneCanvas.width; // 繪圖緩衝區寬度
+        const canvasCssWidth = rect.width; // CSS 顯示寬度
+        const scaleXFactor = canvasPhysicalWidth / canvasCssWidth;
 
-        const mouseX = (event.clientX - rect.left) * scaleX;
-        const mouseY = (event.clientY - rect.top) * scaleY;
+        const canvasPhysicalHeight = playerHotzoneCanvas.height; // 繪圖緩衝區高度
+        const canvasCssHeight = rect.height; // CSS 顯示高度
+        const scaleYFactor = canvasPhysicalHeight / canvasCssHeight;
+
+        const mouseX = (event.clientX - rect.left) * scaleXFactor;
+        const mouseY = (event.clientY - rect.top) * scaleYFactor;
 
         let hoveredZone = null;
+        let foundFeatureDebug = null; // 用於調試
 
-        // 遍歷所有熱區，檢查滑鼠是否在其中一個多邊形內
+        const currentOriginalCourtWidth = originalCourtWidth || courtImage.naturalWidth;
+        const currentOriginalCourtHeight = originalCourtHeight || courtImage.naturalHeight;
+
+        if (currentOriginalCourtWidth === 0 || currentOriginalCourtHeight === 0) {
+            // console.warn("handlePlayerHotzoneMouseMove: Original court dimensions are zero."); // 調試用
+            return;
+        }
+
+        const canvasToCourtScaleX = playerHotzoneCanvas.width / currentOriginalCourtWidth;
+        const canvasToCourtScaleY = playerHotzoneCanvas.height / currentOriginalCourtHeight;
+
         for (const feature of courtPolygonsData.features) {
             const polygon = feature.geometry.coordinates[0];
-            if (polygon && isPointInPolygon(mouseX, mouseY, polygon)) {
+            let scaledPolygon = polygon.map(p => [p[0] * canvasToCourtScaleX, p[1] * canvasToCourtScaleY]);
+
+            if (isPointInPolygon(mouseX, mouseY, scaledPolygon)) {
                 hoveredZone = feature.properties.name;
+                foundFeatureDebug = feature; // 記住找到的 feature
                 break;
             }
         }
 
-        if (hoveredZone && hoveredZone !== currentPlayerHoveredZone) {
-            currentPlayerHoveredZone = hoveredZone;
-            const playerData = playerDataMap.get(playerNameDisplay.text()); // 獲取當前顯示球員的數據
-            const leagueFG = PlayerleagueAverage[hoveredZone];
-            const playerFG = playerData ? playerData[hoveredZone] : undefined;
+        // --- ✨ 新增日誌點 ✨ ---
+        console.log(`Hotzone MouseMove: mouse(X:${mouseX.toFixed(0)},Y:${mouseY.toFixed(0)}), hoveredZone: ${hoveredZone}, currentHovered: ${currentPlayerHoveredZone}, tooltipDisplay: ${playerHotzoneTooltip ? playerHotzoneTooltip.style.display : 'N/A'}`);
 
-            let tooltipContent = `<strong>${hoveredZone}</strong><br>`;
+        if (hoveredZone) {
+            const prevTooltipDisplay = playerHotzoneTooltip ? playerHotzoneTooltip.style.display : 'N/A'; // ✨ 記錄之前的狀態 ✨
 
-            if (typeof playerFG === 'number') {
-                tooltipContent += `球員命中率: ${playerFG.toFixed(2)}%<br>`;
-                if (typeof leagueFG === 'number') {
-                    const diff = playerFG - leagueFG;
-                    tooltipContent += `聯盟平均: ${leagueFG.toFixed(2)}%<br>`;
-                    tooltipContent += `差異: <span class="${diff > 0 ? 'positive-diff' : (diff < 0 ? 'negative-diff' : '')}">${diff.toFixed(2)}%</span>`;
+            if (hoveredZone !== currentPlayerHoveredZone || prevTooltipDisplay === 'none') {
+                console.log(`Hotzone: Condition MET (zone changed or tooltip was hidden). Updating tooltip for: ${hoveredZone}`); // ✨ 新增日誌 ✨
+                currentPlayerHoveredZone = hoveredZone;
+                const playerData = playerDataMap.get(playerNameDisplay.text());
+                const leagueFG = PlayerleagueAverage[hoveredZone];
+                const playerFG = playerData ? playerData[hoveredZone] : undefined;
+
+                let tooltipContent = `<strong>${hoveredZone}</strong><br>`;
+                // ... (你準備 tooltipContent 的詳細邏輯) ...
+                if (typeof playerFG === 'number') {
+                    tooltipContent += `球員命中率: ${playerFG.toFixed(2)}%<br>`;
+                    if (typeof leagueFG === 'number') {
+                        const diff = playerFG - leagueFG;
+                        tooltipContent += `聯盟平均: ${leagueFG.toFixed(2)}%<br>`;
+                        tooltipContent += `差異: <span class="${diff > 0 ? 'positive-diff' : (diff < 0 ? 'negative-diff' : '')}">${diff.toFixed(2)}%</span>`;
+                    } else {
+                        tooltipContent += `聯盟平均: 無數據`;
+                    }
                 } else {
-                    tooltipContent += `聯盟平均: 無數據`;
+                    tooltipContent += `球員命中率: 無數據`;
                 }
+                if (playerHotzoneTooltip) playerHotzoneTooltip.innerHTML = tooltipContent;
             } else {
-                tooltipContent += `球員命中率: 無數據`;
+                // console.log(`Hotzone: Condition NOT MET. hoveredZone: ${hoveredZone}, currentPlayerHoveredZone: ${currentPlayerHoveredZone}, tooltipDisplay: ${prevTooltipDisplay}`); // 調試用
             }
 
-            playerHotzoneTooltip.innerHTML = tooltipContent;
-            // ===============================================================
-            // !!! 修改這裡的定位邏輯，讓提示框居中顯示 !!!
-            playerHotzoneTooltip.style.position = 'fixed'; // 使用 fixed 定位，相對於視窗
-            playerHotzoneTooltip.style.left = '50%'; // 從左邊緣開始 50%
-            playerHotzoneTooltip.style.top = '50%'; // 從頂部邊緣開始 50%
-            playerHotzoneTooltip.style.transform = 'translate(-50%, -50%)'; // 向上和向左移動自身寬高的一半，實現真正的居中
-            playerHotzoneTooltip.style.zIndex = '1000'; // 確保它在其他元素之上
-            playerHotzoneTooltip.style.display = 'block'; // 確保顯示
-            // ===============================================================
-        } else if (!hoveredZone && currentPlayerHoveredZone) {
-            hideTooltip();
+            if (playerHotzoneTooltip) {
+                playerHotzoneTooltip.style.position = 'fixed';
+                playerHotzoneTooltip.style.left = '50%';
+                playerHotzoneTooltip.style.top = '50%';
+                playerHotzoneTooltip.style.transform = 'translate(-50%, -50%)';
+                playerHotzoneTooltip.style.zIndex = '1000';
+                playerHotzoneTooltip.style.display = 'block';
+                playerHotzoneTooltip.style.opacity = '1'; // ✨✨ 新增：確保透明度為 1 ✨✨
+
+                // console.log(`Hotzone: Tooltip display set to 'block' for ${hoveredZone}`); // ✨ 新增日誌 ✨
+            }
+
+        } else { // 如果沒有 hoveredZone
+            if (currentPlayerHoveredZone !== null) {
+                console.log(`Hotzone: No hoveredZone, but currentPlayerHoveredZone was ${currentPlayerHoveredZone}. Calling hideTooltip.`); // ✨ 新增日誌 ✨
+                hideTooltip('hotzone_mousemove_no_hover'); // ✨ 傳遞標識符 ✨
+            }
         }
     }
 
@@ -9175,7 +9207,7 @@
      * @param {string} playerName 要顯示的球員名稱。
      */
     function updatePlayerDisplay(playerName) {
-        console.log("player-dashboard.js: updatePlayerDisplay: 嘗試更新球員顯示，球員名稱:", playerName);
+        // console.log("player-dashboard.js: updatePlayerDisplay: 嘗試更新球員顯示，球員名稱:", playerName);
 
         const playerDashboardArticle = $('#player-dashboard');
         const teamDashboardArticle = $('#team-dashboard');
@@ -9253,7 +9285,7 @@
         }
         // --- ✨ 繪製雷達圖的呼叫結束 ✨ ---
 
-        console.log("player-dashboard.js: updatePlayerDisplay: 球員儀表板已更新並顯示。");
+        // console.log("player-dashboard.js: updatePlayerDisplay: 球員儀表板已更新並顯示。");
     }
 
 
@@ -9298,7 +9330,7 @@
      * @description 從 CSV 檔案載入球員PR數據
      */
     async function loadPlayerRadarData() {
-        console.log('loadPlayerRadarData: 嘗試載入球員雷達圖數據從:', playerPRDataCSVPath);
+        // console.log('loadPlayerRadarData: 嘗試載入球員雷達圖數據從:', playerPRDataCSVPath);
         try {
             const response = await fetch(playerPRDataCSVPath);
             if (!response.ok) {
@@ -9306,7 +9338,7 @@
             }
             const csvText = await response.text();
             playerPRData = parseRadarCSV(csvText);
-            console.log('loadPlayerRadarData: 球員雷達圖數據載入完成，共載入', playerPRData.length, '筆記錄。');
+            // console.log('loadPlayerRadarData: 球員雷達圖數據載入完成，共載入', playerPRData.length, '筆記錄。');
             // if (playerPRData.length > 0) { // 用於調試，檢查第一筆數據
             //     console.log('loadPlayerRadarData: PR 數據範例:', playerPRData[0]);
             // }
@@ -9333,6 +9365,8 @@
 
         // 當滑鼠移開圖表作用區或沒有 tooltip 內容時隱藏
         if (tooltip.opacity === 0 || !playerDataForTooltip) {
+            console.log("Radar: Hiding tooltip via radarExternalTooltipHandler (opacity 0 or no data)"); // ✨ 新增日誌 ✨
+
             tooltipEl.style.opacity = '0';
             tooltipEl.style.display = 'none'; // 使用 display none 來完全隱藏
             return;
@@ -9487,7 +9521,7 @@
      * 獲取 DOM 元素並綁定事件監聽器。
      */
     async function initPlayerDashboard() {
-        console.log("player-dashboard.js: initPlayerDashboard: 開始初始化球員儀表板...");
+        // console.log("player-dashboard.js: initPlayerDashboard: 開始初始化球員儀表板...");
 
         playerHotzoneCanvas = document.getElementById('playerHotzoneCanvas');
         if (playerHotzoneCanvas) {
@@ -9496,7 +9530,7 @@
             const parentWidth = playerHotzoneCanvas.parentElement.clientWidth;
             playerHotzoneCanvas.width = parentWidth > 500 ? 500 : parentWidth; // 限制最大寬度為500
             playerHotzoneCanvas.height = playerHotzoneCanvas.width * (470 / 500); // 保持比例
-            console.log("player-dashboard.js: playerHotzoneCanvas 和 ctx 已獲取並設置尺寸。");
+            // console.log("player-dashboard.js: playerHotzoneCanvas 和 ctx 已獲取並設置尺寸。");
         } else {
             console.error("player-dashboard.js: initPlayerDashboard: 未找到 playerHotzoneCanvas 元素。");
             return;
@@ -9518,7 +9552,7 @@
         playerStatsRadarCanvas = document.getElementById('playerStatsCanvas2');
         if (playerStatsRadarCanvas) {
             playerStatsRadarCtx = playerStatsRadarCanvas.getContext('2d');
-            console.log("player-dashboard.js: playerStatsRadarCanvas 和 ctx 已獲取。");
+            // console.log("player-dashboard.js: playerStatsRadarCanvas 和 ctx 已獲取。");
             // 注意：雷達圖的尺寸將由 Chart.js 的 responsive:true 選項自動處理，
             // 或者在 drawPlayerSeasonRadarChart 函數中根據其父容器動態設定。
             // 此處不需要像 playerHotzoneCanvas 一樣立即設定固定尺寸。
@@ -9533,7 +9567,7 @@
             // await getPlayerData();     // 如果你有這個函數並且需要它先完成
 
             await loadPlayerRadarData(); // 載入雷達圖專用數據
-            console.log("player-dashboard.js: initPlayerDashboard: 球員PR數據請求已發出。");
+            // console.log("player-dashboard.js: initPlayerDashboard: 球員PR數據請求已發出。");
         } catch (error) {
             console.error("player-dashboard.js: initPlayerDashboard: 數據載入過程中發生錯誤:", error);
         }
@@ -9551,7 +9585,7 @@
                 }
                 for (let entry of entries) {
                     if (entry.target === playerHotzoneCanvas.parentElement) { // ✨ 改為觀察父元素的尺寸變化 ✨
-                        console.log("player-dashboard.js: ResizeObserver 偵測到父元素尺寸變化。");
+                        // console.log("player-dashboard.js: ResizeObserver 偵測到父元素尺寸變化。");
                         const newParentWidth = entry.contentRect.width;
 
                         // ✨ 直接在此處調整 playerHotzoneCanvas 尺寸並重繪熱區圖 ✨
@@ -9561,7 +9595,7 @@
                         const playerName = getUrlParameter('player');
                         const currentPlayer = playerDataMap.get(playerName); // ✨ 需要獲取 currentPlayer 數據來重繪 ✨
                         if (currentPlayer) {
-                            console.log("player-dashboard.js: ResizeObserver 正在重繪熱區圖 for player:", playerName);
+                            // console.log("player-dashboard.js: ResizeObserver 正在重繪熱區圖 for player:", playerName);
                             drawPlayerHotzone(currentPlayer); // ✨ 直接呼叫繪製函數 ✨
                         } else {
                             // console.warn("player-dashboard.js: ResizeObserver 無法重繪熱區圖，找不到 currentPlayer 數據。");
@@ -9572,12 +9606,12 @@
         }
 
         // 熱區圖滑鼠互動事件監聽器
-        if (playerHotzoneCanvas) { // ✨ 確保 playerHotzoneCanvas 存在再綁定事件 ✨
+        if (playerHotzoneCanvas) {
             playerHotzoneCanvas.addEventListener('mousemove', handlePlayerHotzoneMouseMove);
-            playerHotzoneCanvas.addEventListener('mouseleave', hideTooltip);
+            playerHotzoneCanvas.addEventListener('mouseleave', () => hideTooltip('hotzone_mouseleave')); // ✨ 傳遞標識符 ✨
         }
 
-        console.log("player-dashboard.js: initPlayerDashboard: 初始化完成，事件監聽器已綁定。");
+        // console.log("player-dashboard.js: initPlayerDashboard: 初始化完成，事件監聽器已綁定。");
 
         // 頁面首次載入時，根據 URL Hash 顯示對應的球員數據
         // 這個邏輯將被 main.js 的 hashchange 處理器觸發
