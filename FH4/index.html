@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>FH4 賽道紀錄系統</title>
+    <style>
+        body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    input,
+    button,
+    select {
+      padding: 6px;
+      margin: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #eee;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+    }
+  </style>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+</head>
+
+<body>
+    <h1>FH4 賽道紀錄系統</h1>
+    <div>
+        <input list="carList" type="text" id="car" placeholder="車輛名稱">
+        <datalist id="carList"></datalist>
+        <input list="trackList" type="text" id="track" placeholder="賽道名稱">
+        <datalist id="trackList"></datalist>
+        <input type="text" id="lap" placeholder="單圈圈速 (例：05:38.328)">
+        <input type="text" id="total" placeholder="賽道圈速 (例：05:38.328)">
+        <button onclick="addRecord()">新增紀錄</button>
+        <div id="error-message" class="error"></div>
+    </div>
+    <div>
+        <button id="ocr-upload-btn">辨識圖片並自動加入紀錄 (點擊上傳)</button>
+        <input type="file" id="ocr-input" accept="image/*" style="display:none">
+        <p>或直接貼上圖片 (Ctrl+V)</p>
+    </div>
+    <script type="text/javascript">
+    // 賽車縮名
+    const alias = {
+        "Porsche 911 GT3 RS": ["911 GT3 RS", "911 GT3RS"],
+        "Lamborghini Huracan": ["Huracan", "小牛"],
+        // ... 更多別名
+    };
+    document.getElementById("ocr-upload-btn").addEventListener("click", () => {
+        document.getElementById("ocr-input").click();
+    });
+
+    document.getElementById("ocr-input").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function() {
+            const img = new Image();
+            img.onload = () => handleOCRImage(img);
+            img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // 新增的貼上事件監聽器
+    document.addEventListener("paste", (e) => {
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf("image") !== -1) {
+                const blob = items[i].getAsFile();
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const img = new Image();
+                    img.onload = () => handleOCRImage(img);
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(blob);
+                e.preventDefault(); // 阻止預設貼上行為
+                break;
+            }
+        }
+    });
+
+
+    async function handleOCRImage(image) {
+        // 建立 canvas，裁切畫面
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.drawImage(image, 0, 0);
+
+        // 以下是模擬辨識整張圖片（你可以再依 extract.html 中的裁切區域優化）
+        // 為了更精確，您可以根據圖片內容定義多個裁切區域進行Tesseract辨識
+        // 例如：
+        // const carNameRegion = { left: ..., top: ..., width: ..., height: ... };
+        // const carNameText = await Tesseract.recognize(canvas, 'eng', { rectangle: carNameRegion });
+
+        // 這裡我們還是先用整張圖辨識，讓使用者確認。
+        const {
+            data: {
+                text
+            }
+        } = await Tesseract.recognize(canvas, 'eng', {});
+        console.log("OCR 辨識結果：", text); // 除錯用
+
+        if (!text.includes("dragonwood0613")) {
+            alert("圖片中非 dragonwood0613 玩家，請確認截圖是否正確。");
+            return;
+        }
+
+        // 嘗試從 OCR 結果中提取資訊
+        const carMatch = Object.keys(alias).find(key =>
+            text.includes(key) || alias[key].some(name => text.includes(name))
+        );
+        const carName = alias[carMatch] ? . [0] || carMatch || "未知車輛";
+
+        // 這裡假設賽道名稱會直接出現在文字中，您可以根據實際截圖格式調整正規表達式
+        // 例如：如果賽道名稱通常在 "Track Name: [賽道名稱]" 這種格式，可以這樣提取：
+        const trackMatch = text.match(/Track Name:\s*(.+?)\n/); // 範例
+        const trackName = trackMatch ? trackMatch[1].trim() : "未知賽道";
+
+
+        const bestLapMatch = text.match(/\d+:\d{2}\.\d{3}/);
+        const bestLap = bestLapMatch ? bestLapMatch[0] : "未偵測";
+
+        // 注意：這裡假設總時間是第二個匹配到的時間格式
+        const totalTimeMatches = text.match(/\d+:\d{2}\.\d{3}/g);
+        const totalTime = totalTimeMatches && totalTimeMatches.length > 1 ? totalTimeMatches[1] : "未偵測";
+
+
+        // 將辨識結果填入輸入框
+        document.getElementById("car").value = carName;
+        document.getElementById("track").value = trackName;
+        document.getElementById("lap").value = bestLap;
+        document.getElementById("total").value = totalTime;
+
+        alert("圖片辨識完成，請確認資料是否正確後再點擊「新增紀錄」。");
+    }
+
+    function addToTable(track, car, carClass, bestLap, totalTime) {
+        const tbody = document.querySelector("#records-table tbody");
+        const tr = document.createElement("tr");
+        [track, car, carClass, bestLap, totalTime].forEach(text => {
+            const td = document.createElement("td");
+            td.textContent = text;
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    }
+    </script>
+    <div>
+        <input type="file" id="csvInput" accept=".csv">
+        <button onclick="importCSV()">匯入 CSV</button>
+        <button onclick="exportCSV()">匯出 CSV</button>
+        <button onclick="clearRecords()">刪除全部資料</button>
+    </div>
+    <div>
+        <label for="filterTrack">選擇賽道：</label>
+        <select id="filterTrack" onchange="renderTable()">
+            <option value="">全部</option>
+        </select>
+        <label for="filterCar">選擇車輛：</label>
+        <select id="filterCar" onchange="renderTable()">
+            <option value="">全部</option>
+        </select>
+    </div>
+    <table id="recordTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable('car')">車輛名稱</th>
+                <th onclick="sortTable('track')">賽道名稱</th>
+                <th onclick="sortTable('lapTime')">單圈圈速</th>
+                <th onclick="sortTable('trackTime')">賽道圈速</th>
+                <th onclick="sortTable('pr')">PR 值</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script>
+    let records = JSON.parse(localStorage.getItem("fh4_records")) || [];
+    let sortKey = null;
+    let sortAsc = true;
+
+    function saveRecords() {
+        localStorage.setItem("fh4_records", JSON.stringify(records));
+    }
+
+    function toSeconds(time) {
+        const parts = time.split(":").map(parseFloat);
+        if (parts.length === 2) return parts[0] * 60 + parts[1];
+        const [minutes, seconds, milliseconds] = time.split(/[:.]/).map(parseFloat);
+        return minutes * 60 + seconds + milliseconds / 1000;
+    }
+
+    function renderTable() {
+        const tbody = document.querySelector("#recordTable tbody");
+        const filterTrack = document.getElementById("filterTrack").value;
+        const filterCar = document.getElementById("filterCar").value;
+
+        let filtered = records.filter(r => {
+            return (!filterTrack || r.track === filterTrack) && (!filterCar || r.car === filterCar);
+        });
+
+        filtered.forEach(entry => {
+            const sameTrack = records.filter(r => r.track === entry.track && r.lapTime);
+            const sorted = [...sameTrack].sort((a, b) => toSeconds(a.lapTime) - toSeconds(b.lapTime));
+            const index = sorted.findIndex(r => r.car === entry.car && r.lapTime === entry.lapTime);
+            if (index !== -1) {
+                entry.pr = ((sorted.length - index) / sorted.length * 100).toFixed(1);
+            } else {
+                entry.pr = "";
+            }
+        });
+
+        if (sortKey) {
+            filtered.sort((a, b) => {
+                let va = a[sortKey] || "";
+                let vb = b[sortKey] || "";
+                if (sortKey === 'lapTime' || sortKey === 'trackTime') {
+                    va = toSeconds(va);
+                    vb = toSeconds(vb);
+                } else if (sortKey === 'pr') {
+                    va = parseFloat(va) || 0;
+                    vb = parseFloat(vb) || 0;
+                } else { // For string comparisons (car, track)
+                    va = String(va).toLowerCase();
+                    vb = String(vb).toLowerCase();
+                    if (va < vb) return sortAsc ? -1 : 1;
+                    if (va > vb) return sortAsc ? 1 : -1;
+                    return 0;
+                }
+                return sortAsc ? va - vb : vb - va;
+            });
+        }
+
+        tbody.innerHTML = "";
+        filtered.forEach(record => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                    <td>${record.car}</td>
+                    <td>${record.track}</td>
+                    <td>${record.lapTime}</td>
+                    <td>${record.trackTime}</td>
+                    <td>${record.pr || ""}</td>
+                `;
+            tbody.appendChild(row);
+        });
+
+        updateFilters();
+        updateTrackList();
+        updateCarList();
+    }
+
+    function updateFilters() {
+        const trackSet = new Set(records.map(r => r.track));
+        const carSet = new Set(records.map(r => r.car));
+        const trackSelect = document.getElementById("filterTrack");
+        const carSelect = document.getElementById("filterCar");
+
+        function updateOptions(select, set) {
+            const value = select.value;
+            select.innerHTML = '<option value="">全部</option>' +
+                Array.from(set).sort().map(v => `<option value="${v}">${v}</option>`).join("");
+            select.value = value;
+        }
+
+        updateOptions(trackSelect, trackSet);
+        updateOptions(carSelect, carSet);
+    }
+
+    function updateTrackList() {
+        const trackSet = new Set(records.map(r => r.track));
+        const datalist = document.getElementById("trackList");
+        datalist.innerHTML = Array.from(trackSet).sort().map(t => `<option value="${t}">`).join("");
+    }
+
+    function updateCarList() {
+        const carSet = new Set(records.map(r => r.car));
+        const datalist = document.getElementById("carList");
+        datalist.innerHTML = Array.from(carSet).sort().map(c => `<option value="${c}">`).join("");
+    }
+
+    function addRecord() {
+        const car = document.getElementById("car").value.trim();
+        const track = document.getElementById("track").value.trim();
+        const lapTime = document.getElementById("lap").value.trim();
+        const trackTime = document.getElementById("total").value.trim();
+
+        document.getElementById("error-message").innerText = "";
+
+        if (!car || !track || !lapTime || !trackTime) {
+            return document.getElementById("error-message").innerText = "請填寫所有欄位。";
+        }
+
+        const timeFormat = /^(\d{2}):(\d{2})\.(\d{3})$/;
+        if (!timeFormat.test(lapTime) || !timeFormat.test(trackTime)) {
+            return document.getElementById("error-message").innerText = "圈速格式錯誤，應為 MM:SS.SSS 格式。";
+        }
+
+        // 將資料傳送到 Google Apps Script
+        sendRecordToGoogleSheet({ car, track, lapTime, trackTime });
+
+        // 保持本地顯示，但主要儲存改為 Google Sheet
+        records.push({ car, track, lapTime, trackTime });
+        saveRecords(); // 仍然本地儲存一份作為備份和篩選/排序的來源
+        renderTable();
+
+        document.getElementById("car").value = "";
+        document.getElementById("track").value = "";
+        document.getElementById("lap").value = "";
+        document.getElementById("total").value = "";
+    }
+
+    function clearRecords() {
+        if (confirm("確定要刪除全部資料嗎？這不會刪除 Google 試算表中的資料。")) {
+            records = [];
+            saveRecords();
+            renderTable();
+            alert("本地資料已刪除。若要刪除 Google 試算表中的資料，請手動操作。");
+        }
+    }
+
+    function importCSV() {
+        const file = document.getElementById("csvInput").files[0];
+        if (!file) return alert("請選擇 CSV 檔案。");
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const lines = e.target.result.split("\n").map(line => line.trim()).filter(line => line);
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(",");
+                if (values.length >= 4) {
+                    const car = values[0].trim();
+                    const track = values[1].trim();
+                    const lapTime = values[2].trim();
+                    const trackTime = values[3].trim();
+
+                    const timeFormat = /^(\d{2}):(\d{2})\.(\d{3})$/;
+                    if (timeFormat.test(lapTime) && timeFormat.test(trackTime)) {
+                        records.push({ car, track, lapTime, trackTime });
+                        // 如果匯入的資料也需要存到 Google Sheet，可以在這裡呼叫 sendRecordToGoogleSheet
+                        // 但為了避免大量請求，通常匯入CSV後會考慮手動上傳或一次性上傳
+                    }
+                }
+            }
+
+            saveRecords();
+            renderTable();
+            alert("CSV 資料已匯入本地，但未同步至 Google 試算表。");
+        };
+        reader.readAsText(file);
+    }
+
+    function exportCSV() {
+        if (records.length === 0) {
+            return alert("目前沒有資料可以匯出。");
+        }
+
+        let csvContent = "車輛名稱,賽道名稱,單圈圈速,賽道圈速\n";
+        records.forEach(record => {
+            const row = [record.car, record.track, record.lapTime, record.trackTime].join(",");
+            csvContent += row + "\n";
+        });
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "FH4_賽道紀錄.csv");
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function sortTable(key) {
+        if (sortKey === key) {
+            sortAsc = !sortAsc;
+        } else {
+            sortKey = key;
+            sortAsc = true;
+        }
+        renderTable();
+    }
+
+    // --- Google Apps Script 相關函式 (待會會詳細說明如何設定) ---
+    // 請替換成您部署後的 Web App URL
+    const GOOGLE_APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby3rvDYSm5uFy081yFiECdsvtc3oJyONnMk8T9e9d72y6QgYZBHlw4mXsL0Tlm0JwegJw/exec";
+
+    async function sendRecordToGoogleSheet(recordData) {
+        try {
+            const response = await fetch(GOOGLE_APPS_SCRIPT_WEB_APP_URL, {
+                method: "POST",
+                mode: "cors", // 必須設定為 cors
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(recordData),
+            });
+
+            const result = await response.json();
+            if (result.status === "success") {
+                console.log("資料已成功儲存到 Google 試算表:", result.message);
+            } else {
+                console.error("儲存到 Google 試算表失敗:", result.message);
+                alert("資料儲存到 Google 試算表失敗：" + result.message + "\n請檢查 Google Apps Script 設定。");
+            }
+        } catch (error) {
+            console.error("發送資料到 Google Apps Script 時發生錯誤:", error);
+            alert("無法連接到 Google 試算表服務。請檢查網路連線或 Apps Script URL。");
+        }
+    }
+
+    // --- 初始化時載入並渲染表格 ---
+    renderTable();
+    </script>
+</body>
+
+</html>
