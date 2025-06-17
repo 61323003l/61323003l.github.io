@@ -26,6 +26,8 @@
       margin: 5px;
     }
 
+    textarea { display: block; margin: 10px 0; width: 300px; }
+    
     table {
       width: 100%;
       border-collapse: collapse;
@@ -48,12 +50,32 @@
       color: red;
       font-size: 14px;
     }
+
+    /*  回到頂端按鈕  */
+.backtohome {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    /*       background-color: #75c0ea;*/
+    border-radius: 30px;
+    height: 75px;
+    width: 75px;
+}
+
+.backtohome img {
+    display: block;
+    margin: auto;
+    max-width: 80%;
+    /*filter: drop-shadow(1px 1px 1px);*/
+}
   </style>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
 </head>
 
 <body>
-    <h1>FH4 賽道紀錄系統</h1>
+    <h1>FH4 車輛紀錄系統</h1>
+    <!-- 回到頂端按鈕 -->
+    <div class="backtohome"><a href="https://61323003l.github.io/MyWebsite/"><img src="img\負電拍拍頭剪影-2.png" alt="回到首頁" title="按一下回到首頁"></a></div>
     <div>
         <input list="carList" type="text" id="car" placeholder="車輛名稱">
         <datalist id="carList"></datalist>
@@ -64,121 +86,99 @@
         <button onclick="addRecord()">新增紀錄</button>
         <div id="error-message" class="error"></div>
     </div>
-    <div>
-        <button id="ocr-upload-btn">辨識圖片並自動加入紀錄 (點擊上傳)</button>
-        <input type="file" id="ocr-input" accept="image/*" style="display:none">
-        <p>或直接貼上圖片 (Ctrl+V)</p>
-    </div>
-    <script type="text/javascript">
-    // 賽車縮名
-    const alias = {
-        "Porsche 911 GT3 RS": ["911 GT3 RS", "911 GT3RS"],
-        "Lamborghini Huracan": ["Huracan", "小牛"],
-        // ... 更多別名
-    };
-    document.getElementById("ocr-upload-btn").addEventListener("click", () => {
-        document.getElementById("ocr-input").click();
-    });
+    <!-- 圖片辨識功能區 -->
+    <img id="preview" style="max-width: 500px; display:none; margin-top: 10px;">
+    <script>
+        const vehicleList = [
+        "Bugatti EB110", "Ford GT '05", "Honda NSX-R '92", "Corvette '09", "Maseratti MC12", "McLaren 570S",
+        "McLaren F1", "Nissan GT-R '97", "Dodge Viper '08", "Corvette '02", "Lambo Huracán", "Ford Focus '17",
+        "Ferrari 458", "McLaren 12C", "Porsche Cayman", "Alfa Romeo 4C", "Koenigsegg CC8S", "M-B AMG GTR",
+        "Vantage S '13", "Aventador J", "Pagani Zonda C", "Porsche 911 '19", "Porsche Carrera",
+        "Koenigsegg CCGT", "Pagani Zonda R", "Ferrari F40 C", "Ferrari F50 GT", "Ferrari 599XX E", "Ferrari FXX",
+        "M-B CLK-GTR", "Apollo IE '18", "WP FERRARI F50", "DIABLO GTR", "Lotus Elise GT1", "CORVETTE C8 '20",
+        "Ford Mustang DD", "Alfa Romeo 33S", "WP #1 TOYOTA T100", "Jeep Trailcat", "RAM Rebel TRX",
+        "Atomic Punk '59", "Nova '69 FE", "Alfa Romeo TZ2", "Ford Roadster", "Ford Raptor '17", "M-B X-Class",
+        "Chevrolet ZR2", "Macan Turbo '19", "Jaguar F-PACE S", "Abarth 131", "Alfa Romeo GTA", "Datsun 510",
+        "IH Scout 800A", "MINI '65", "Shelby Daytona", "Honda Civic '74", "Subaru Legacy RS", "RAM Power Wagon",
+        "Shelby Monaco KC", "Pagani Huayra BC", "Bugatti Divo", "Lambo Centenario", "McLaren Senna", "BAC Mono",
+        "LEXUS LFA", "Hoonigan RS200", "Mazda RX-7 '97", "Subaru 22B", "Lancer GSR '99", "Nissan GT-R '02",
+        "Honda S2000", "BMW M6 '13 FE", "KTM X-Bow GT4", "Ferrari FXX K", "AM Vulcan FE", "GTA Spano",
+        "Aventador FE", "McLaren P1", "911 GT2 RS '18", "Lambo Sesto", "RAESR TS '19", "BMW M4 '14",
+        "Acura NSX '17", "Audi R8 '13", "Chevy Camaro '15", "Challenger '15", "Dodge Charger '15", "Ford Mustang '16",
+        "WP FOCUS RS RX", "Jaguar C-X75", "M-B SLS AMG", "Subaru BRZ", "Saleen S5S", "Nissan GT-R '12",
+        "Honda Civic '97", "M-B C63"
+    ];
 
-    document.getElementById("ocr-input").addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function() {
-            const img = new Image();
-            img.onload = () => handleOCRImage(img);
-            img.src = reader.result;
-        };
-        reader.readAsDataURL(file);
-    });
+    function getBestMatch(text, candidates) {
+        text = text.toLowerCase();
+        let best = '';
+        let minDistance = Infinity;
+        for (const name of candidates) {
+            const dist = levenshtein(text, name.toLowerCase());
+            if (dist < minDistance) {
+                minDistance = dist;
+                best = name;
+            }
+        }
+        return best;
+    }
 
-    // 新增的貼上事件監聽器
-    document.addEventListener("paste", (e) => {
-        const items = e.clipboardData.items;
-        for (let i = 0; i < items.length; i++) {
-            if (items[i].type.indexOf("image") !== -1) {
-                const blob = items[i].getAsFile();
-                const reader = new FileReader();
-                reader.onload = function() {
-                    const img = new Image();
-                    img.onload = () => handleOCRImage(img);
-                    img.src = reader.result;
-                };
-                reader.readAsDataURL(blob);
-                e.preventDefault(); // 阻止預設貼上行為
-                break;
+    function levenshtein(a, b) {
+        const matrix = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(null));
+        for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+        for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost);
+            }
+        }
+        return matrix[a.length][b.length];
+    }
+
+    document.addEventListener('paste', async (event) => {
+        const items = event.clipboardData.items;
+        for (const item of items) {
+            if (item.type.indexOf("image") === 0) {
+                const blob = item.getAsFile();
+                const url = URL.createObjectURL(blob);
+                document.getElementById("preview").src = url;
+                document.getElementById("preview").style.display = "block";
+
+                const result = await Tesseract.recognize(blob, 'eng');
+                const text = result.data.text;
+                console.log("OCR文字內容：", text);
+
+                if (!/dragonwood/i.test(text)) {
+                    alert("不是指定玩家的圖片！");
+                    return;
+                }
+
+                // document.getElementById("player").value = "dragonwood0613";
+
+                // 時間匹配
+                const timeMatch = text.match(/(\d{2}:\d{2}\.\d{3})/g);
+                if (timeMatch) {
+                    if (timeMatch[0]) document.getElementById("lap").value = timeMatch[0];
+                    if (timeMatch[1]) document.getElementById("total").value = timeMatch[1];
+                }
+
+                // 車輛名稱模糊比對
+                const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 4);
+                let foundCar = '';
+                for (const line of lines) {
+                    const guess = getBestMatch(line, vehicleList);
+                    if (guess && line.toLowerCase().includes(guess.toLowerCase().split(' ')[0])) {
+                        foundCar = guess;
+                        break;
+                    }
+                }
+                if (foundCar) document.getElementById("car").value = foundCar;
             }
         }
     });
-
-
-    async function handleOCRImage(image) {
-        // 建立 canvas，裁切畫面
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = image.width;
-        canvas.height = image.height;
-        ctx.drawImage(image, 0, 0);
-
-        // 以下是模擬辨識整張圖片（你可以再依 extract.html 中的裁切區域優化）
-        // 為了更精確，您可以根據圖片內容定義多個裁切區域進行Tesseract辨識
-        // 例如：
-        // const carNameRegion = { left: ..., top: ..., width: ..., height: ... };
-        // const carNameText = await Tesseract.recognize(canvas, 'eng', { rectangle: carNameRegion });
-
-        // 這裡我們還是先用整張圖辨識，讓使用者確認。
-        const {
-            data: {
-                text
-            }
-        } = await Tesseract.recognize(canvas, 'eng', {});
-        console.log("OCR 辨識結果：", text); // 除錯用
-
-        if (!text.includes("dragonwood0613")) {
-            alert("圖片中非 dragonwood0613 玩家，請確認截圖是否正確。");
-            return;
-        }
-
-        // 嘗試從 OCR 結果中提取資訊
-        const carMatch = Object.keys(alias).find(key =>
-            text.includes(key) || alias[key].some(name => text.includes(name))
-        );
-        const carName = alias[carMatch] ? . [0] || carMatch || "未知車輛";
-
-        // 這裡假設賽道名稱會直接出現在文字中，您可以根據實際截圖格式調整正規表達式
-        // 例如：如果賽道名稱通常在 "Track Name: [賽道名稱]" 這種格式，可以這樣提取：
-        const trackMatch = text.match(/Track Name:\s*(.+?)\n/); // 範例
-        const trackName = trackMatch ? trackMatch[1].trim() : "未知賽道";
-
-
-        const bestLapMatch = text.match(/\d+:\d{2}\.\d{3}/);
-        const bestLap = bestLapMatch ? bestLapMatch[0] : "未偵測";
-
-        // 注意：這裡假設總時間是第二個匹配到的時間格式
-        const totalTimeMatches = text.match(/\d+:\d{2}\.\d{3}/g);
-        const totalTime = totalTimeMatches && totalTimeMatches.length > 1 ? totalTimeMatches[1] : "未偵測";
-
-
-        // 將辨識結果填入輸入框
-        document.getElementById("car").value = carName;
-        document.getElementById("track").value = trackName;
-        document.getElementById("lap").value = bestLap;
-        document.getElementById("total").value = totalTime;
-
-        alert("圖片辨識完成，請確認資料是否正確後再點擊「新增紀錄」。");
-    }
-
-    function addToTable(track, car, carClass, bestLap, totalTime) {
-        const tbody = document.querySelector("#records-table tbody");
-        const tr = document.createElement("tr");
-        [track, car, carClass, bestLap, totalTime].forEach(text => {
-            const td = document.createElement("td");
-            td.textContent = text;
-            tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
-    }
     </script>
+    <!-- 資料匯出 & 匯入 -->
     <div>
         <input type="file" id="csvInput" accept=".csv">
         <button onclick="importCSV()">匯入 CSV</button>
@@ -217,10 +217,13 @@
     }
 
     function toSeconds(time) {
-        const parts = time.split(":").map(parseFloat);
-        if (parts.length === 2) return parts[0] * 60 + parts[1];
-        const [minutes, seconds, milliseconds] = time.split(/[:.]/).map(parseFloat);
-        return minutes * 60 + seconds + milliseconds / 1000;
+        // 原始程式碼只處理 MM:SS.S，這裡修正為 MM:SS.SSS
+        const parts = time.split(/[:.]/).map(parseFloat); // 分割分鐘、秒、毫秒
+        if (parts.length === 3) {
+            return parts[0] * 60 + parts[1] + parts[2] / 1000;
+        }
+        // Fallback for MM:SS or other unexpected formats
+        return parseFloat(time) || 0;
     }
 
     function renderTable() {
@@ -253,12 +256,6 @@
                 } else if (sortKey === 'pr') {
                     va = parseFloat(va) || 0;
                     vb = parseFloat(vb) || 0;
-                } else { // For string comparisons (car, track)
-                    va = String(va).toLowerCase();
-                    vb = String(vb).toLowerCase();
-                    if (va < vb) return sortAsc ? -1 : 1;
-                    if (va > vb) return sortAsc ? 1 : -1;
-                    return 0;
                 }
                 return sortAsc ? va - vb : vb - va;
             });
@@ -268,18 +265,19 @@
         filtered.forEach(record => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                    <td>${record.car}</td>
-                    <td>${record.track}</td>
-                    <td>${record.lapTime}</td>
-                    <td>${record.trackTime}</td>
-                    <td>${record.pr || ""}</td>
-                `;
+        <td>${record.car}</td>
+        <td>${record.track}</td>
+        <td>${record.lapTime}</td>
+        <td>${record.trackTime}</td>
+        <td>${record.pr || ""}</td>
+        `;
             tbody.appendChild(row);
         });
 
+
         updateFilters();
         updateTrackList();
-        updateCarList();
+        updateCarList(); // ✅ 加入這行
     }
 
     function updateFilters() {
@@ -323,31 +321,28 @@
             return document.getElementById("error-message").innerText = "請填寫所有欄位。";
         }
 
-        const timeFormat = /^(\d{2}):(\d{2})\.(\d{3})$/;
+        const timeFormat = /^(\d{1,2}):(\d{2})\.(\d{3})$/;
         if (!timeFormat.test(lapTime) || !timeFormat.test(trackTime)) {
             return document.getElementById("error-message").innerText = "圈速格式錯誤，應為 MM:SS.SSS 格式。";
         }
 
-        // 將資料傳送到 Google Apps Script
-        sendRecordToGoogleSheet({ car, track, lapTime, trackTime });
-
-        // 保持本地顯示，但主要儲存改為 Google Sheet
         records.push({ car, track, lapTime, trackTime });
-        saveRecords(); // 仍然本地儲存一份作為備份和篩選/排序的來源
+        saveRecords();
         renderTable();
 
         document.getElementById("car").value = "";
         document.getElementById("track").value = "";
         document.getElementById("lap").value = "";
         document.getElementById("total").value = "";
+        document.getElementById("error-message").innerText = "紀錄新增成功！"; // 新增成功提示
+
     }
 
     function clearRecords() {
-        if (confirm("確定要刪除全部資料嗎？這不會刪除 Google 試算表中的資料。")) {
+        if (confirm("確定要刪除全部資料嗎？")) {
             records = [];
             saveRecords();
             renderTable();
-            alert("本地資料已刪除。若要刪除 Google 試算表中的資料，請手動操作。");
         }
     }
 
@@ -370,15 +365,13 @@
                     const timeFormat = /^(\d{2}):(\d{2})\.(\d{3})$/;
                     if (timeFormat.test(lapTime) && timeFormat.test(trackTime)) {
                         records.push({ car, track, lapTime, trackTime });
-                        // 如果匯入的資料也需要存到 Google Sheet，可以在這裡呼叫 sendRecordToGoogleSheet
-                        // 但為了避免大量請求，通常匯入CSV後會考慮手動上傳或一次性上傳
                     }
                 }
             }
 
             saveRecords();
             renderTable();
-            alert("CSV 資料已匯入本地，但未同步至 Google 試算表。");
+            document.getElementById("error-message").innerText = "CSV 資料匯入完成。"; // 新增成功提示
         };
         reader.readAsText(file);
     }
@@ -399,52 +392,21 @@
 
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", "FH4_賽道紀錄.csv");
+        link.setAttribute("download", "FH4_車輛紀錄.csv");
         link.style.display = "none";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        document.getElementById("error-message").innerText = "資料已匯出為 CSV。"; // 新增成功提示
+
     }
 
     function sortTable(key) {
-        if (sortKey === key) {
-            sortAsc = !sortAsc;
-        } else {
-            sortKey = key;
-            sortAsc = true;
-        }
+        sortKey = key;
+        sortAsc = !sortAsc;
         renderTable();
     }
 
-    // --- Google Apps Script 相關函式 (待會會詳細說明如何設定) ---
-    // 請替換成您部署後的 Web App URL
-    const GOOGLE_APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw0mV0Sj2uN2eGvn14dNybSWEgwmdYgExbsxGKtYDEpZOxACjwrDjxTq5TbyQ7eOr8Mnw/exec";
-
-    async function sendRecordToGoogleSheet(recordData) {
-        try {
-            const response = await fetch(GOOGLE_APPS_SCRIPT_WEB_APP_URL, {
-                method: "POST",
-                mode: "cors", // 必須設定為 cors
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(recordData),
-            });
-
-            const result = await response.json();
-            if (result.status === "success") {
-                console.log("資料已成功儲存到 Google 試算表:", result.message);
-            } else {
-                console.error("儲存到 Google 試算表失敗:", result.message);
-                alert("資料儲存到 Google 試算表失敗：" + result.message + "\n請檢查 Google Apps Script 設定。");
-            }
-        } catch (error) {
-            console.error("發送資料到 Google Apps Script 時發生錯誤:", error);
-            alert("無法連接到 Google 試算表服務。請檢查網路連線或 Apps Script URL。");
-        }
-    }
-
-    // --- 初始化時載入並渲染表格 ---
     renderTable();
     </script>
 </body>
