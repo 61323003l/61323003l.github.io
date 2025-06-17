@@ -137,25 +137,42 @@
     <!-- 圖片辨識功能區 -->
     <img id="preview" style="max-width: 500px; display:none; margin-top: 10px;">
     <script>
-        const vehicleList = [
-        "Bugatti EB110", "Ford GT '05", "Honda NSX-R '92", "Corvette '09", "Maseratti MC12", "McLaren 570S",
-        "McLaren F1", "Nissan GT-R '97", "Dodge Viper '08", "Corvette '02", "Lambo Huracán", "Ford Focus '17",
-        "Ferrari 458", "McLaren 12C", "Porsche Cayman", "Alfa Romeo 4C", "Koenigsegg CC8S", "M-B AMG GTR",
-        "Vantage S '13", "Aventador J", "Pagani Zonda C", "Porsche 911 '19", "Porsche Carrera",
-        "Koenigsegg CCGT", "Pagani Zonda R", "Ferrari F40 C", "Ferrari F50 GT", "Ferrari 599XX E", "Ferrari FXX",
-        "M-B CLK-GTR", "Apollo IE '18", "WP FERRARI F50", "DIABLO GTR", "Lotus Elise GT1", "CORVETTE C8 '20",
-        "Ford Mustang DD", "Alfa Romeo 33S", "WP #1 TOYOTA T100", "Jeep Trailcat", "RAM Rebel TRX",
-        "Atomic Punk '59", "Nova '69 FE", "Alfa Romeo TZ2", "Ford Roadster", "Ford Raptor '17", "M-B X-Class",
-        "Chevrolet ZR2", "Macan Turbo '19", "Jaguar F-PACE S", "Abarth 131", "Alfa Romeo GTA", "Datsun 510",
-        "IH Scout 800A", "MINI '65", "Shelby Daytona", "Honda Civic '74", "Subaru Legacy RS", "RAM Power Wagon",
-        "Shelby Monaco KC", "Pagani Huayra BC", "Bugatti Divo", "Lambo Centenario", "McLaren Senna", "BAC Mono",
-        "LEXUS LFA", "Hoonigan RS200", "Mazda RX-7 '97", "Subaru 22B", "Lancer GSR '99", "Nissan GT-R '02",
-        "Honda S2000", "BMW M6 '13 FE", "KTM X-Bow GT4", "Ferrari FXX K", "AM Vulcan FE", "GTA Spano",
-        "Aventador FE", "McLaren P1", "911 GT2 RS '18", "Lambo Sesto", "RAESR TS '19", "BMW M4 '14",
-        "Acura NSX '17", "Audi R8 '13", "Chevy Camaro '15", "Challenger '15", "Dodge Charger '15", "Ford Mustang '16",
-        "WP FOCUS RS RX", "Jaguar C-X75", "M-B SLS AMG", "Subaru BRZ", "Saleen S5S", "Nissan GT-R '12",
-        "Honda Civic '97", "M-B C63"
-    ];
+        // Google Sheet 動態載入 車輛名稱
+    let vehicleList = [];
+
+    // 在頁面載入時獲取車輛列表
+const GOOGLE_APPS_SCRIPT_VEHICLE_LIST_URL = "https://script.google.com/macros/s/AKfycbxP2dQrjxsMb11ErGxq01zgOJg2g2pkjQlRPSgTsjP021DrxWZtNYeHT4PwL4tGN681lw/exec"; 
+
+async function fetchVehicleList() {
+    try {
+        const response = await fetch(GOOGLE_APPS_SCRIPT_VEHICLE_LIST_URL, {
+            method: 'GET',
+            mode: 'cors'
+        });
+        const result = await response.json();
+        if (result.status === "success" && result.data) {
+            vehicleList = result.data; // 更新全局的 vehicleList 變數
+            console.log("車輛列表已從 Google Sheet 載入:", vehicleList);
+            updateCarListDatalist(); // 更新 datalist，讓輸入框能自動完成
+        } else {
+            console.error("載入車輛列表失敗:", result.message);
+            document.getElementById("error-message").innerText = "無法載入車輛列表：" + result.message;
+        }
+    } catch (error) {
+        console.error("連接 Apps Script 獲取車輛列表時發生錯誤:", error);
+        document.getElementById("error-message").innerText = "無法連接到車輛列表服務。";
+    }
+}
+
+// 頁面載入完成後呼叫
+document.addEventListener('DOMContentLoaded', fetchVehicleList);
+
+
+// 新增這個函數來更新 datalist
+function updateCarListDatalist() {
+    const datalist = document.getElementById("carList");
+    datalist.innerHTML = Array.from(vehicleList).sort().map(c => `<option value="${c}">`).join("");
+}
 
     function getBestMatch(text, candidates) {
         text = text.toLowerCase();
