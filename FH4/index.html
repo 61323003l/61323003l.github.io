@@ -109,6 +109,7 @@
 }
   </style>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -131,9 +132,54 @@
         <datalist id="trackList"></datalist>
         <input type="text" id="lap" placeholder="單圈圈速 (例：05:38.328)">
         <input type="text" id="total" placeholder="賽道圈速 (例：05:38.328)">
-        <button onclick="addRecord()">新增紀錄</button>
-        <div id="error-message" class="error"></div>
+        <button id="b" onclick="addRecord()">新增紀錄</button>
     </div>
+    <script>
+        // 將"新增紀錄"寫入 google sheet
+        $(function() {
+        var $a1 = $('#car'),
+            $a2 = $('#track'),
+            $a3 = $('#lap'),
+            $a4 = $('#total')
+        $b = $('#b'),
+            a = {};
+
+        $b.on('click', function() {
+            a = {
+                data: $a1.val() + ',' + $a2.val() + ',' + $a3.val() + ',' + $a4.val(),
+                sheetUrl: 'https://docs.google.com/spreadsheets/d/1z_vnstW1q7UoFhRYTa4skagDlBoNCPtlobxkiN-m2Dk/edit?gid=1632701730#gid=1632701730',
+                sheetTag: '賽道紀錄'
+            };
+            console.log(a);
+            $.get('https://script.google.com/macros/s/AKfycbxBzCRzG-bDfd1Z-4hRij0daGm6sMT0q49BvZnjr8Cz8gg7SgASGDhAkd61SGlfJx1NNA/exec', a)
+                .done(function(response) {
+                    // 請求成功完成後執行
+                    console.log("Apps Script 回應:", response); // 顯示 Apps Script 的回應
+
+                    // 假設 Apps Script 會返回一個 JSON 物件，其中包含 success 狀態
+                    // 您需要根據 Apps Script 的實際回應格式調整這裡的判斷
+                    if (response === true || response === "true") { // <--- 關鍵改變：直接判斷 response 是否為 true
+                        $('#error-message').text('紀錄已成功送出！'); // 顯示成功訊息
+                        // 清空欄位內容
+                        $a1.val('');
+                        $a2.val('');
+                        $a3.val('');
+                        $a4.val('');
+                    } else {
+                        // Apps Script 回應不是 true，視為失敗
+                        $('#error-message').text('送出失敗: Apps Script 回應非預期。'); // 顯示失敗訊息
+                        console.error("Apps Script 返回非預期回應:", response); // 記錄下非預期的回應
+                    }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    // 請求失敗時執行（例如網路問題或 Apps Script 錯誤）
+                    console.error("請求失敗:", textStatus, errorThrown);
+                    $('#error-message').text('送出失敗，請檢查網路連線或 Apps Script 設定。');
+                });
+        });
+    });
+    </script>
+    <div id="error-message" class="error"></div>
     <!-- 圖片辨識功能區 -->
     <img id="preview" style="max-width: 500px; display:none; margin-top: 10px;">
     <script>
@@ -277,42 +323,6 @@ function updateCarListDatalist() {
     let sortKey = null;
     let sortAsc = true;
 
-    // Apps Script Web App URL 用於將紀錄寫入 Google Sheet
-    const GOOGLE_APPS_SCRIPT_RECORD_URL = "https://script.google.com/macros/s/AKfycbxBzCRzG-bDfd1Z-4hRij0daGm6sMT0q49BvZnjr8Cz8gg7SgASGDhAkd61SGlfJx1NNA/exec";
-
-    async function sendRecordToGoogleSheet(recordData) {
-        try {
-            // 將數據轉換為 URL 查詢字串
-            const params = new URLSearchParams(recordData).toString();
-            const urlWithParams = `${GOOGLE_APPS_SCRIPT_RECORD_URL}?${params}`;
-            // 發送 GET 請求
-            const response = await fetch(urlWithParams, {
-                method: "GET", // <--- 關鍵改變：改為 GET 請求
-                mode: "cors" // 仍然設定為 cors
-                // 注意：GET 請求通常不需要 Content-Type 或 body
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`HTTP 錯誤! 狀態: ${response.status}, 訊息: ${errorText}`);
-            }
-
-            const result = await response.json();
-            if (result.status === "success") {
-                console.log("資料已成功儲存到 Google 試算表 (GET):", result.message); // 訊息調整
-                document.getElementById("error-message").innerText = "紀錄新增成功並同步至雲端。";
-            } else {
-                console.error("儲存到 Google 試算表失敗 (GET):", result.message); // 訊息調整
-                document.getElementById("error-message").innerText = "紀錄新增成功，但同步至雲端失敗：" + result.message;
-                alert("紀錄新增成功，但同步至 Google 試算表失敗：" + result.message + "\n請檢查 Google Apps Script 設定。");
-            }
-        } catch (error) {
-            console.error("發送資料到 Google Apps Script 時發生錯誤 (GET):", error); // 訊息調整
-            document.getElementById("error-message").innerText = "紀錄新增成功，但無法連接到雲端服務。";
-            alert("紀錄新增成功，但無法連接到 Google 試算表服務。請檢查網路連線或 Apps Script URL。");
-        }
-    }
-
     function saveRecords() {
         localStorage.setItem("fh4_records", JSON.stringify(records));
     }
@@ -432,14 +442,6 @@ function updateCarListDatalist() {
         saveRecords(); // 保存 records 到 localStorage
         renderTable(); // 重新渲染表格
 
-        // 將資料發送到google sheet
-        sendRecordToGoogleSheet({ car, track, lapTime, trackTime });
-
-        // 清空輸入框
-        document.getElementById("car").value = "";
-        document.getElementById("track").value = "";
-        document.getElementById("lap").value = "";
-        document.getElementById("total").value = "";
 
         // 提示訊息將由 sendRecordToGoogleSheet 處理，這裡可以移除或調整
         // document.getElementById("error-message").innerText = "紀錄新增成功！"; 
