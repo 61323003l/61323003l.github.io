@@ -52,7 +52,7 @@
     }
 
     /*  回到頂端按鈕  */
-.backtohome {
+.backtotop {
     position: fixed;
     right: 30px;
     bottom: 30px;
@@ -62,7 +62,7 @@
     width: 75px;
 }
 
-.backtohome img {
+.backtotop img {
     display: block;
     margin: auto;
     max-width: 80%;
@@ -110,6 +110,15 @@
   </style>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+        // 回到頂端功能
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+    </script>
 </head>
 
 <body>
@@ -161,10 +170,10 @@
                     if (response === true || response === "true") { // <--- 關鍵改變：直接判斷 response 是否為 true
                         $('#error-message').text('紀錄已成功送出！'); // 顯示成功訊息
                         // 清空欄位內容
-                        $a1.val('');
-                        $a2.val('');
-                        $a3.val('');
-                        $a4.val('');
+                        $a1.val('');//清空車輛
+                        // $a2.val('');//清空賽道
+                        $a3.val('');//清空單圈
+                        $a4.val('');//清空總圈
                     } else {
                         // Apps Script 回應不是 true，視為失敗
                         $('#error-message').text('送出失敗: Apps Script 回應非預期。'); // 顯示失敗訊息
@@ -440,6 +449,10 @@ function updateCarListDatalist() {
         // 將資料添加到 records 陣列 (本地儲存)
         records.push({ car, track, lapTime, trackTime });
         saveRecords(); // 保存 records 到 localStorage
+        
+        // 設定賽道篩選器為當前賽道
+        document.getElementById("filterTrack").value = track;
+        
         renderTable(); // 重新渲染表格
 
 
@@ -521,6 +534,13 @@ function updateCarListDatalist() {
 
     renderTable();
     </script>
+    <!-- 
+    更新紀錄(ChangeLog)
+    2025-08-29 
+        1. 回到頂端按鈕修改
+        2. 新增紀錄後保留賽道名稱
+        3. 新增紀錄後進行自動篩選與顯示賽道排名
+    -->
 </body>
 
 </html>
