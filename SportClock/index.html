@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>運動計時提醒器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .setup-section {
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.1rem;
+            backdrop-filter: blur(5px);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.stop {
+            background: linear-gradient(45deg, #FF4757, #FF3742);
+        }
+
+        .timer-display {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .current-phase {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .time-remaining {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            font-family: 'Courier New', monospace;
+        }
+
+        .progress-info {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4ECDC4, #44A08D);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        .workout-phase {
+            color: #FFD93D;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .rest-phase {
+            color: #4ECDC4;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .completed {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .time-remaining {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🏃‍♂️ 運動計時器</h1>
+        <div class="setup-section" id="setupSection">
+            <div class="input-group">
+                <label for="workoutTime">動作時間 (秒):</label>
+                <input type="number" id="workoutTime" value="30" min="1" max="3600" placeholder="30">
+            </div>
+            <div class="input-group">
+                <label for="restTime">休息時間 (秒):</label>
+                <input type="number" id="restTime" value="5" min="1" max="3600" placeholder="5">
+            </div>
+            <div class="input-group">
+                <label for="totalSets">總組數:</label>
+                <input type="number" id="totalSets" value="5" min="1" max="50" placeholder="5">
+            </div>
+            <button class="btn" onclick="startWorkout()">🚀 開始運動</button>
+        </div>
+        <div class="timer-display" id="timerDisplay">
+            <div class="current-phase" id="currentPhase">準備開始...</div>
+            <div class="time-remaining" id="timeRemaining">00</div>
+            <div class="progress-info" id="progressInfo">第 1 組 / 共 5 組</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <button class="btn stop" onclick="stopWorkout()">⏹️ 停止運動</button>
+        </div>
+    </div>
+    <div class="notification" id="notification"></div>
+    <script>
+    let workoutSettings = {
+        workoutTime: 30,
+        restTime: 5,
+        totalSets: 5
+    };
+
+    let currentState = {
+        isRunning: false,
+        currentSet: 1,
+        isWorkoutPhase: true,
+        timeRemaining: 0,
+        totalTime: 0,
+        timerId: null
+    };
+
+    // 音效生成函數
+    function createBeep(frequency = 800, duration = 200) {
+        const audioContext = new(window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.01);
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + duration / 1000);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration / 1000);
+    }
+
+    function playWorkoutEndSound() {
+        // 動作結束音效 - 兩聲短嗶
+        createBeep(600, 150);
+        setTimeout(() => createBeep(600, 150), 200);
+        showNotification("動作完成！開始休息");
+    }
+
+    function playRestEndSound() {
+        // 休息結束音效 - 三聲較高的嗶聲
+        createBeep(1000, 150);
+        setTimeout(() => createBeep(1000, 150), 200);
+        setTimeout(() => createBeep(1000, 150), 400);
+        showNotification("休息結束！開始動作");
+    }
+
+    function playCompletionSound() {
+        // 完成音效 - 上升音調
+        createBeep(523, 200);
+        setTimeout(() => createBeep(659, 200), 250);
+        setTimeout(() => createBeep(784, 200), 500);
+        setTimeout(() => createBeep(1047, 400), 750);
+        showNotification("🎉 恭喜完成所有組數！");
+    }
+
+    function showNotification(message) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.style.display = 'block';
+
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 3000);
+    }
+
+    function startWorkout() {
+        // 獲取設定值
+        workoutSettings.workoutTime = parseInt(document.getElementById('workoutTime').value) || 30;
+        workoutSettings.restTime = parseInt(document.getElementById('restTime').value) || 5;
+        workoutSettings.totalSets = parseInt(document.getElementById('totalSets').value) || 5;
+
+        // 重置狀態
+        currentState.isRunning = true;
+        currentState.currentSet = 1;
+        currentState.isWorkoutPhase = true;
+        currentState.timeRemaining = workoutSettings.workoutTime;
+        currentState.totalTime = workoutSettings.workoutTime;
+
+        // 切換顯示
+        document.getElementById('setupSection').style.display = 'none';
+        document.getElementById('timerDisplay').style.display = 'block';
+
+        // 開始計時
+        updateDisplay();
+        currentState.timerId = setInterval(tick, 1000);
+
+        showNotification("運動開始！");
+    }
+
+    function stopWorkout() {
+        if (currentState.timerId) {
+            clearInterval(currentState.timerId);
+        }
+
+        currentState.isRunning = false;
+
+        // 回到設定頁面
+        document.getElementById('setupSection').style.display = 'block';
+        document.getElementById('timerDisplay').style.display = 'none';
+
+        showNotification("運動已停止");
+    }
+
+    function tick() {
+        currentState.timeRemaining--;
+
+        if (currentState.timeRemaining <= 0) {
+            // 時間到了
+            if (currentState.isWorkoutPhase) {
+                // 動作時間結束
+                playWorkoutEndSound();
+
+                if (currentState.currentSet < workoutSettings.totalSets) {
+                    // 開始休息
+                    currentState.isWorkoutPhase = false;
+                    currentState.timeRemaining = workoutSettings.restTime;
+                    currentState.totalTime = workoutSettings.restTime;
+                } else {
+                    // 所有組數完成
+                    completeWorkout();
+                    return;
+                }
+            } else {
+                // 休息時間結束
+                playRestEndSound();
+                currentState.currentSet++;
+                currentState.isWorkoutPhase = true;
+                currentState.timeRemaining = workoutSettings.workoutTime;
+                currentState.totalTime = workoutSettings.workoutTime;
+            }
+        }
+
+        updateDisplay();
+    }
+
+    function completeWorkout() {
+        clearInterval(currentState.timerId);
+        currentState.isRunning = false;
+
+        playCompletionSound();
+
+        document.getElementById('currentPhase').innerHTML = '🎉 運動完成！';
+        document.getElementById('currentPhase').className = 'current-phase completed';
+        document.getElementById('timeRemaining').textContent = '完成';
+        document.getElementById('progressFill').style.width = '100%';
+
+        setTimeout(() => {
+            document.getElementById('setupSection').style.display = 'block';
+            document.getElementById('timerDisplay').style.display = 'none';
+            document.getElementById('currentPhase').className = 'current-phase';
+        }, 5000);
+    }
+
+    function updateDisplay() {
+        const phaseElement = document.getElementById('currentPhase');
+        const timeElement = document.getElementById('timeRemaining');
+        const progressElement = document.getElementById('progressInfo');
+        const progressFill = document.getElementById('progressFill');
+
+        if (currentState.isWorkoutPhase) {
+            phaseElement.innerHTML = '💪 動作時間';
+            phaseElement.className = 'current-phase workout-phase';
+        } else {
+            phaseElement.innerHTML = '😌 休息時間';
+            phaseElement.className = 'current-phase rest-phase';
+        }
+
+        timeElement.textContent = currentState.timeRemaining.toString().padStart(2, '0');
+        progressElement.textContent = `第 ${currentState.currentSet} 組 / 共 ${workoutSettings.totalSets} 組`;
+
+        // 更新進度條
+        const progress = ((currentState.totalTime - currentState.timeRemaining) / currentState.totalTime) * 100;
+        progressFill.style.width = progress + '%';
+    }
+
+    // 頁面加載完成後檢查音頻上下文
+    window.addEventListener('load', function() {
+        // 添加點擊事件來啟用音頻上下文（某些瀏覽器需要用戶互動）
+        document.body.addEventListener('click', function() {
+            if (window.AudioContext || window.webkitAudioContext) {
+                const audioContext = new(window.AudioContext || window.webkitAudioContext)();
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+            }
+        }, { once: true });
+    });
+    </script>
+</body>
+<!-- 
+    2025-08-23 上線 -->
+
+</html>

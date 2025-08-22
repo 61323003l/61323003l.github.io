@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- favicon -->
+    <link rel="shortcut icon" href="img\DWU icon.ico">
+    <title>FH4 賽道紀錄系統</title>
+    <style>
+        body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    input,
+    button,
+    select {
+      padding: 6px;
+      margin: 5px;
+    }
+
+    textarea { display: block; margin: 10px 0; width: 300px; }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #eee;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+    }
+
+/*  回到頂端按鈕  */
+.backtotop {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    /*       background-color: #75c0ea;*/
+    border-radius: 30px;
+    height: 75px;
+    width: 75px;
+}
+
+.backtotop img {
+    display: block;
+    margin: auto;
+    max-width: 80%;
+    /*filter: drop-shadow(1px 1px 1px);*/
+}
+
+/* top navigation bar */
+.topnav {
+    /*    滾動後固定在上方    */
+    position: sticky;
+    top: 0;
+    background-color: #eee;
+    /*    多區塊置中    */
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    /*    圓角    */
+    border-radius: 10px;
+}
+
+/* topnav */
+.topnav li {
+    /*    多區塊置中    */
+    display: inline-block;
+}
+
+/* topnav links */
+.topnav a {
+    float: left;
+    display: inline-block;
+    color: black;
+    font-weight: bolder;
+    text-align: center;
+    padding: 16px 16px;
+    text-decoration: none;
+}
+
+/* change style on hover */
+.topnav a:hover {
+    background-color: #ccc;
+    /*    圓角    */
+    border-radius: 10px;
+}
+  </style>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+        // 回到頂端功能
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+</script>
+</head>
+
+<body>
+    <header>
+        <h1>FH4 車輛紀錄系統</h1>
+    </header>
+    <!-- 回到頂端按鈕 -->
+    <div class="backtotop"><a href="#" onclick="scrollToTop(); return false;"><img src="img\負電拍拍頭剪影-2.png" alt="回到頂端" title="按一下回到頂端"></a></div>
+    <!-- top navigation bar -->
+    <div class="topnav">
+        <li><a href="https://docs.google.com/spreadsheets/d/1z_vnstW1q7UoFhRYTa4skagDlBoNCPtlobxkiN-m2Dk/edit?gid=710451785#gid=710451785" target="_blank">FH4賽道列表</a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1z_vnstW1q7UoFhRYTa4skagDlBoNCPtlobxkiN-m2Dk/edit?gid=1760936330#gid=1760936330" target="_blank">FH4車輛列表</a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1z_vnstW1q7UoFhRYTa4skagDlBoNCPtlobxkiN-m2Dk/edit?gid=1034815587#gid=1034815587" target="_blank">調教車輛</a></li>
+        <li><a href="https://docs.google.com/spreadsheets/d/1z_vnstW1q7UoFhRYTa4skagDlBoNCPtlobxkiN-m2Dk/edit?gid=1632701730#gid=1632701730" target="_blank">賽道紀錄</a></li>
+    </div>
+    <div>
+        <input list="carList" type="text" id="car" placeholder="車輛名稱">
+        <datalist id="carList"></datalist>
+        <input list="trackList" type="text" id="track" placeholder="賽道名稱">
+        <datalist id="trackList"></datalist>
+        <input type="text" id="lap" placeholder="單圈圈速 (例：05:38.328)">
+        <input type="text" id="total" placeholder="賽道圈速 (例：05:38.328)">
+        <button id="b" onclick="addRecord()">新增紀錄</button>
+    </div>
+    <script>
+        // 將"新增紀錄"寫入 google sheet
+        $(function() {
+        var $a1 = $('#car'),
+            $a2 = $('#track'),
+            $a3 = $('#lap'),
+            $a4 = $('#total')
+        $b = $('#b'),
+            a = {};
+
+        $b.on('click', function() {
+            a = {
+                data: $a1.val() + ',' + $a2.val() + ',' + $a3.val() + ',' + $a4.val(),
+                sheetUrl: 'https://docs.google.com/spreadsheets/d/1z_vnstW1q7UoFhRYTa4skagDlBoNCPtlobxkiN-m2Dk/edit?gid=1632701730#gid=1632701730',
+                sheetTag: '賽道紀錄'
+            };
+            console.log(a);
+            $.get('https://script.google.com/macros/s/AKfycbxBzCRzG-bDfd1Z-4hRij0daGm6sMT0q49BvZnjr8Cz8gg7SgASGDhAkd61SGlfJx1NNA/exec', a)
+                .done(function(response) {
+                    // 請求成功完成後執行
+                    console.log("Apps Script 回應:", response); // 顯示 Apps Script 的回應
+
+                    // 假設 Apps Script 會返回一個 JSON 物件，其中包含 success 狀態
+                    // 您需要根據 Apps Script 的實際回應格式調整這裡的判斷
+                    if (response === true || response === "true") { // <--- 關鍵改變：直接判斷 response 是否為 true
+                        $('#error-message').text('紀錄已成功送出！'); // 顯示成功訊息
+                        // 清空欄位內容
+                        $a1.val('');//清空車輛
+                        // $a2.val('');//清空賽道
+                        $a3.val('');//清空單圈
+                        $a4.val('');//清空總圈
+                    } else {
+                        // Apps Script 回應不是 true，視為失敗
+                        $('#error-message').text('送出失敗: Apps Script 回應非預期。'); // 顯示失敗訊息
+                        console.error("Apps Script 返回非預期回應:", response); // 記錄下非預期的回應
+                    }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    // 請求失敗時執行（例如網路問題或 Apps Script 錯誤）
+                    console.error("請求失敗:", textStatus, errorThrown);
+                    $('#error-message').text('送出失敗，請檢查網路連線或 Apps Script 設定。');
+                });
+        });
+    });
+    </script>
+    <div id="error-message" class="error"></div>
+    <!-- 圖片辨識功能區 -->
+    <img id="preview" style="max-width: 500px; display:none; margin-top: 10px;">
+    <script>
+        // Google Sheet 動態載入 車輛名稱
+    let vehicleList = [];
+
+    // 在頁面載入時獲取車輛列表
+const GOOGLE_APPS_SCRIPT_VEHICLE_LIST_URL = "https://script.google.com/macros/s/AKfycbxP2dQrjxsMb11ErGxq01zgOJg2g2pkjQlRPSgTsjP021DrxWZtNYeHT4PwL4tGN681lw/exec"; 
+
+async function fetchVehicleList() {
+    try {
+        const response = await fetch(GOOGLE_APPS_SCRIPT_VEHICLE_LIST_URL, {
+            method: 'GET',
+            mode: 'cors'
+        });
+        const result = await response.json();
+        if (result.status === "success" && result.data) {
+            vehicleList = result.data; // 更新全局的 vehicleList 變數
+            console.log("車輛列表已從 Google Sheet 載入:", vehicleList);
+            updateCarListDatalist(); // 更新 datalist，讓輸入框能自動完成
+        } else {
+            console.error("載入車輛列表失敗:", result.message);
+            document.getElementById("error-message").innerText = "無法載入車輛列表：" + result.message;
+        }
+    } catch (error) {
+        console.error("連接 Apps Script 獲取車輛列表時發生錯誤:", error);
+        document.getElementById("error-message").innerText = "無法連接到車輛列表服務。";
+    }
+}
+
+// 頁面載入完成後呼叫
+document.addEventListener('DOMContentLoaded', fetchVehicleList);
+
+
+// 新增這個函數來更新 datalist
+function updateCarListDatalist() {
+    const datalist = document.getElementById("carList");
+    datalist.innerHTML = Array.from(vehicleList).sort().map(c => `<option value="${c}">`).join("");
+}
+
+    function getBestMatch(text, candidates) {
+        text = text.toLowerCase();
+        let best = '';
+        let minDistance = Infinity;
+        for (const name of candidates) {
+            const dist = levenshtein(text, name.toLowerCase());
+            if (dist < minDistance) {
+                minDistance = dist;
+                best = name;
+            }
+        }
+        return best;
+    }
+
+    function levenshtein(a, b) {
+        const matrix = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(null));
+        for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+        for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost);
+            }
+        }
+        return matrix[a.length][b.length];
+    }
+
+    document.addEventListener('paste', async (event) => {
+        const items = event.clipboardData.items;
+        for (const item of items) {
+            if (item.type.indexOf("image") === 0) {
+                const blob = item.getAsFile();
+                const url = URL.createObjectURL(blob);
+                document.getElementById("preview").src = url;
+                document.getElementById("preview").style.display = "block";
+
+                const result = await Tesseract.recognize(blob, 'eng');
+                const text = result.data.text;
+                console.log("OCR文字內容：", text);
+
+                if (!/dragonwood/i.test(text)) {
+                    alert("不是指定玩家的圖片！");
+                    return;
+                }
+
+                // document.getElementById("player").value = "dragonwood0613";
+
+                // 時間匹配
+                const timeMatch = text.match(/(\d{2}:\d{2}\.\d{3})/g);
+                if (timeMatch) {
+                    if (timeMatch[0]) document.getElementById("lap").value = timeMatch[0];
+                    if (timeMatch[1]) document.getElementById("total").value = timeMatch[1];
+                }
+
+                // 車輛名稱模糊比對
+                const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 4);
+                let foundCar = '';
+                for (const line of lines) {
+                    const guess = getBestMatch(line, vehicleList);
+                    if (guess && line.toLowerCase().includes(guess.toLowerCase().split(' ')[0])) {
+                        foundCar = guess;
+                        break;
+                    }
+                }
+                if (foundCar) document.getElementById("car").value = foundCar;
+            }
+        }
+    });
+    </script>
+    <!-- 資料匯出 & 匯入 -->
+    <div>
+        <input type="file" id="csvInput" accept=".csv">
+        <button onclick="importCSV()">匯入 CSV</button>
+        <button onclick="exportCSV()">匯出 CSV</button>
+        <button onclick="clearRecords()">刪除全部資料</button>
+    </div>
+    <div>
+        <label for="filterTrack">選擇賽道：</label>
+        <select id="filterTrack" onchange="renderTable()">
+            <option value="">全部</option>
+        </select>
+        <label for="filterCar">選擇車輛：</label>
+        <select id="filterCar" onchange="renderTable()">
+            <option value="">全部</option>
+        </select>
+    </div>
+    <table id="recordTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable('car')">車輛名稱</th>
+                <th onclick="sortTable('track')">賽道名稱</th>
+                <th onclick="sortTable('lapTime')">單圈圈速</th>
+                <th onclick="sortTable('trackTime')">賽道圈速</th>
+                <th onclick="sortTable('pr')">PR 值</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script>
+    let records = JSON.parse(localStorage.getItem("fh4_records")) || [];
+    let sortKey = null;
+    let sortAsc = true;
+
+    function saveRecords() {
+        localStorage.setItem("fh4_records", JSON.stringify(records));
+    }
+
+    function toSeconds(time) {
+        // 原始程式碼只處理 MM:SS.S，這裡修正為 MM:SS.SSS
+        const parts = time.split(/[:.]/).map(parseFloat); // 分割分鐘、秒、毫秒
+        if (parts.length === 3) {
+            return parts[0] * 60 + parts[1] + parts[2] / 1000;
+        }
+        // Fallback for MM:SS or other unexpected formats
+        return parseFloat(time) || 0;
+    }
+
+    function renderTable() {
+        const tbody = document.querySelector("#recordTable tbody");
+        const filterTrack = document.getElementById("filterTrack").value;
+        const filterCar = document.getElementById("filterCar").value;
+
+        let filtered = records.filter(r => {
+            return (!filterTrack || r.track === filterTrack) && (!filterCar || r.car === filterCar);
+        });
+
+        filtered.forEach(entry => {
+            const sameTrack = records.filter(r => r.track === entry.track && r.lapTime);
+            const sorted = [...sameTrack].sort((a, b) => toSeconds(a.lapTime) - toSeconds(b.lapTime));
+            const index = sorted.findIndex(r => r.car === entry.car && r.lapTime === entry.lapTime);
+            if (index !== -1) {
+                entry.pr = ((sorted.length - index) / sorted.length * 100).toFixed(1);
+            } else {
+                entry.pr = "";
+            }
+        });
+
+        if (sortKey) {
+            filtered.sort((a, b) => {
+                let va = a[sortKey] || "";
+                let vb = b[sortKey] || "";
+                if (sortKey === 'lapTime' || sortKey === 'trackTime') {
+                    va = toSeconds(va);
+                    vb = toSeconds(vb);
+                } else if (sortKey === 'pr') {
+                    va = parseFloat(va) || 0;
+                    vb = parseFloat(vb) || 0;
+                }
+                return sortAsc ? va - vb : vb - va;
+            });
+        }
+
+        tbody.innerHTML = "";
+        filtered.forEach(record => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+        <td>${record.car}</td>
+        <td>${record.track}</td>
+        <td>${record.lapTime}</td>
+        <td>${record.trackTime}</td>
+        <td>${record.pr || ""}</td>
+        `;
+            tbody.appendChild(row);
+        });
+
+
+        updateFilters();
+        updateTrackList();
+        updateCarList(); // ✅ 加入這行
+    }
+
+    function updateFilters() {
+        const trackSet = new Set(records.map(r => r.track));
+        const carSet = new Set(records.map(r => r.car));
+        const trackSelect = document.getElementById("filterTrack");
+        const carSelect = document.getElementById("filterCar");
+
+        function updateOptions(select, set) {
+            const value = select.value;
+            select.innerHTML = '<option value="">全部</option>' +
+                Array.from(set).sort().map(v => `<option value="${v}">${v}</option>`).join("");
+            select.value = value;
+        }
+
+        updateOptions(trackSelect, trackSet);
+        updateOptions(carSelect, carSet);
+    }
+
+    function updateTrackList() {
+        const trackSet = new Set(records.map(r => r.track));
+        const datalist = document.getElementById("trackList");
+        datalist.innerHTML = Array.from(trackSet).sort().map(t => `<option value="${t}">`).join("");
+    }
+
+    function updateCarList() {
+        const carSet = new Set(records.map(r => r.car));
+        const datalist = document.getElementById("carList");
+        datalist.innerHTML = Array.from(carSet).sort().map(c => `<option value="${c}">`).join("");
+    }
+
+    function addRecord() {
+        const car = document.getElementById("car").value.trim();
+        const track = document.getElementById("track").value.trim();
+        const lapTime = document.getElementById("lap").value.trim();
+        const trackTime = document.getElementById("total").value.trim();
+
+        document.getElementById("error-message").innerText = "";
+
+        if (!car || !track || !lapTime || !trackTime) {
+            return document.getElementById("error-message").innerText = "請填寫所有欄位。";
+        }
+
+        const timeFormat = /^(\d{1,2}):(\d{2})\.(\d{3})$/;
+        if (!timeFormat.test(lapTime) || !timeFormat.test(trackTime)) {
+            return document.getElementById("error-message").innerText = "圈速格式錯誤，應為 MM:SS.SSS 格式。";
+        }
+
+        // 將資料添加到 records 陣列 (本地儲存)
+        records.push({ car, track, lapTime, trackTime });
+        saveRecords(); // 保存 records 到 localStorage
+
+        // 設定賽道篩選器為當前賽道
+        document.getElementById("filterTrack").value = track;
+
+        renderTable(); // 重新渲染表格
+
+
+        // 提示訊息將由 sendRecordToGoogleSheet 處理，這裡可以移除或調整
+        // document.getElementById("error-message").innerText = "紀錄新增成功！"; 
+
+    }
+
+    function clearRecords() {
+        // 提醒使用者這只會刪除本地資料，不會影響 Google 試算表
+        if (confirm("確定要刪除全部本地資料嗎？這不會刪除 Google 試算表中的資料。")) {
+            records = [];
+            saveRecords();
+            renderTable();
+            document.getElementById("error-message").innerText = "本地資料已刪除。";
+        }
+    }
+
+    function importCSV() {
+        const file = document.getElementById("csvInput").files[0];
+        if (!file) return alert("請選擇 CSV 檔案。");
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const lines = e.target.result.split("\n").map(line => line.trim()).filter(line => line);
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(",");
+                if (values.length >= 4) {
+                    const car = values[0].trim();
+                    const track = values[1].trim();
+                    const lapTime = values[2].trim();
+                    const trackTime = values[3].trim();
+
+                    const timeFormat = /^(\d{2}):(\d{2})\.(\d{3})$/;
+                    if (timeFormat.test(lapTime) && timeFormat.test(trackTime)) {
+                        records.push({ car, track, lapTime, trackTime });
+                    }
+                }
+            }
+
+            saveRecords();
+            renderTable();
+            document.getElementById("error-message").innerText = "CSV 資料匯入完成。"; // 新增成功提示
+        };
+        reader.readAsText(file);
+    }
+
+    function exportCSV() {
+        if (records.length === 0) {
+            return alert("目前沒有資料可以匯出。");
+        }
+
+        let csvContent = "車輛名稱,賽道名稱,單圈圈速,賽道圈速\n";
+        records.forEach(record => {
+            const row = [record.car, record.track, record.lapTime, record.trackTime].join(",");
+            csvContent += row + "\n";
+        });
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "FH4_車輛紀錄.csv");
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        document.getElementById("error-message").innerText = "資料已匯出為 CSV。"; // 新增成功提示
+
+    }
+
+    function sortTable(key) {
+        sortKey = key;
+        sortAsc = !sortAsc;
+        renderTable();
+    }
+
+    renderTable();
+    </script>
+    <!-- 
+更新紀錄(ChangeLog)
+2025-08-29 
+    1. 回到頂端按鈕修改
+    2. 新增紀錄後保留賽道名稱
+    3. 新增紀錄後進行自動篩選與顯示賽道排名
+-->
+</body>
+
+</html>
