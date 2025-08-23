@@ -234,6 +234,152 @@
             color: #ffffff;
             font-weight: bold;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+
+        /* 輸入欄位排版 */
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        /* 按鈕控制列排版 */
+        .button-control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .button-control-row #b {
+            margin-right: auto;
+        }
+
+        /* 調整分段控制器在新位置的樣式 */
+        .button-control-row .segmented-control {
+            margin-left: auto;
+            margin-right: 0;
+            flex-shrink: 0;
+        }
+
+        /* 篩選器排版 */
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 0, 0, 0.4);
+            flex-wrap: wrap;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-control-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            
+            .button-control-row #b {
+                margin-right: 0;
+                align-self: stretch;
+            }
+                
+            .button-control-row .segmented-control {
+                align-self: center;
+                margin-left: 0;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .filter-row label {
+                margin-bottom: 5px;
+            }
+            
+            .topnav a {
+                padding: 12px 8px;
+                font-size: 12px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .input-row input {
+                font-size: 14px;
+                padding: 8px;
+            }
+            
+            button {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            
+            .segmented-control button {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+            
+            table {
+                font-size: 10px;
+            }
+            
+            th, td {
+                padding: 6px 2px;
+            }
+        }
+
+        /* 移除原有的通用div樣式，避免衝突 */
+        div:has(input) {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            margin: 0;
+            border: none;
+        }
+
+        div:has(#filterTrack) {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            margin: 0;
+            border: none;
+        }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
@@ -262,14 +408,22 @@
         <li><a href="https://docs.google.com/spreadsheets/d/1z_vnstW1q7UoFhRYTa4skagDlBoNCPtlobxkiN-m2Dk/edit?gid=1034815587#gid=1034815587" target="_blank">調教車輛</a></li>
         <li><a href="https://docs.google.com/spreadsheets/d/1z_vnstW1q7UoFhRYTa4skagDlBoNCPtlobxkiN-m2Dk/edit?gid=1632701730#gid=1632701730" target="_blank">賽道紀錄</a></li>
     </div>
-    <div>
+    <!-- 輸入欄位區域 -->
+    <div class="input-row">
         <input list="carList" type="text" id="car" placeholder="車輛名稱">
         <datalist id="carList"></datalist>
         <input list="trackList" type="text" id="track" placeholder="賽道名稱">
         <datalist id="trackList"></datalist>
         <input type="text" id="lap" placeholder="單圈圈速 (例：05:38.328)">
         <input type="text" id="total" placeholder="賽道圈速 (例：05:38.328)">
+    </div>
+    <!-- 按鈕控制區域 -->
+    <div class="button-control-row">
         <button id="b" onclick="addRecord()">新增紀錄</button>
+        <div class="segmented-control">
+            <button id="trackMode" class="active" onclick="switchFilterMode('track')">賽道模式</button>
+            <button id="carMode" onclick="switchFilterMode('car')">車輛模式</button>
+        </div>
     </div>
     <script>
         // 將"新增紀錄"寫入 google sheet
@@ -443,10 +597,6 @@ function updateCarListDatalist() {
         <select id="filterCar" onchange="renderTable()">
             <option value="">全部</option>
         </select>
-        <div class="segmented-control">
-            <button id="trackMode" class="active" onclick="switchFilterMode('track')">賽道模式</button>
-            <button id="carMode" onclick="switchFilterMode('car')">車輛模式</button>
-        </div>
     </div>
     <table id="recordTable">
         <thead>
