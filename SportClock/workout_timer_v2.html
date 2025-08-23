@@ -39,25 +39,6 @@
             margin-bottom: 2rem;
             font-size: 2.5rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            /* 滑鼠觸碰樣式 */
-            cursor: pointer; 
-            /* 過度效果:透明度變化在0.3秒ease模式變化 */
-            transition: opacity 0.3s ease; 
-        }
-
-        h1.disabled {
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        .pause-btn {
-            background: linear-gradient(45deg, #FFA726, #FF9800);
-            margin-right: 1rem;
-        }
-
-        .resume-btn {
-            background: linear-gradient(45deg, #66BB6A, #4CAF50);
-            margin-right: 1rem;
         }
 
         .setup-section {
@@ -354,7 +335,7 @@
 
 <body>
     <div class="container">
-        <h1>🏃‍♂️ 運動計時器 <span style="font-size: 0.5em; opacity: 0.7;">v2.1</span></h1>
+        <h1>🏃‍♂️ 運動計時器 <span style="font-size: 0.5em; opacity: 0.7;">v2.0</span></h1>
         <div class="mode-selector" id="modeSelector">
             <button class="btn" onclick="selectMode('basic')">🏃 基本模式</button>
             <button class="btn" onclick="selectMode('advanced')">⚡ 進階功能</button>
@@ -409,7 +390,6 @@
             </div>
             <button class="btn" onclick="startAdvancedWorkout()" id="startAdvancedBtn" style="display:none;">🚀 開始進階運動</button>
         </div>
-        <!-- 計時顯示區 -->
         <div class="timer-display" id="timerDisplay">
             <div class="current-phase" id="currentPhase">準備開始...</div>
             <div class="time-remaining" id="timeRemaining">00</div>
@@ -417,72 +397,11 @@
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <button class="btn pause-btn" id="pauseBtn" onclick="togglePause()">⏸️ 暫停運動</button>
             <button class="btn stop" onclick="stopWorkout()">⏹️ 停止運動</button>
         </div>
     </div>
     <div class="notification" id="notification"></div>
     <script>
-    // 標題點擊返回功能
-    function returnToHome() {
-        if (currentState.isRunning && !currentState.isPaused) {
-            return; // 計時中且未暫停時不允許返回
-        }
-
-        // 停止計時器
-        if (currentState.timerId) {
-            clearInterval(currentState.timerId);
-        }
-
-        // 重置所有狀態
-        currentState.isRunning = false;
-        currentState.isPaused = false;
-        currentState.currentSet = 1;
-        currentState.isWorkoutPhase = true;
-        currentState.currentExerciseIndex = 0;
-        currentState.currentExerciseSet = 1;
-
-        // 顯示模式選擇器，隱藏其他區域
-        document.getElementById('modeSelector').style.display = 'block';
-        document.getElementById('setupSection').style.display = 'none';
-        document.getElementById('advancedSection').style.display = 'none';
-        document.getElementById('timerDisplay').style.display = 'none';
-
-        // 重置標題樣式
-        document.querySelector('h1').classList.remove('disabled');
-
-        showNotification("已返回首頁");
-    }
-
-    // 暫停/恢復功能
-    function togglePause() {
-        const pauseBtn = document.getElementById('pauseBtn');
-
-        if (currentState.isPaused) {
-            // 恢復運動
-            currentState.isPaused = false;
-            if (currentState.mode === 'advanced') {
-                currentState.timerId = setInterval(advancedTick, 1000);
-            } else {
-                currentState.timerId = setInterval(tick, 1000);
-            }
-            pauseBtn.innerHTML = '⏸️ 暫停運動';
-            pauseBtn.className = 'btn pause-btn';
-            document.querySelector('h1').classList.add('disabled');
-            showNotification("運動已恢復");
-        } else {
-            // 暫停運動
-            currentState.isPaused = true;
-            if (currentState.timerId) {
-                clearInterval(currentState.timerId);
-            }
-            pauseBtn.innerHTML = '▶️ 恢復運動';
-            pauseBtn.className = 'btn resume-btn';
-            document.querySelector('h1').classList.remove('disabled');
-            showNotification("運動已暫停");
-        }
-    }
-
     let workoutSettings = {
         workoutTime: 30,
         restTime: 5,
@@ -498,8 +417,7 @@
         timerId: null,
         mode: 'basic', // 'basic' or 'advanced'
         currentExerciseIndex: 0,
-        currentExerciseSet: 1,
-        isPaused: false,
+        currentExerciseSet: 1
     };
 
     let advancedWorkout = {
@@ -632,9 +550,6 @@
         updateAdvancedDisplay();
         currentState.timerId = setInterval(advancedTick, 1000);
         showNotification("進階運動開始！");
-
-        // 禁用標題點擊
-        document.querySelector('h1').classList.add('disabled');
     }
 
     // 進階運動計時邏輯
@@ -785,9 +700,6 @@
         currentState.timerId = setInterval(tick, 1000);
 
         showNotification("運動開始！");
-
-        // 禁用標題點擊
-        document.querySelector('h1').classList.add('disabled');
     }
 
     function stopWorkout() {
@@ -808,15 +720,6 @@
         document.getElementById('modeSelector').style.display = 'block';
 
         showNotification("運動已停止");
-
-        // 重置暫停狀態和標題
-        currentState.isPaused = false;
-        document.querySelector('h1').classList.remove('disabled');
-        const pauseBtn = document.getElementById('pauseBtn');
-        if (pauseBtn) {
-            pauseBtn.innerHTML = '⏸️ 暫停運動';
-            pauseBtn.className = 'btn pause-btn';
-        }
     }
 
     function tick() {
@@ -872,15 +775,6 @@
             document.getElementById('modeSelector').style.display = 'block';
             document.getElementById('currentPhase').className = 'current-phase';
         }, 5000);
-
-        // 重置暫停狀態和標題
-        currentState.isPaused = false;
-        document.querySelector('h1').classList.remove('disabled');
-        const pauseBtn = document.getElementById('pauseBtn');
-        if (pauseBtn) {
-            pauseBtn.innerHTML = '⏸️ 暫停運動';
-            pauseBtn.className = 'btn pause-btn';
-        }
     }
 
     function updateDisplay() {
@@ -909,11 +803,6 @@
         const progress = ((currentState.totalTime - currentState.timeRemaining) / currentState.totalTime) * 100;
         progressFill.style.width = progress + '%';
     }
-
-    // 為標題添加點擊事件
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelector('h1').addEventListener('click', returnToHome);
-    });
 
     // 頁面加載完成後檢查音頻上下文
     window.addEventListener('load', function() {
