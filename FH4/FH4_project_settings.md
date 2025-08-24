@@ -2,8 +2,8 @@
 
 ## 專案概述
 - **專案名稱**：FH4 賽道紀錄系統
-- **當前版本**：v2.1
-- **開發語言**：HTML/CSS/JavaScript (單一檔案)
+- **當前版本**：v2.4
+- **開發語言**：HTML/CSS/JavaScript + 外部服務
 - **主要功能**：車輛賽道記錄管理、OCR圖片識別、Google Sheets整合
 - **目標平台**：現代網頁瀏覽器 (支援ES6+)
 
@@ -42,8 +42,10 @@ FH4 賽道紀錄系統
 
 #### **1. 數據管理模組**
 - **本地儲存**: localStorage 存儲記錄數據
-- **雲端同步**: Google Sheets 讀寫整合
+- **雲端同步**: Google Sheets 雙向同步整合
 - **數據結構**: `{car, track, lapTime, trackTime, pr}`
+- **雲端載入**: 自動獲取雲端所有記錄
+- **資料去重**: 智能合併本地與雲端資料
 
 #### **2. 記錄輸入模組**
 - **手動輸入**: 車輛名稱、賽道名稱、單圈/總圈時間
@@ -56,6 +58,7 @@ FH4 賽道紀錄系統
 - **篩選功能**: 按車輛/賽道篩選
 - **PR計算**: 自動計算百分位排名
 - **排序功能**: 多欄位升降序排列
+- **篩選重置**: 一鍵清除所有篩選條件
 
 #### **4. 數據處理模組**
 - **CSV匯入**: 批量導入記錄
@@ -78,7 +81,9 @@ VEHICLE_LIST_URL: "https://script.google.com/macros/s/AKfycbxP2dQrjxsMb11ErGxq01
 
 // 記錄寫入
 RECORD_SUBMIT_URL: "https://script.google.com/macros/s/AKfycbxBzCRzG-bDfd1Z-4hRij0daGm6sMT0q49BvZnjr8Cz8gg7SgASGDhAkd61SGlfJx1NNA/exec"
-```
+
+// 記錄讀取
+FETCH_RECORDS_URL: "RECORD_SUBMIT_URL?action=fetchRecords"
 
 #### **OCR服務配置**
 ```javascript
@@ -96,6 +101,11 @@ RECORD_SUBMIT_URL: "https://script.google.com/macros/s/AKfycbxBzCRzG-bDfd1Z-4hRi
 用戶輸入 → 數據驗證 → 本地儲存 → Google Sheets同步 → 界面更新
 ```
 
+#### **雲端同步流程**
+```
+點擊重新整理 → 獲取雲端資料 → 與本地資料合併去重 → 更新本地儲存 → 重新渲染表格
+```
+
 #### **OCR處理流程**
 ```
 圖片貼上 → OCR識別 → 玩家驗證 → 數據提取 → 自動填入表單
@@ -104,6 +114,11 @@ RECORD_SUBMIT_URL: "https://script.google.com/macros/s/AKfycbxBzCRzG-bDfd1Z-4hRi
 #### **數據查詢流程**
 ```
 篩選條件 → 本地數據過濾 → PR計算 → 排序處理 → 表格渲染
+```
+
+#### **篩選重置流程**
+```
+點擊清除篩選 → 重置所有篩選器 → 重新渲染表格 → 顯示操作確認
 ```
 
 ### 🎯 技術棧說明
@@ -188,7 +203,21 @@ RECORD_SUBMIT_URL: "https://script.google.com/macros/s/AKfycbxBzCRzG-bDfd1Z-4hRi
 - 優化導航欄視覺效果（彩色速度條裝飾）
 - 增強按鈕和表格的賽車風格設計
 
-### 規劃中功能 (v2.4+)
+### v2.4 (2025-08-24)
+- 新增雲端資料同步功能
+- 實作「重新整理」按鈕載入Google Sheets資料
+- 智能資料去重合併機制（車輛+賽道+單圈+總圈完全匹配）
+- 雲端與本地資料無縫整合
+- 完整的同步狀態提示與錯誤處理
+- 新增「清除篩選」按鈕重置所有篩選條件
+- Google Apps Script新增fetchAllRecords端點
+
+### v2.5 (2025-08-24) 
+- UI優化：篩選器區域重新布局
+- 新增清除篩選功能的用戶反饋提示
+- 完善篩選器操作體驗
+
+### 規劃中功能 (v2.6+)
 - [ ] 數據統計圖表
 - [ ] 深色/淺色模式切換
 - [ ] 記錄編輯功能
@@ -196,4 +225,4 @@ RECORD_SUBMIT_URL: "https://script.google.com/macros/s/AKfycbxBzCRzG-bDfd1Z-4hRi
 
 ---
 **最後更新**：2025-08-24
-**文件版本**：2.1 → 2.3
+**文件版本**：2.1 → 2.5
