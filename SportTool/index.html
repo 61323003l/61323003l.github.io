@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f1216">
+<title>核心基礎運動｜課表總覽</title>
+<style>
+  :root {
+    --bg: #0f1216; --panel: #181d23; --panel2: #1f262e; --text: #e9edf1; --muted: #8a95a3;
+    --line: #2a313a; --accent: #4cc38a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  main {
+    max-width: 560px; margin: 0 auto; min-height: 100dvh;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  h1 { font-size: 24px; margin: 8px 0 0; }
+  .sub { color: var(--muted); font-size: 14px; margin: 4px 0 0; }
+  .list { display: grid; gap: 12px; }
+  a.card {
+    display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px;
+  }
+  a.card:active { background: var(--panel2); }
+  .badge {
+    flex: none; width: 48px; height: 48px; border-radius: 12px; background: var(--panel2);
+    display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--accent); font-size: 18px;
+  }
+  .info { flex: 1; min-width: 0; }
+  .info h2 { font-size: 18px; margin: 0; }
+  .info p { margin: 4px 0 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .arrow { color: var(--muted); font-size: 22px; }
+  footer { margin-top: auto; color: var(--muted); font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>核心基礎運動</h1>
+    <p class="sub">選擇今天要練的課表</p>
+  </header>
+
+  <!--
+    新增課表：複製 basic5.html 成新檔案、改裡面的課表 JSON（記得換一個新的 "id"），
+    再到下面 WORKOUTS 加一筆即可。
+  -->
+  <nav class="list" id="list"></nav>
+
+  <footer>訓練時請把手機放在看得到的地方，並開啟音量</footer>
+</main>
+
+<script>
+  const WORKOUTS = [
+    { href: 'basic5.html', badge: '5', title: '5 大基本招式', desc: '基礎式・背部伸展・內收肌背部伸展・跪姿基礎式・弓箭步伸展｜3 輪，約 15–20 分鐘' }
+  ];
+
+  const list = document.getElementById('list');
+  WORKOUTS.forEach(w => {
+    const a = document.createElement('a'); a.className = 'card'; a.href = w.href;
+    const badge = document.createElement('div'); badge.className = 'badge'; badge.textContent = w.badge;
+    const info = document.createElement('div'); info.className = 'info';
+    const h = document.createElement('h2'); h.textContent = w.title;
+    const p = document.createElement('p'); p.textContent = w.desc;
+    info.append(h, p);
+    const arrow = document.createElement('span'); arrow.className = 'arrow'; arrow.textContent = '›';
+    a.append(badge, info, arrow);
+    list.append(a);
+  });
+</script>
+</body>
+</html>

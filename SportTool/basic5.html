@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f1216">
+<title>5 大基本招式｜核心基礎運動</title>
+<style>
+  :root {
+    --bg: #0f1216; --panel: #181d23; --panel2: #1f262e; --text: #e9edf1; --muted: #8a95a3;
+    --line: #2a313a; --accent: #4cc38a; --rest: #f2b84b; --trans: #6aa7ff; --danger: #ef6b6b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  .screen {
+    display: none; min-height: 100dvh; max-width: 560px; margin: 0 auto;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+    flex-direction: column; gap: 14px;
+  }
+  .screen.active { display: flex; }
+  h1 { font-size: 22px; margin: 8px 0 0; }
+  .sub { color: var(--muted); font-size: 14px; margin: 0; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+  .card h2 { font-size: 15px; margin: 0 0 10px; color: var(--muted); font-weight: 600; }
+
+  /* home */
+  .moves { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .moves li { display: flex; justify-content: space-between; gap: 8px; font-size: 15px; }
+  .moves li span:last-child { color: var(--muted); white-space: nowrap; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+  .row:first-of-type { border-top: 0; }
+  .row label { font-size: 15px; }
+  .seg { display: flex; background: var(--panel2); border-radius: 10px; padding: 3px; }
+  .seg button { border: 0; background: transparent; padding: 7px 12px; border-radius: 8px; font-size: 14px; color: var(--muted); }
+  .seg button.on { background: var(--accent); color: #08130d; font-weight: 700; }
+  .stepper { display: flex; align-items: center; gap: 6px; }
+  .stepper button { width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel2); font-size: 18px; }
+  .stepper output { min-width: 52px; text-align: center; font-variant-numeric: tabular-nums; }
+  .switch { width: 50px; height: 30px; border-radius: 15px; border: 0; background: var(--line); position: relative; }
+  .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: left .15s; }
+  .switch.on { background: var(--accent); }
+  .switch.on::after { left: 23px; }
+  .est { text-align: center; color: var(--muted); font-size: 14px; }
+  .primary { border: 0; background: var(--accent); color: #08130d; font-weight: 800; font-size: 20px; padding: 16px; border-radius: 14px; width: 100%; }
+  .back { color: var(--muted); text-decoration: none; font-size: 14px; }
+  .stop.confirm { border-color: var(--danger); color: var(--danger); font-weight: 700; }
+  .ghost { border: 1px solid var(--line); background: transparent; padding: 10px 14px; border-radius: 12px; font-size: 14px; color: var(--muted); }
+
+  /* run */
+  .top { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--muted); }
+  .top b { color: var(--text); }
+  .bar { height: 6px; background: var(--panel2); border-radius: 3px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+  .move-title { font-size: 22px; font-weight: 800; margin: 2px 0 0; }
+  .step-no { font-size: 14px; color: var(--muted); margin: 0; }
+  .ring-wrap { position: relative; width: min(64vw, 260px); aspect-ratio: 1; margin: 6px auto 0; }
+  .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: var(--panel2); stroke-width: 12; }
+  .ring-fg { fill: none; stroke: var(--accent); stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset .2s linear, stroke .2s; }
+  .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .big { font-size: clamp(64px, 22vw, 104px); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  .unit { font-size: 15px; color: var(--muted); margin-top: 6px; }
+  .kind { font-size: 13px; font-weight: 700; letter-spacing: .08em; padding: 3px 10px; border-radius: 99px; background: var(--panel2); align-self: center; }
+  .cue { font-size: 22px; font-weight: 700; line-height: 1.45; text-align: center; margin: 0; }
+  .note { font-size: 15px; color: var(--muted); text-align: center; margin: 0; line-height: 1.5; }
+  .next { font-size: 14px; color: var(--muted); text-align: center; }
+  .done-btn { border: 0; background: var(--accent); color: #08130d; font-weight: 800; font-size: 22px; padding: 22px; border-radius: 16px; width: 100%; }
+  details { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+  summary { color: var(--muted); }
+  details ul { margin: 8px 0 0; padding-left: 20px; line-height: 1.6; }
+  details .bad li::marker { color: var(--danger); }
+  .controls { margin-top: auto; display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 10px; }
+  .controls button { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 16px 0; font-size: 16px; }
+  .controls .pp { background: var(--panel2); font-weight: 800; font-size: 18px; }
+  .stop { align-self: center; }
+  .paused-tag { color: var(--rest); font-weight: 700; }
+
+  .is-rest .ring-fg { stroke: var(--rest); }
+  .is-trans .ring-fg { stroke: var(--trans); }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ========== 課表資料：之後換課表只要改這一段 ========== -->
+<!--
+  steps 每一筆的寫法：
+  { "cue": "提示文字", "time": 15 }            → 計時 15 秒
+  { "cue": "提示文字", "time": [10, 20] }      → 有範圍的時間，依「強度」取下限 / 中間 / 上限
+  { "cue": "提示文字", "type": "transition" }  → 預備或轉換，秒數依設定的「轉換時間」
+  { "cue": "提示文字", "type": "reps", "reps": 15 } → 次數動作，自己計數，完成後點擊進下一步
+  可另外加 "note"（畫面小字）或 "detail"（次數動作的分解步驟）
+-->
+<script id="workout" type="application/json">
+{
+  "id": "basic5",
+  "title": "5 大基本招式",
+  "rounds": 3,
+  "moves": [
+    {
+      "name": "基礎式",
+      "tips": ["抬頭，眼睛看前方", "挺胸、臀部往後推", "重心在腳跟", "雙臂上舉時貼近耳朵"],
+      "mistakes": ["低頭往下看", "膝蓋過彎超過腳尖", "重心在前腳掌", "雙臂張太開"],
+      "steps": [
+        { "cue": "雙腳與肩同寬，膝微彎，重心在腳跟", "type": "transition" },
+        { "cue": "雙手往後伸，肩膀下拉，臀部後推", "time": 15 },
+        { "cue": "雙手盡量往上舉高，臀部繼續後推", "time": 15 },
+        { "cue": "吐氣，上半身往下彎，背部保持平坦", "time": 10, "note": "深呼吸 2 次" },
+        { "cue": "膝再彎一點，雙手壓小腿，抬頭挺胸，下背拱起", "time": 15 },
+        { "cue": "背部保持伸展，雙手移到膝蓋上", "type": "transition" },
+        { "cue": "雙臂往後推，肩胛骨靠攏，回到步驟二的姿勢", "time": 15 },
+        { "cue": "雙臂盡量往上舉高", "time": 20, "note": "或深呼吸 4 次" }
+      ]
+    },
+    {
+      "name": "背部伸展式",
+      "tips": ["腳尖觸地", "前臂與手肘貼身體兩側", "手肘往後抬高", "脊椎平直", "不要聳肩"],
+      "mistakes": ["雙臂太往前伸、手肘沒貼身體", "抬背時雙腳跟著抬起"],
+      "steps": [
+        { "cue": "俯臥，雙臂向前伸直", "type": "transition" },
+        { "cue": "依自己的節奏做背部伸展", "type": "reps", "reps": 15,
+          "detail": "① 雙臂前伸　② 手收回肩旁，手肘拉向中背　③ 用胸部力量抬起上身　④ 慢慢放下，手肘保持離地" }
+      ]
+    },
+    {
+      "name": "內收肌輔助的背部伸展式",
+      "tips": ["膝蓋越靠近效果越好", "雙腿彎曲、離地約 15 公分", "視線看前方幾公分，不要過度抬頸"],
+      "mistakes": ["雙臂太往前伸、手肘沒貼身體", "膝蓋與雙腳沒有併攏"],
+      "steps": [
+        { "cue": "俯臥，手肘往後拉抬，雙腿併攏", "type": "transition" },
+        { "cue": "膝彎四十五度夾緊，雙腳離地，胸部抬高", "time": [10, 20], "note": "雙腳離地約 15 公分" }
+      ]
+    },
+    {
+      "name": "跪姿基礎式",
+      "tips": ["抬頭，眼睛看前方", "挺胸、臀部往後拉", "臀部約在腳跟正上方", "雙臂上舉貼近耳朵"],
+      "mistakes": ["背部彎曲", "臀部太往前", "軀幹直立，沒有前傾約 45 度"],
+      "steps": [
+        { "cue": "俯臥，掌心貼地放在頭部兩側", "type": "transition" },
+        { "cue": "屈膝，臀部往後坐到腳跟上", "type": "transition" },
+        { "cue": "維持兒童式", "time": [20, 30] },
+        { "cue": "挺起胸部，臀部仍坐在腳跟上", "type": "transition" },
+        { "cue": "臀部離開腳跟，挺胸，雙臂往後伸", "time": [10, 15] },
+        { "cue": "雙臂慢慢高舉過頭，背部與臀部保持穩定", "time": 10 }
+      ]
+    },
+    {
+      "name": "弓箭步伸展式",
+      "tips": ["背部伸展", "雙臂直直高舉", "肩膀下沉", "前膝在腳踝後方", "側彎時髖部保持方正"],
+      "mistakes": ["重心前移到前腳掌", "聳肩", "前膝過彎超過腳尖", "髖部沒有方正"],
+      "steps": [
+        { "cue": "右腳在前，跨成弓箭步", "type": "transition" },
+        { "cue": "雙手高舉過頭，從髖部伸展脊椎", "time": 10 },
+        { "cue": "上半身往右側彎，髖部保持方正", "time": 20 },
+        { "cue": "換邊，左腳在前，跨成弓箭步", "type": "transition" },
+        { "cue": "雙手高舉過頭，從髖部伸展脊椎", "time": 10 },
+        { "cue": "上半身往左側彎，髖部保持方正", "time": 20 }
+      ]
+    }
+  ]
+}
+</script>
+
+<!-- ========== 首頁 ========== -->
+<section id="home" class="screen active">
+  <div>
+    <a class="back" href="index.html">← 所有課表</a>
+    <h1 id="title"></h1>
+    <p class="sub">核心基礎運動・手機語音計時</p>
+  </div>
+
+  <div class="card">
+    <h2>動作清單</h2>
+    <ul class="moves" id="moveList"></ul>
+  </div>
+
+  <div class="card">
+    <h2>設定</h2>
+    <div class="row">
+      <label>強度（有範圍的時間）</label>
+      <div class="seg" id="intensity">
+        <button data-v="low">下限</button><button data-v="mid">中間</button><button data-v="high">上限</button>
+      </div>
+    </div>
+    <div class="row"><label>輪數</label>
+      <div class="stepper" data-key="rounds" data-min="1" data-max="10" data-step="1" data-unit="輪"></div></div>
+    <div class="row"><label>預備／轉換時間</label>
+      <div class="stepper" data-key="transition" data-min="3" data-max="30" data-step="1" data-unit="秒"></div></div>
+    <div class="row"><label>輪與輪之間休息</label>
+      <div class="stepper" data-key="roundRest" data-min="0" data-max="180" data-step="5" data-unit="秒"></div></div>
+    <div class="row"><label>語音提示</label><button class="switch" data-key="voice" aria-label="語音提示"></button></div>
+    <div class="row"><label>倒數嗶聲</label><button class="switch" data-key="beep" aria-label="倒數嗶聲"></button></div>
+  </div>
+
+  <p class="est" id="estimate"></p>
+  <button class="primary" id="startBtn">開始訓練</button>
+  <button class="ghost" id="testVoice">測試語音</button>
+</section>
+
+<!-- ========== 訓練中 ========== -->
+<section id="run" class="screen">
+  <div class="top">
+    <span>第 <b id="roundNo"></b> 輪</span>
+    <span id="pausedTag" class="paused-tag hidden">已暫停</span>
+    <span id="moveNo"></span>
+  </div>
+  <div class="bar"><i id="progress"></i></div>
+
+  <div>
+    <p class="move-title" id="moveName"></p>
+    <p class="step-no" id="stepNo"></p>
+  </div>
+
+  <span class="kind" id="kind"></span>
+
+  <div class="ring-wrap" id="ringWrap">
+    <svg viewBox="0 0 200 200" aria-hidden="true">
+      <circle class="ring-bg" cx="100" cy="100" r="90"></circle>
+      <circle class="ring-fg" id="ring" cx="100" cy="100" r="90" stroke-dasharray="565.49" stroke-dashoffset="0"></circle>
+    </svg>
+    <div class="ring-center">
+      <div class="big" id="bigNum"></div>
+      <div class="unit" id="unit"></div>
+    </div>
+  </div>
+
+  <p class="cue" id="cue"></p>
+  <p class="note" id="note"></p>
+
+  <button class="done-btn hidden" id="doneBtn">完成，下一步 ✓</button>
+
+  <p class="next" id="next"></p>
+
+  <details id="tipsBox">
+    <summary>動作要點</summary>
+    <ul id="tips"></ul>
+    <ul class="bad" id="mistakes"></ul>
+  </details>
+
+  <div class="controls">
+    <button id="prevBtn">⏮ 上一步</button>
+    <button id="ppBtn" class="pp">暫停</button>
+    <button id="nextBtn">下一步 ⏭</button>
+  </div>
+  <button class="ghost stop" id="stopBtn">結束訓練</button>
+</section>
+
+<!-- ========== 完成 ========== -->
+<section id="done" class="screen">
+  <div style="margin:auto 0;text-align:center;display:grid;gap:14px">
+    <div style="font-size:64px">🎉</div>
+    <h1>訓練完成</h1>
+    <p class="sub" id="doneInfo"></p>
+    <button class="primary" id="homeBtn">回到首頁</button>
+  </div>
+</section>
+
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById('workout').textContent);
+  const $ = (id) => document.getElementById(id);
+  const RING = 565.49;
+  const STORE_KEY = 'ft-settings-' + (DATA.id || location.pathname);
+
+  /* ---------- 設定（存在瀏覽器裡） ---------- */
+  const DEFAULTS = { intensity: 'mid', rounds: DATA.rounds || 3, transition: 8, roundRest: 20, voice: true, beep: true };
+  let settings = { ...DEFAULTS };
+  try { Object.assign(settings, JSON.parse(localStorage.getItem(STORE_KEY) || '{}')); } catch (e) {}
+  const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(settings)); } catch (e) {} };
+
+  /* ---------- 時間計算 ---------- */
+  function resolveTime(t) {
+    if (Array.isArray(t)) {
+      const [a, b] = t;
+      if (settings.intensity === 'low') return a;
+      if (settings.intensity === 'high') return b;
+      return Math.round((a + b) / 2);
+    }
+    return t;
+  }
+
+  function buildTimeline() {
+    const segs = [];
+    const R = settings.rounds;
+    for (let r = 1; r <= R; r++) {
+      DATA.moves.forEach((move, mi) => {
+        move.steps.forEach((step, si) => {
+          const type = step.type || 'timed';
+          let kind = 'timed', dur = null;
+          if (type === 'transition') { kind = 'trans'; dur = settings.transition; }
+          else if (type === 'reps') { kind = 'reps'; }
+          else { dur = resolveTime(step.time); }
+          segs.push({ round: r, mi, si, move, step, kind, dur });
+        });
+      });
+      if (r < R && settings.roundRest > 0) {
+        segs.push({ round: r, kind: 'rest', dur: settings.roundRest, step: { cue: `休息，準備第 ${r + 1} 輪` } });
+      }
+    }
+    return segs;
+  }
+
+  /* ---------- 首頁 ---------- */
+  $('title').textContent = DATA.title;
+
+  function renderHome() {
+    const list = $('moveList');
+    list.innerHTML = '';
+    DATA.moves.forEach((m, i) => {
+      let secs = 0, reps = null;
+      m.steps.forEach(s => {
+        if (s.type === 'transition') secs += settings.transition;
+        else if (s.type === 'reps') reps = s.reps;
+        else secs += resolveTime(s.time);
+      });
+      const li = document.createElement('li');
+      const a = document.createElement('span'); a.textContent = `${i + 1}. ${m.name}`;
+      const b = document.createElement('span'); b.textContent = reps ? `${reps} 次` : `${secs} 秒`;
+      li.append(a, b); list.append(li);
+    });
+
+    document.querySelectorAll('#intensity button').forEach(btn =>
+      btn.classList.toggle('on', btn.dataset.v === settings.intensity));
+    document.querySelectorAll('.stepper').forEach(el => {
+      el.querySelector('output').textContent = `${settings[el.dataset.key]} ${el.dataset.unit}`;
+    });
+    document.querySelectorAll('.switch').forEach(el => el.classList.toggle('on', !!settings[el.dataset.key]));
+
+    const tl = buildTimeline();
+    let secs = 0, repsCount = 0;
+    tl.forEach(s => { if (s.kind === 'reps') repsCount++; else secs += s.dur; });
+    const est = Math.round((secs + repsCount * 60) / 60);
+    $('estimate').textContent = `預估約 ${est} 分鐘（次數動作以每組約 1 分鐘估算）`;
+  }
+
+  document.querySelectorAll('#intensity button').forEach(btn => btn.addEventListener('click', () => {
+    settings.intensity = btn.dataset.v; save(); renderHome();
+  }));
+  document.querySelectorAll('.stepper').forEach(el => {
+    const minus = document.createElement('button'); minus.textContent = '−';
+    const out = document.createElement('output');
+    const plus = document.createElement('button'); plus.textContent = '+';
+    el.append(minus, out, plus);
+    const k = el.dataset.key, min = +el.dataset.min, max = +el.dataset.max, st = +el.dataset.step;
+    minus.addEventListener('click', () => { settings[k] = Math.max(min, settings[k] - st); save(); renderHome(); });
+    plus.addEventListener('click', () => { settings[k] = Math.min(max, settings[k] + st); save(); renderHome(); });
+  });
+  document.querySelectorAll('.switch').forEach(el => el.addEventListener('click', () => {
+    settings[el.dataset.key] = !settings[el.dataset.key]; save(); renderHome();
+  }));
+
+  /* ---------- 聲音 ---------- */
+  let audioCtx = null, zhVoice = null;
+  function pickVoice() {
+    const vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+    zhVoice = vs.find(v => /zh[-_]TW/i.test(v.lang)) || vs.find(v => /zh[-_](HK|Hant)/i.test(v.lang)) || vs.find(v => /^zh/i.test(v.lang)) || null;
+  }
+  if (window.speechSynthesis) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+
+  function unlockAudio() {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    } catch (e) {}
+    try { // iOS 需要使用者點擊後先說一次話
+      const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function say(text) {
+    if (!settings.voice || !window.speechSynthesis) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'zh-TW'; if (zhVoice) u.voice = zhVoice; u.rate = 1.05;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function beep(freq = 660, dur = 0.12, vol = 0.25) {
+    if (!settings.beep || !audioCtx) return;
+    try {
+      const t = audioCtx.currentTime;
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = 'sine'; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t); o.stop(t + dur + 0.02);
+    } catch (e) {}
+  }
+  $('testVoice').addEventListener('click', () => { unlockAudio(); say('第一式，基礎式。雙手往後伸，十五秒'); beep(); });
+
+  /* ---------- 螢幕常亮 ---------- */
+  let wakeLock = null;
+  async function requestWake() {
+    try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+  }
+  function releaseWake() { try { wakeLock && wakeLock.release(); } catch (e) {} wakeLock = null; }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && $('run').classList.contains('active')) requestWake();
+  });
+
+  /* ---------- 計時引擎 ---------- */
+  let T = [], idx = 0, running = false, segStart = 0, pausedElapsed = 0, lastWhole = null, ticker = null, sessionStart = 0;
+
+  const elapsed = () => running ? (performance.now() - segStart) / 1000 : pausedElapsed;
+
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+    window.scrollTo(0, 0);
+  }
+
+  function start() {
+    unlockAudio();
+    T = buildTimeline();
+    sessionStart = Date.now();
+    show('run');
+    requestWake();
+    running = true;
+    enter(0);
+    clearInterval(ticker);
+    ticker = setInterval(tick, 100);
+  }
+
+  function enter(i) {
+    idx = i;
+    pausedElapsed = 0;
+    segStart = performance.now();
+    lastWhole = null;
+    render();
+    announce();
+  }
+
+  function announce() {
+    const s = T[idx];
+    const parts = [];
+    if (s.kind === 'rest') { parts.push(s.step.cue); parts.push(`${s.dur} 秒`); say(parts.join('。')); return; }
+    if (s.mi === 0 && s.si === 0) parts.push(`第 ${s.round} 輪`);
+    if (s.si === 0) parts.push(`第 ${s.mi + 1} 式，${s.move.name}`);
+    parts.push(s.step.cue);
+    if (s.kind === 'reps') parts.push(`${s.step.reps} 次，做完後點擊螢幕`);
+    else if (s.kind === 'timed') parts.push(`${s.dur} 秒`);
+    say(parts.join('。'));
+  }
+
+  function nextSeg() {
+    if (idx >= T.length - 1) { finish(); return; }
+    beep(990, 0.25, 0.3);
+    if (!running) { running = true; updatePP(); }
+    enter(idx + 1);
+  }
+  function prevSeg() {
+    if (!running) { running = true; updatePP(); }
+    enter(Math.max(0, idx - 1));
+  }
+
+  function tick() {
+    if (!running) return;
+    const s = T[idx];
+    if (s.kind === 'reps') { updateTime(); return; }
+    const rem = s.dur - elapsed();
+    if (rem <= 0) { nextSeg(); return; }
+    const whole = Math.ceil(rem);
+    if (whole !== lastWhole) {
+      if (whole <= 3) beep(660);
+      lastWhole = whole;
+    }
+    updateTime();
+  }
+
+  function updateTime() {
+    const s = T[idx];
+    if (s.kind === 'reps') {
+      const e = Math.floor(elapsed());
+      $('unit').textContent = `次・已進行 ${Math.floor(e / 60)}:${String(e % 60).padStart(2, '0')}`;
+      return;
+    }
+    const rem = Math.max(0, s.dur - elapsed());
+    $('bigNum').textContent = Math.ceil(rem);
+    $('ring').style.strokeDashoffset = (RING * (1 - rem / s.dur)).toFixed(1);
+  }
+
+  function render() {
+    const s = T[idx];
+    const run = $('run');
+    run.classList.toggle('is-rest', s.kind === 'rest');
+    run.classList.toggle('is-trans', s.kind === 'trans');
+
+    $('roundNo').textContent = `${s.round}/${settings.rounds}`;
+    $('progress').style.width = `${(idx / T.length) * 100}%`;
+
+    if (s.kind === 'rest') {
+      $('moveNo').textContent = '';
+      $('moveName').textContent = '輪間休息';
+      $('stepNo').textContent = '';
+      $('tipsBox').classList.add('hidden');
+    } else {
+      $('moveNo').textContent = `第 ${s.mi + 1}/${DATA.moves.length} 式`;
+      $('moveName').textContent = s.move.name;
+      $('stepNo').textContent = `步驟 ${s.si + 1}/${s.move.steps.length}`;
+      $('tipsBox').classList.remove('hidden');
+      const tips = $('tips'), bad = $('mistakes');
+      tips.innerHTML = ''; bad.innerHTML = '';
+      (s.move.tips || []).forEach(t => { const li = document.createElement('li'); li.textContent = t; tips.append(li); });
+      (s.move.mistakes || []).forEach(t => { const li = document.createElement('li'); li.textContent = '避免：' + t; bad.append(li); });
+    }
+
+    const kindLabel = { timed: '維持', trans: '預備／轉換', reps: '自行計數', rest: '休息' }[s.kind];
+    $('kind').textContent = kindLabel;
+
+    $('cue').textContent = s.step.cue;
+    $('note').textContent = s.step.detail || s.step.note || '';
+    $('note').classList.toggle('hidden', !(s.step.detail || s.step.note));
+
+    if (s.kind === 'reps') {
+      $('bigNum').textContent = s.step.reps;
+      $('ring').style.strokeDashoffset = 0;
+      $('doneBtn').classList.remove('hidden');
+    } else {
+      $('unit').textContent = '秒';
+      $('doneBtn').classList.add('hidden');
+    }
+    updateTime();
+
+    const n = T[idx + 1];
+    if (!n) $('next').textContent = '這是最後一步';
+    else if (n.kind === 'rest') $('next').textContent = `接著：休息 ${n.dur} 秒`;
+    else if (n.si === 0) $('next').textContent = `接著：第 ${n.mi + 1} 式 ${n.move.name}`;
+    else $('next').textContent = `接著：${n.step.cue}`;
+
+    updatePP();
+  }
+
+  function updatePP() {
+    $('ppBtn').textContent = running ? '暫停' : '繼續';
+    $('pausedTag').classList.toggle('hidden', running);
+  }
+
+  function togglePause() {
+    if (running) {
+      pausedElapsed = elapsed();
+      running = false;
+      try { speechSynthesis.cancel(); } catch (e) {}
+    } else {
+      unlockAudio();
+      segStart = performance.now() - pausedElapsed * 1000;
+      running = true;
+    }
+    updatePP();
+  }
+
+  function finish() {
+    clearInterval(ticker);
+    running = false;
+    releaseWake();
+    const mins = Math.round((Date.now() - sessionStart) / 60000);
+    $('doneInfo').textContent = `共 ${settings.rounds} 輪，用時約 ${mins} 分鐘`;
+    beep(990, 0.4, 0.3);
+    say('訓練完成，辛苦了');
+    show('done');
+  }
+
+  // 結束訓練：按一次變成確認狀態，3 秒內再按一次才結束（不使用 confirm 視窗，部分瀏覽器會擋）
+  let stopArmed = null;
+  function disarmStop() {
+    clearTimeout(stopArmed); stopArmed = null;
+    $('stopBtn').textContent = '結束訓練'; $('stopBtn').classList.remove('confirm');
+  }
+  function stop() {
+    if (!stopArmed) {
+      $('stopBtn').textContent = '再按一次確認結束';
+      $('stopBtn').classList.add('confirm');
+      stopArmed = setTimeout(disarmStop, 3000);
+      return;
+    }
+    disarmStop();
+    clearInterval(ticker);
+    running = false;
+    releaseWake();
+    try { speechSynthesis.cancel(); } catch (e) {}
+    renderHome();
+    show('home');
+  }
+
+  $('startBtn').addEventListener('click', start);
+  $('doneBtn').addEventListener('click', nextSeg);
+  $('nextBtn').addEventListener('click', nextSeg);
+  $('prevBtn').addEventListener('click', prevSeg);
+  $('ppBtn').addEventListener('click', togglePause);
+  $('stopBtn').addEventListener('click', stop);
+  $('homeBtn').addEventListener('click', () => { renderHome(); show('home'); });
+
+  renderHome();
+})();
+</script>
+</body>
+</html>
